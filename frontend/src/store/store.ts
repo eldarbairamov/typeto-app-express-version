@@ -4,11 +4,11 @@ import { userReducer } from "./slice/user.slice.ts";
 import { conversationReducer } from "./slice/conversation.slice.ts";
 
 export const store = configureStore({
-    reducer: {
-        authReducer,
-        userReducer,
-        conversationReducer
-    }
+   reducer: {
+      authReducer,
+      userReducer,
+      conversationReducer
+   }
 });
 
 export type RootState = ReturnType<typeof store.getState>

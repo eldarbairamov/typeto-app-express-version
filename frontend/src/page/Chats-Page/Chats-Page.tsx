@@ -8,46 +8,46 @@ import { conversationActions } from "../../store/slice/conversation.slice.ts";
 import { EmptyBox } from "../../component/Empty-Box/Empty-Box.tsx";
 
 export function ChatsPage() {
-    const { conversations } = useAppSelector(state => state.conversationReducer);
+   const { conversations } = useAppSelector(state => state.conversationReducer);
 
-    const dispatch = useAppDispatch();
+   const dispatch = useAppDispatch();
 
-    const getConversations = async () => {
-        try {
-            const { data } = await conversationService.getConversations();
+   const getConversations = async () => {
+      try {
+         const { data } = await conversationService.getConversations();
 
-            if (data.length) {
-                dispatch(conversationActions.setConversations(data));
-                dispatch(conversationActions.setActiveConversation(data[0]));
-            }
+         if (data.length) {
+            dispatch(conversationActions.setConversations(data));
+            dispatch(conversationActions.setActiveConversation(data[0]));
+         }
 
-        } catch (e) {
-            console.log(e);
-        }
-    };
+      } catch (e) {
+         console.log(e);
+      }
+   };
 
-    useEffect(() => {
-        getConversations();
-    }, []);
+   useEffect(() => {
+      getConversations();
+   }, []);
 
 
-    return (
-        <VStack w={ "100%" }
-                spacing={ 0 }
-                gap={ "20px" }
-                h={ calc("100vh").subtract("100px").toString() }>
+   return (
+       <VStack w={ "100%" }
+               spacing={ 0 }
+               gap={ "20px" }
+               h={ calc("100vh").subtract("100px").toString() }>
 
-            <HStack h={ calc("100%").subtract("80px").toString() }
-                    spacing={ 0 }
-                    w={ "100%" }
-                    justify={ "space-between" }
-                    alignItems={ "flex-start" }>
-                <SideBar/>
+          <HStack h={ calc("100%").subtract("80px").toString() }
+                  spacing={ 0 }
+                  w={ "100%" }
+                  justify={ "space-between" }
+                  alignItems={ "flex-start" }>
+             <SideBar/>
 
-                { Boolean(conversations.length) ? <ChatBox/> : <EmptyBox/> }
+             { Boolean(conversations.length) ? <ChatBox/> : <EmptyBox/> }
 
-            </HStack>
+          </HStack>
 
-        </VStack>
-    );
+       </VStack>
+   );
 }

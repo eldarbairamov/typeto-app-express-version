@@ -6,94 +6,96 @@ import { useState } from "react";
 import { GroupConversationMenu } from "../Group-Conversation-Menu/Group-Conversation-Menu.tsx";
 
 export function EmptyBox() {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+   const { isOpen, onOpen, onClose } = useDisclosure();
 
-    const [ content, setContent ] = useState<JSX.Element>();
+   const [ content, setContent ] = useState<JSX.Element>();
 
-    const openFriendList = () => {
-        setContent(<ContactList isOnlyMessage={ true } onModalClose={ onClose }/>);
-        onOpen();
-    };
+   const openFriendList = () => {
+      setContent(<ContactList isOnlyMessage={ true } onModalClose={ onClose }/>);
+      onOpen();
+   };
 
-    const createGroupConversation = () => {
-        setContent(<GroupConversationMenu isOnlyMessage={ true } onModalClose={ onClose }/>);
-        onOpen();
-    };
+   const createGroupConversation = () => {
+      setContent(<GroupConversationMenu isOnlyMessage={ true } onModalClose={ onClose }/>);
+      onOpen();
+   };
 
-    return (
-        <VStack h={ calc("100vh").subtract("150px").toString() }
-                rounded={ 20 }
-                bg={ "white" }
-                w={ calc("100%").subtract("450px").toString() }
-                spacing={ 0 }>
+   return (
+       <VStack h={ calc("100vh").subtract("150px").toString() }
+               rounded={ 20 }
+               bg={ "white" }
+               w={ calc("100%").subtract("450px").toString() }
+               spacing={ 0 }>
 
-            <Center h={ '100%' }
-                    flexDir={ 'column' }
-                    gap={ 5 }>
+          <Center h={ '100%' }
+                  flexDir={ 'column' }
+                  gap={ 5 }>
 
-                <Button p={ 8 }
-                        rounded={ 20 }
-                        gap={ 5 }
-                        onClick={ openFriendList }>
+             <Button p={ 8 }
+                     rounded={ 20 }
+                     gap={ 5 }
+                     onClick={ openFriendList }>
 
-                    <Text color={ "gray.600" }
-                          fontSize={ 17 }>
-                        створити бесіду?
-                    </Text>
+                <Text color={ "gray.600" }
+                      fontSize={ 17 }>
+                   створити бесіду?
+                </Text>
 
-                    <Divider orientation={ 'horizontal' }
-                             borderColor={ 'gray.400' }
-                             borderWidth={ 1 }
-                             h={ 5 }/>
+                <Divider orientation={ 'horizontal' }
+                         borderColor={ 'gray.400' }
+                         borderWidth={ 1 }
+                         h={ 5 }/>
 
-                    <Icon as={ AiOutlineMessage }
-                          boxSize={ 30 }
-                          cursor={ 'pointer' }
-                          color={ 'orange.400' }/>
+                <Icon as={ AiOutlineMessage }
+                      boxSize={ 30 }
+                      cursor={ 'pointer' }
+                      color={ 'orange.400' }/>
 
-                </Button>
+             </Button>
 
-                <Button p={ 8 }
-                        rounded={ 20 }
-                        gap={ 5 }
-                        onClick={ createGroupConversation }>
+             <Divider w={ 60 }/>
 
-                    <Text color={ "gray.600" }
-                          fontSize={ 17 }>
-                        створити групову бесіду?
-                    </Text>
+             <Button p={ 8 }
+                     rounded={ 20 }
+                     gap={ 5 }
+                     onClick={ createGroupConversation }>
 
-                    <Divider orientation={ 'horizontal' }
-                             borderColor={ 'gray.400' }
-                             borderWidth={ 1 }
-                             h={ 5 }/>
+                <Text color={ "gray.600" }
+                      fontSize={ 17 }>
+                   створити групову бесіду?
+                </Text>
 
-                    <Icon as={ FiUsers }
-                          boxSize={ 30 }
-                          cursor={ 'pointer' }
-                          color={ 'orange.400' }/>
+                <Divider orientation={ 'horizontal' }
+                         borderColor={ 'gray.400' }
+                         borderWidth={ 1 }
+                         h={ 5 }/>
 
-                </Button>
+                <Icon as={ FiUsers }
+                      boxSize={ 30 }
+                      cursor={ 'pointer' }
+                      color={ 'orange.400' }/>
 
-            </Center>
+             </Button>
 
-            <Modal isOpen={ isOpen }
-                   onClose={ onClose }
-                   isCentered={ true }
-                   motionPreset={ "slideInBottom" }>
+          </Center>
 
-                <ModalOverlay bg={ "blackAlpha.200" }
-                              backdropFilter={ "auto" }
-                              backdropBlur={ "5px" }/>
+          <Modal isOpen={ isOpen }
+                 onClose={ onClose }
+                 isCentered={ true }
+                 motionPreset={ "slideInBottom" }>
 
-                <ModalContent w={ 400 }
-                              p={ 2 }
-                              rounded={ 20 }>
-                    { content }
-                </ModalContent>
+             <ModalOverlay bg={ "blackAlpha.200" }
+                           backdropFilter={ "auto" }
+                           backdropBlur={ "5px" }/>
 
-            </Modal>
+             <ModalContent w={ 400 }
+                           p={ 2 }
+                           rounded={ 20 }>
+                { content }
+             </ModalContent>
 
-        </VStack>
-    );
+          </Modal>
+
+       </VStack>
+   );
 }

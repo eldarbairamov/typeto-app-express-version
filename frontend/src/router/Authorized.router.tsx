@@ -4,15 +4,15 @@ import { MainLayout } from "../layout/Main-Layout.tsx";
 import { Error } from "../component/Error/Error.tsx";
 
 export const AuthorizedRouter = createBrowserRouter([
-    {
-        path: "/",
-        element: <MainLayout/>,
-        children: [
-            {
-                index: true,
-                element: <ChatsPage/>
-            }
-        ],
-        errorElement: <Error/>
-    },
+   {
+      path: "/",
+      element: <MainLayout/>,
+      children: [
+         {
+            index: true,
+            element: <ChatsPage/>
+         }
+      ],
+      errorElement: <Error/>
+   },
 ]);

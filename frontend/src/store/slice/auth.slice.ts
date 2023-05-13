@@ -3,28 +3,28 @@ import { storageService } from "../../service/storage.service.ts";
 import { IUserInfo } from "../../interface/auth.interface.ts";
 
 interface IInitialState {
-    currentUserInfo: IUserInfo;
-    isLogin: boolean;
+   currentUserInfo: IUserInfo;
+   isLogin: boolean;
 }
 
 const initialState: IInitialState = {
-    isLogin: !!storageService.getAccessToken(),
-    currentUserInfo: { userId: 1 } as IUserInfo
+   isLogin: !!storageService.getAccessToken(),
+   currentUserInfo: { userId: 1 } as IUserInfo
 };
 
 
 const authSlice = createSlice({
-    name: "auth",
-    initialState,
-    reducers: {
-        setIsLogin: ( state, { payload }: PayloadAction<boolean> ) => {
-            state.isLogin = payload;
-        },
-        setUserInfo: ( state, { payload }: PayloadAction<IUserInfo> ) => {
-            state.currentUserInfo = payload;
-            state.isLogin = true;
-        }
-    }
+   name: "auth",
+   initialState,
+   reducers: {
+      setIsLogin: ( state, { payload }: PayloadAction<boolean> ) => {
+         state.isLogin = payload;
+      },
+      setUserInfo: ( state, { payload }: PayloadAction<IUserInfo> ) => {
+         state.currentUserInfo = payload;
+         state.isLogin = true;
+      }
+   }
 });
 
 

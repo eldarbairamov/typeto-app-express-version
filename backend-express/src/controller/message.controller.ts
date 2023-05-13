@@ -4,13 +4,13 @@ import { Response } from "express";
 
 export const messageController = {
 
-    sendMessage: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
+   sendMessage: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
 
-    }),
+   }),
 
-    getMessages: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
+   getMessages: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
 
-    })
+   })
 
 
 };

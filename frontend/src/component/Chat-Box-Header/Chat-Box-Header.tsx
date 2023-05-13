@@ -6,71 +6,71 @@ import { conversationActions } from "../../store/slice/conversation.slice.ts";
 import { v4 } from "uuid";
 
 export function ChatBoxHeader() {
-    const dispatch = useAppDispatch();
+   const dispatch = useAppDispatch();
 
-    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+   const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
-    const deleteConversation = async () => {
-        try {
-            const { data } = await conversationService.deleteConversation(activeConversation.id);
-            dispatch(conversationActions.setConversations(data));
-            if (data.length) dispatch(conversationActions.setActiveConversation(data[0]));
+   const deleteConversation = async () => {
+      try {
+         const { data } = await conversationService.deleteConversation(activeConversation.id);
+         dispatch(conversationActions.setConversations(data));
+         if (data.length) dispatch(conversationActions.setActiveConversation(data[0]));
 
-        } catch (e) {
-            console.log(e);
-        }
-    };
+      } catch (e) {
+         console.log(e);
+      }
+   };
 
-    return (
-        <HStack width={ "100%" }
-                h={ '60px' }
-                spacing={ 0 }
-                justify={ 'center' }
-                style={ { position: "relative" } }>
+   return (
+       <HStack width={ "100%" }
+               h={ '60px' }
+               spacing={ 0 }
+               justify={ 'center' }
+               style={ { position: "relative" } }>
 
-            <HStack spacing={ 3 }>
+          <HStack spacing={ 3 }>
 
-                { activeConversation.conversationName
-                    ?
-                    <AvatarGroup size="sm" max={ 2 }>
-                        { activeConversation.users.map(user => <Avatar key={ v4() }
-                                                                                  name={ user.username }
-                                                                                  size={ "lg" }/>) }
-                    </AvatarGroup>
-                    :
-                    <Avatar name={ activeConversation.conversationWith[0].username }
-                            size={ "sm" }/>
-                }
-                <Heading size={ 'md' }
-                         color={ 'gray.600' }>
-                    { activeConversation.conversationName ? activeConversation.conversationName : activeConversation.conversationWith[0].username }
-                </Heading>
+             { activeConversation.conversationName
+                 ?
+                 <AvatarGroup size="sm" max={ 2 }>
+                    { activeConversation.users.map(user => <Avatar key={ v4() }
+                                                                   name={ user.username }
+                                                                   size={ "lg" }/>) }
+                 </AvatarGroup>
+                 :
+                 <Avatar name={ activeConversation.conversationWith[0].username }
+                         size={ "sm" }/>
+             }
+             <Heading size={ 'md' }
+                      color={ 'gray.600' }>
+                { activeConversation.conversationName ? activeConversation.conversationName : activeConversation.conversationWith[0].username }
+             </Heading>
 
-            </HStack>
+          </HStack>
 
-            <Menu>
-                <MenuButton style={ { position: 'absolute', right: 30 } }
-                            as={ IconButton }
-                            aria-label={ 'Options' }
-                            icon={ <HamburgerIcon boxSize={ 5 }/> }
-                            variant={ 'outline' }/>
+          <Menu>
+             <MenuButton style={ { position: 'absolute', right: 30 } }
+                         as={ IconButton }
+                         aria-label={ 'Options' }
+                         icon={ <HamburgerIcon boxSize={ 5 }/> }
+                         variant={ 'outline' }/>
 
-                <MenuList>
-                    <MenuItem>
-                        Очистити бесіду
-                    </MenuItem>
+             <MenuList>
+                <MenuItem>
+                   Очистити бесіду
+                </MenuItem>
 
-                    <Divider/>
+                <Divider/>
 
-                    <MenuItem color={ 'orange.400' }
-                              onClick={ deleteConversation }>
-                        Видалити чат
-                    </MenuItem>
-                </MenuList>
+                <MenuItem color={ 'orange.400' }
+                          onClick={ deleteConversation }>
+                   Видалити чат
+                </MenuItem>
+             </MenuList>
 
-            </Menu>
+          </Menu>
 
-        </HStack>
+       </HStack>
 
-    );
+   );
 }

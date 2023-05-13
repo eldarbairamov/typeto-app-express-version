@@ -1,8 +1,8 @@
 export interface IAccessTokenPair {
-    accessToken: string;
-    refreshToken: string;
+   accessToken: string;
+   refreshToken: string;
 }
 
 export interface IUserInfo extends IAccessTokenPair {
-    userId: number;
+   userId: number;
 }

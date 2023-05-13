@@ -8,40 +8,40 @@ import { EmailActionType } from "../type/email-action.type";
 import hbs from "nodemailer-express-handlebars";
 
 export const emailSender = async ( to: string, emailAction: EmailActionType, context: any ) => {
-    const template = emailTemplate[emailAction];
+   const template = emailTemplate[emailAction];
 
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        from: "no reply",
-        auth: {
-            user: config.EMAIL_SERVICE_USER,
-            pass: config.EMAIL_SERVICE_PASS,
-        },
-    });
+   const transporter = nodemailer.createTransport({
+      service: "gmail",
+      from: "no reply",
+      auth: {
+         user: config.EMAIL_SERVICE_USER,
+         pass: config.EMAIL_SERVICE_PASS,
+      },
+   });
 
-    transporter.use("compile", hbs({
-        viewEngine: {
-            defaultLayout: "main",
-            layoutsDir: path.join(EMAIL_TEMPLATES_PATH, "layout"),
-            partialsDir: path.join(EMAIL_TEMPLATES_PATH, "partial"),
-            extname: ".hbs",
-        },
-        extName: ".hbs",
-        viewPath: path.join(EMAIL_TEMPLATES_PATH, "view"),
-    }));
+   transporter.use("compile", hbs({
+      viewEngine: {
+         defaultLayout: "main",
+         layoutsDir: path.join(EMAIL_TEMPLATES_PATH, "layout"),
+         partialsDir: path.join(EMAIL_TEMPLATES_PATH, "partial"),
+         extname: ".hbs",
+      },
+      extName: ".hbs",
+      viewPath: path.join(EMAIL_TEMPLATES_PATH, "view"),
+   }));
 
-    const mail = {
-        to,
-        subject: template.subject,
-        template: template.templateName,
-        context,
-    };
+   const mail = {
+      to,
+      subject: template.subject,
+      template: template.templateName,
+      context,
+   };
 
-    return transporter
-        .sendMail(mail)
-        .catch(( e ) => {
-            const error = e as Error;
-            console.log(error.message);
-            throw new ApiException("Nodemailer: Error", 500);
-        });
+   return transporter
+       .sendMail(mail)
+       .catch(( e ) => {
+          const error = e as Error;
+          console.log(error.message);
+          throw new ApiException("Nodemailer: Error", 500);
+       });
 };

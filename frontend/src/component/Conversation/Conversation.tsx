@@ -7,72 +7,72 @@ import moment from 'moment';
 import { v4 } from "uuid";
 
 interface IConversationProps {
-    conversation: IConversation;
-    user?: IUserFromConversation;
+   conversation: IConversation;
+   user?: IUserFromConversation;
 }
 
 export function Conversation( { user, conversation }: IConversationProps ) {
-    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+   const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
-    const dispatch = useAppDispatch();
+   const dispatch = useAppDispatch();
 
-    const selectConversation = () => {
-        dispatch(conversationActions.setActiveConversation({
-            ...conversation,
-            username: user?.username
-        }));
-    };
+   const selectConversation = () => {
+      dispatch(conversationActions.setActiveConversation({
+         ...conversation,
+         username: user?.username
+      }));
+   };
 
-    const conversationTime = moment(+conversation.lastModified).format('HH:mm');
+   const conversationTime = moment(+conversation.lastModified).format('HH:mm');
 
-    return (
-        <VStack width={ "100%" }>
+   return (
+       <VStack width={ "100%" }>
 
-            <VStack width={ "100%" }
-                    _hover={ { bg: "gray.100", transition: '.3s' } }
-                    bg={ conversation.id === activeConversation.id ? 'gray.100' : undefined }
-                    p={ 4 }
-                    rounded={ 10 }
-                    spacing={ 5 }
-                    onClick={ selectConversation }
-                    cursor={ 'pointer' }>
+          <VStack width={ "100%" }
+                  _hover={ { bg: "gray.100", transition: '.3s' } }
+                  bg={ conversation.id === activeConversation.id ? 'gray.100' : undefined }
+                  p={ 4 }
+                  rounded={ 10 }
+                  spacing={ 5 }
+                  onClick={ selectConversation }
+                  cursor={ 'pointer' }>
 
-                <HStack w={ "100%" }
-                        justify={ "space-between" }>
+             <HStack w={ "100%" }
+                     justify={ "space-between" }>
 
-                    <HStack spacing={ 5 }>
+                <HStack spacing={ 5 }>
 
-                        { conversation.isGroupConversation
-                            ?
-                            <AvatarGroup size="md" max={ 2 }>
-                                { conversation.users.map(user => <Avatar key={ v4() } name={ user.username } size={ "lg" }/>) }
-                            </AvatarGroup>
-                            :
-                            <Avatar name={ user?.username }
-                                    size={ "lg" }/>
-                        }
+                   { conversation.isGroupConversation
+                       ?
+                       <AvatarGroup size="md" max={ 2 }>
+                          { conversation.users.map(user => <Avatar key={ v4() } name={ user.username } size={ "lg" }/>) }
+                       </AvatarGroup>
+                       :
+                       <Avatar name={ user?.username }
+                               size={ "lg" }/>
+                   }
 
-                        <VStack alignItems={ "flex-start" }
-                                h={ "100%" }
-                                justify={ "center" }>
+                   <VStack alignItems={ "flex-start" }
+                           h={ "100%" }
+                           justify={ "center" }>
 
-                            <Heading size={ "sm" }> { conversation.isGroupConversation ? conversation.conversationName : user?.username } </Heading>
+                      <Heading size={ "sm" }> { conversation.isGroupConversation ? conversation.conversationName : user?.username } </Heading>
 
-                            <Text color={ "gray.500" }> Hi there. How are you? </Text>
+                      <Text color={ "gray.500" }> Hi there. How are you? </Text>
 
-                        </VStack>
-
-                    </HStack>
-
-                    <Box>
-                        <Text>
-                            { conversationTime }
-                        </Text>
-                    </Box>
+                   </VStack>
 
                 </HStack>
-            </VStack>
-            <Divider width={ 200 }/>
-        </VStack>
-    );
+
+                <Box>
+                   <Text>
+                      { conversationTime }
+                   </Text>
+                </Box>
+
+             </HStack>
+          </VStack>
+          <Divider width={ 200 }/>
+       </VStack>
+   );
 }

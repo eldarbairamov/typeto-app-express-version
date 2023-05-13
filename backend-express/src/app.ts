@@ -15,9 +15,9 @@ app.use(express.json())
     .use(errorMiddleware);
 
 const start = async () => {
-    await sequelize.authenticate();
-    await sequelize.sync();
-    app.listen(config.PORT);
+   await sequelize.authenticate();
+   await sequelize.sync();
+   app.listen(config.PORT);
 };
 
 start()

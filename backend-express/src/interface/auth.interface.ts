@@ -1,27 +1,27 @@
 export interface IRegistration {
-    readonly username: string;
-    readonly email: string;
-    readonly password: string;
+   readonly username: string;
+   readonly email: string;
+   readonly password: string;
 }
 
 export interface ILogin {
-    readonly email: string;
-    readonly password: string;
+   readonly email: string;
+   readonly password: string;
 }
 
 export interface IAccessTokenPair {
-    readonly accessToken: string,
-    readonly refreshToken: string
+   readonly accessToken: string,
+   readonly refreshToken: string
 }
 
 export interface IResetPassword {
-    readonly resetPasswordToken: string;
-    readonly password: string;
+   readonly resetPasswordToken: string;
+   readonly password: string;
 }
 
 export interface IOAuthResponse {
-    readonly userId: number;
-    readonly username: string;
-    readonly accessToken: string;
-    readonly refreshToken: string;
+   readonly userId: number;
+   readonly username: string;
+   readonly accessToken: string;
+   readonly refreshToken: string;
 }

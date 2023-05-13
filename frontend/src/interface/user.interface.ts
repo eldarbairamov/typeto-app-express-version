@@ -1,17 +1,17 @@
 export interface IUser {
-    id: number,
-    username: string,
-    email: string,
-    image: string | null
+   id: number,
+   username: string,
+   email: string,
+   image: string | null
 }
 
 export interface IUserBySearch extends IUser {
-    isAlreadyAdded: boolean;
+   isAlreadyAdded: boolean;
 }
 
 export interface IUserFromConversation extends IUser {
-    ConversationUser: {
-        conversationId: number,
-        userId: number
-    };
+   ConversationUser: {
+      conversationId: number,
+      userId: number
+   };
 }

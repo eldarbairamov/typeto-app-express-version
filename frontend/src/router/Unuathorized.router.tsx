@@ -4,16 +4,16 @@ import { RegistrationPage } from "../page/Registration-Page/Registration-Page.ts
 import { ForgotPasswordPage } from "../page/Forgot-Password-Page/Forgot-Password-Page.tsx";
 
 export const UnauthorizedRouter = createBrowserRouter([
-    {
-        path: "/",
-        element: <LoginPage/>
-    },
-    {
-        path: "/registration",
-        element: <RegistrationPage/>
-    },
-    {
-        path: "/forgot_password",
-        element: <ForgotPasswordPage/>
-    }
+   {
+      path: "/",
+      element: <LoginPage/>
+   },
+   {
+      path: "/registration",
+      element: <RegistrationPage/>
+   },
+   {
+      path: "/forgot_password",
+      element: <ForgotPasswordPage/>
+   }
 ]);

@@ -6,12 +6,12 @@ import { chakraTheme } from "./style/chakra.theme.ts";
 import { useAppSelector } from "./hook/redux.hook.ts";
 
 export function App() {
-    const { isLogin } = useAppSelector(state => state.authReducer);
+   const { isLogin } = useAppSelector(state => state.authReducer);
 
-    return (
-        <ChakraProvider theme={ chakraTheme }>
-            <RouterProvider router={ isLogin ? AuthorizedRouter : UnauthorizedRouter }/>
-        </ChakraProvider>
-    );
+   return (
+       <ChakraProvider theme={ chakraTheme }>
+          <RouterProvider router={ isLogin ? AuthorizedRouter : UnauthorizedRouter }/>
+       </ChakraProvider>
+   );
 }
 
