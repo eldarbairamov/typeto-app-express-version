@@ -7,6 +7,8 @@ import { v4 } from "uuid";
 export function SideBar() {
     const { conversations } = useAppSelector(state => state.conversationReducer);
 
+    console.log(conversations);
+
     return (
         <VStack bg={ "white" }
                 h={ calc("100vh").subtract("150px").toString() }
@@ -26,11 +28,14 @@ export function SideBar() {
                 <VStack overflow={ "scroll" }
                         h={ "100%" }
                         spacing={ 0 }>
-                    <>
-                        { Boolean(conversations.length) && conversations.map(conversation => {
-                            return conversation.conversationWith.map(user => <Conversation key={ v4() } user={ user } conversation={ conversation }/>);
-                        }) }
-                    </>
+
+                    { Boolean(conversations.length) && conversations.map(conversation => {
+                        if (conversation.isGroupConversation) {
+                            return <Conversation key={ v4() } conversation={ conversation }/>;
+                        }
+                        return conversation.conversationWith.map(user => <Conversation key={ v4() } user={ user } conversation={ conversation }/>);
+                    }) }
+
                 </VStack>
 
             </Box>

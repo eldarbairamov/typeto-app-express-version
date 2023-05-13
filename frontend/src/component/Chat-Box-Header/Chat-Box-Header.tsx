@@ -1,9 +1,9 @@
-import { Avatar, Divider, Heading, HStack, IconButton, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
+import { Avatar, AvatarGroup, Divider, Heading, HStack, IconButton, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { conversationService } from "../../service/conversation.service.ts";
 import { conversationActions } from "../../store/slice/conversation.slice.ts";
-import { setActiveConversation } from "../../helper/set-active-conversation.helper.ts";
+import { v4 } from "uuid";
 
 export function ChatBoxHeader() {
     const dispatch = useAppDispatch();
@@ -12,9 +12,9 @@ export function ChatBoxHeader() {
 
     const deleteConversation = async () => {
         try {
-            const { data } = await conversationService.deleteConversation(activeConversation.conversationId);
+            const { data } = await conversationService.deleteConversation(activeConversation.id);
             dispatch(conversationActions.setConversations(data));
-            if (data.length) dispatch(conversationActions.setActiveConversation(setActiveConversation(data)));
+            if (data.length) dispatch(conversationActions.setActiveConversation(data[0]));
 
         } catch (e) {
             console.log(e);
@@ -30,12 +30,20 @@ export function ChatBoxHeader() {
 
             <HStack spacing={ 3 }>
 
-                <Avatar name={ activeConversation.username }
-                        size={ "sm" }/>
-
+                { activeConversation.conversationName
+                    ?
+                    <AvatarGroup size="sm" max={ 2 }>
+                        { activeConversation.users.map(user => <Avatar key={ v4() }
+                                                                                  name={ user.username }
+                                                                                  size={ "lg" }/>) }
+                    </AvatarGroup>
+                    :
+                    <Avatar name={ activeConversation.conversationWith[0].username }
+                            size={ "sm" }/>
+                }
                 <Heading size={ 'md' }
                          color={ 'gray.600' }>
-                    { activeConversation.conversationName ? activeConversation.conversationName : activeConversation.username }
+                    { activeConversation.conversationName ? activeConversation.conversationName : activeConversation.conversationWith[0].username }
                 </Heading>
 
             </HStack>

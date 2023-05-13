@@ -10,7 +10,7 @@ export interface ConversationAttr {
     lastMessageId: string;
     adminId: number;
     lastModified: number;
-    users: User;
+    users: User[];
 }
 
 interface ConversationCreationAttr {

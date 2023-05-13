@@ -29,11 +29,11 @@ export function UserItem( { user, onModalClose }: IUserItemProps ) {
 
     const createConversation = async () => {
         try {
-            const { data } = await conversationService.createConversation(user.id);
+            const { data } = await conversationService.createConversation([ user.id]);
             dispatch(conversationActions.createConversation(data));
 
             dispatch(conversationActions.setActiveConversation({
-                conversationId: data.id,
+                ...data,
                 username: user.username
             }));
 

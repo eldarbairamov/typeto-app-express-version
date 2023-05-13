@@ -1,7 +1,7 @@
 import { Avatar, Button, Heading, HStack } from "@chakra-ui/react";
 import { IUser } from "../../interface/user.interface.ts";
 import { Icon } from "@chakra-ui/icons";
-import { AiOutlineMessage, AiOutlineDelete } from "react-icons/all";
+import { AiOutlineMessage, AiOutlineUsergroupAdd, AiOutlineDelete } from "react-icons/all";
 import { userService } from "../../service/user.service.ts";
 import { useAppDispatch } from "../../hook/redux.hook.ts";
 import { userActions } from "../../store/slice/user.slice.ts";
@@ -11,10 +11,11 @@ import { conversationActions } from "../../store/slice/conversation.slice.ts";
 interface IUserItemProps {
     user: IUser,
     canDelete?: boolean,
-    onModalClose?: () => void
+    onModalClose?: () => void,
+    isOnlyForAdding?: boolean
 }
 
-export function ContactItem( { user, canDelete, onModalClose }: IUserItemProps ) {
+export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }: IUserItemProps ) {
     const dispatch = useAppDispatch();
 
     const deleteContact = async () => {
@@ -28,11 +29,11 @@ export function ContactItem( { user, canDelete, onModalClose }: IUserItemProps )
 
     const createConversation = async () => {
         try {
-            const { data } = await conversationService.createConversation(user.id);
+            const { data } = await conversationService.createConversation([ user.id ]);
             dispatch(conversationActions.createConversation(data));
 
             dispatch(conversationActions.setActiveConversation({
-                conversationId: data.id,
+                ...data,
                 username: user.username
             }));
 
@@ -41,6 +42,11 @@ export function ContactItem( { user, canDelete, onModalClose }: IUserItemProps )
         } catch (e) {
             console.log(e);
         }
+    };
+
+    const addContactToGroup = () => {
+        dispatch(conversationActions.addContactToGroup(user));
+        dispatch(userActions.groupModeMove({ id: user.id, action: 'add' }));
     };
 
     return (
@@ -63,11 +69,11 @@ export function ContactItem( { user, canDelete, onModalClose }: IUserItemProps )
 
                 <Button variant={ "unstyled" }
                         display={ "flex" }
-                        onClick={ createConversation }
+                        onClick={ isOnlyForAdding ? addContactToGroup : createConversation }
                         alignItems={ "center" }>
 
-                    <Icon as={ AiOutlineMessage }
-                          boxSize={ "25px" }
+                    <Icon as={ isOnlyForAdding ? AiOutlineUsergroupAdd : AiOutlineMessage }
+                          boxSize={ isOnlyForAdding ? "29px" : "25px" }
                           color={ "gray.600" }/>
 
                 </Button>

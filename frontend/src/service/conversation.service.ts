@@ -4,8 +4,8 @@ import { IConversation } from "../interface/conversation.interface.ts";
 
 export const conversationService = {
 
-    createConversation: async ( userId: number ): Promise<AxiosResponse<IConversation>> => {
-        return await axiosInstance.post<IConversation>("/conversations", { userId });
+    createConversation: async ( userIds: number[], conversationName?: string ): Promise<AxiosResponse<IConversation>> => {
+        return await axiosInstance.post<IConversation>("/conversations", { userIds, conversationName });
     },
 
     getConversations: async (): Promise<AxiosResponse<IConversation[]>> => {

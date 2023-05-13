@@ -1,23 +1,25 @@
-import { Avatar, Box, Divider, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { Avatar, AvatarGroup, Box, Divider, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { IUserFromConversation } from "../../interface/user.interface.ts";
-import { useAppDispatch } from "../../hook/redux.hook.ts";
+import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { conversationActions } from "../../store/slice/conversation.slice.ts";
 import { IConversation } from "../../interface/conversation.interface.ts";
 import moment from 'moment';
+import { v4 } from "uuid";
 
 interface IConversationProps {
     conversation: IConversation;
-    user: IUserFromConversation;
+    user?: IUserFromConversation;
 }
 
 export function Conversation( { user, conversation }: IConversationProps ) {
+    const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
     const dispatch = useAppDispatch();
 
     const selectConversation = () => {
         dispatch(conversationActions.setActiveConversation({
-            conversationId: user.ConversationUser.conversationId,
-            username: user.username
+            ...conversation,
+            username: user?.username
         }));
     };
 
@@ -28,6 +30,7 @@ export function Conversation( { user, conversation }: IConversationProps ) {
 
             <VStack width={ "100%" }
                     _hover={ { bg: "gray.100", transition: '.3s' } }
+                    bg={ conversation.id === activeConversation.id ? 'gray.100' : undefined }
                     p={ 4 }
                     rounded={ 10 }
                     spacing={ 5 }
@@ -39,16 +42,24 @@ export function Conversation( { user, conversation }: IConversationProps ) {
 
                     <HStack spacing={ 5 }>
 
-                        <Avatar name={ user.username }
-                                size={ "lg" }/>
+                        { conversation.isGroupConversation
+                            ?
+                            <AvatarGroup size="md" max={ 2 }>
+                                { conversation.users.map(user => <Avatar key={ v4() } name={ user.username } size={ "lg" }/>) }
+                            </AvatarGroup>
+                            :
+                            <Avatar name={ user?.username }
+                                    size={ "lg" }/>
+                        }
 
                         <VStack alignItems={ "flex-start" }
                                 h={ "100%" }
                                 justify={ "center" }>
 
-                            <Heading size={ "sm" }> { user.username } </Heading>
+                            <Heading size={ "sm" }> { conversation.isGroupConversation ? conversation.conversationName : user?.username } </Heading>
 
                             <Text color={ "gray.500" }> Hi there. How are you? </Text>
+
                         </VStack>
 
                     </HStack>

@@ -7,10 +7,9 @@ export interface IConversation {
     adminId: number;
     lastModified: number;
     conversationWith: IUserFromConversation[];
+    users: IUserFromConversation[]
 }
 
-export interface IActiveConversation {
-    conversationId: number;
+export interface IActiveConversation extends IConversation {
     username?: string;
-    conversationName?: string;
 }

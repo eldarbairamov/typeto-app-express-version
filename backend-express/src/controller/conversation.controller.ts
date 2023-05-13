@@ -7,24 +7,29 @@ import { conversationPresenter } from "../presenter/conversation.presenter";
 
 export const conversationController = {
 
-    createConversation: expressAsyncHandler(async ( req: IRequest<{ userId: number }, any, any>, res: Response ) => {
-        const { userId } = req.body;
+    createConversation: expressAsyncHandler(async ( req: IRequest<{ userIds: number[], conversationName?: string }, any, any>, res: Response ) => {
+        const { userIds, conversationName } = req.body;
 
-        const newConversation = await Conversation.create();
+        const newConversation = await Conversation.create({ conversationName, isGroupConversation: !!conversationName });
 
-        await ConversationUser.bulkCreate([
-            { conversationId: newConversation.id, userId: req.userId! },
-            { conversationId: newConversation.id, userId: userId } ]);
+        const promises = userIds.map(async ( id ) => await ConversationUser.create({
+            conversationId: newConversation.id,
+            userId: id
+        }));
+
+        await Promise.all(promises.concat([ ConversationUser.create({
+            conversationId: newConversation.id,
+            userId: req.userId!
+        }) ]));
 
         const conversationWithUsers = await Conversation.findByPk(newConversation.id, {
             include: {
                 model: User,
                 as: "users",
                 attributes: [ "id", "username", "email", "image" ],
-                where: { id: { [Op.ne]: req.userId } },
             },
         }).then(res => {
-            if (res) return conversationPresenter(res?.toJSON());
+            if (res && !conversationName) return conversationPresenter(res?.toJSON(), req.userId!);
             return res;
         });
 
@@ -42,11 +47,10 @@ export const conversationController = {
             include: {
                 model: User,
                 as: 'users',
-                where: { id: { [Op.ne]: req.userId } },
                 attributes: [ "id", "username", "email", "image" ]
             }
         }).then(res => {
-            if (res) return res.map(item => conversationPresenter(item.toJSON()));
+            if (res) return res.map(item => conversationPresenter(item.toJSON(), req.userId!));
             return res;
         });
 
@@ -72,7 +76,7 @@ export const conversationController = {
                 attributes: [ "id", "username", "email", "image" ],
             }
         }).then(res => {
-            if (res) return res.map(item => conversationPresenter(item.toJSON()));
+            if (res) return res.map(item => conversationPresenter(item.toJSON(), req.userId!));
             return res;
         });
 

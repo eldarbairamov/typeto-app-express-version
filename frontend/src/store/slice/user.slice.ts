@@ -15,12 +15,20 @@ const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
+
         setContacts: ( state, { payload }: PayloadAction<IUser[]> ) => {
             state.contacts = payload;
         },
+
         setUser: ( state, { payload }: PayloadAction<IUserBySearch> ) => {
             state.userBySearch = payload;
-        }
+        },
+
+        groupModeMove: ( state, { payload }: PayloadAction<{ id: number, action: "delete" | "add", user?: IUser }> ) => {
+            if (payload.action === 'delete' && payload.user) state.contacts.push(payload.user);
+            if (payload.action === 'add') state.contacts = state.contacts.filter(contact => contact.id !== payload.id);
+        },
+
     }
 });
 
