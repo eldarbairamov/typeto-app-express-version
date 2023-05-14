@@ -1,6 +1,10 @@
-import { Avatar, HStack, Text, VStack } from "@chakra-ui/react";
+import { Avatar, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { IMessage } from "../../interface/message.interface.ts";
+import moment from "moment/moment";
 
-export function OutcomingMessage() {
+export function OutcomingMessage( { message }: { message: IMessage } ) {
+   const conversationTime = moment(+message.lastModified).format('HH:mm');
+
    return (
        <VStack alignItems={ "flex-end" }
                w={ "100%" }>
@@ -9,20 +13,25 @@ export function OutcomingMessage() {
                   gap={ 5 }
                   marginBottom={ 10 }>
 
-             <VStack w={ [ null, null, null, 300, 600 ] }
+             <VStack maxW={ [ null, null, null, 300, 600 ] }
                      bg={ "orange.100" }
-                     p={ 5 }
-                     borderRadius={ "30px 0px 30px 30px" }>
-                <Text>
-                   Hello Designers,
+                     alignItems={ 'flex-end' }
+                     rounded={ 20 }
+                     p={ 5 }>
+                <Heading size={ 'sm' }> { message.sender.username } </Heading>
 
-                   We are working on chatbot web application where user can easy communicate with client or friends.
-                   They can easily create the groups and share the files with each other. We want our design clean and
-                   simple at the same time User friendly also.
+                <Text>
+                   { message.content }
                 </Text>
              </VStack>
-             <Avatar name={ "eldar" }
-                     size={ "md" }/>
+
+             <VStack>
+                <Avatar name={ message.sender.username }
+                        size={ "md" }/>
+
+                <Text color={ 'gray.500' }> { conversationTime } </Text>
+             </VStack>
+
 
           </HStack>
 

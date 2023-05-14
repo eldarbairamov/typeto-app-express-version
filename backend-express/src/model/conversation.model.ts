@@ -1,4 +1,4 @@
-import { BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, DataType, HasOne, Model, Table } from "sequelize-typescript";
+import { BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
 import { User } from "./user.model";
 import { ConversationUser } from "./conversation-user.model";
 import { Message } from "./message.model";
@@ -7,16 +7,16 @@ export interface ConversationAttr {
    id: number;
    conversationName: string;
    isGroupConversation: boolean;
-   lastMessageId: string;
    adminId: number;
    lastModified: number;
+   lastMessage: Message;
    users: User[];
+   messages: Message[];
 }
 
 interface ConversationCreationAttr {
    conversationName?: string;
    isGroupConversation?: boolean;
-   lastMessageId?: string;
    adminId?: number;
 }
 
@@ -30,9 +30,6 @@ export class Conversation extends Model<ConversationAttr, ConversationCreationAt
    isGroupConversation: boolean;
 
    @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: null })
-   lastMessageId: number;
-
-   @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: null })
    adminId: number;
 
    @Column({ type: DataType.BIGINT, allowNull: true })
@@ -44,8 +41,8 @@ export class Conversation extends Model<ConversationAttr, ConversationCreationAt
    @BelongsTo(() => User, "adminId")
    admin: User;
 
-   @HasOne(() => Message, "lastMessageId")
-   message: Message;
+   @HasMany(() => Message, 'conversationId')
+   messages: Message[];
 
    @BeforeCreate
    @BeforeUpdate

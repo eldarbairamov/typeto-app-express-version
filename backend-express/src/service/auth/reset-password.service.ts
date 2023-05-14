@@ -15,5 +15,4 @@ export const resetPasswordService = async ( body: IResetPassword ) => {
    await actionTokenInfo.destroy();
 
    await User.update({ password: body.password }, { where: { id: actionTokenInfo.ownerId } });
-
 };

@@ -58,7 +58,9 @@ export function Conversation( { user, conversation }: IConversationProps ) {
 
                       <Heading size={ "sm" }> { conversation.isGroupConversation ? conversation.conversationName : user?.username } </Heading>
 
-                      <Text color={ "gray.500" }> Hi there. How are you? </Text>
+                      <Text color={ "gray.500" } noOfLines={ 1 }>
+                         { conversation.lastMessage?.content ? conversation.lastMessage.content : "" }
+                      </Text>
 
                    </VStack>
 

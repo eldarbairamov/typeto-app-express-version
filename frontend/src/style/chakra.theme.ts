@@ -5,7 +5,7 @@ import "@fontsource/pt-sans-narrow";
 export const chakraTheme = extendTheme({
    fonts: {
       heading: `"Roboto", sans-serif`,
-      body: `"Roboto", sans-serif`
+      body: `"Roboto", sans-serif`,
    },
    styles: {
       global: {

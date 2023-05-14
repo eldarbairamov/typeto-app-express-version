@@ -1,30 +1,38 @@
-import { Avatar, HStack, Text, VStack } from "@chakra-ui/react";
+import { Avatar, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import moment from "moment";
+import { IMessage } from "../../interface/message.interface.ts";
 
-export function IncomingMessage() {
+export function IncomingMessage( { message }: { message: IMessage } ) {
+   const conversationTime = moment(+message.lastModified).format('HH:mm');
+
    return (
        <VStack alignItems={ "flex-start" }
                w={ "100%" }>
 
           <HStack alignItems={ "flex-start" }
-                  gap={ 5 }>
-             <Avatar name={ "John" }
-                     size={ "md" }/>
+                  gap={ 5 }
+                  marginBottom={ 10 }>
 
-             <VStack w={ [ null, null, null, 300, 600 ] }
-                     bg={ "#eff0f3" }
-                     p={ 5 }
-                     borderRadius={ "0 30px 30px 30px" }>
+             <VStack>
+                <Avatar name={ message.sender.username }
+                        size={ "md" }/>
+
+                <Text color={ 'gray.500' }> { conversationTime } </Text>
+             </VStack>
+
+             <VStack maxW={ [ null, null, null, 300, 600 ] }
+                     bg={ "gray.100" }
+                     alignItems={ 'flex-start' }
+                     rounded={ 20 }
+                     p={ 5 }>
+                <Heading size={ 'sm' }> { message.sender.username } </Heading>
+
                 <Text>
-                   Hello Designers,
-
-                   We are working on chatbot web application where user can easy communicate with client or friends.
-                   They can easily create the groups and share the files with each other. We want our design clean and
-                   simple at the same time User friendly also.
-                   We are working on chatbot web application where user can easy communicate with client or friends.
-                   They can easily create the groups and share the files with each other. We want our design clean and
-                   simple at the same time User friendly also.
+                   { message.content }
                 </Text>
              </VStack>
+
+
           </HStack>
 
 

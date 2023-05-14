@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { IRequest } from "../interface/express.interface";
 import { Response } from "express";
-import { Conversation, ConversationUser, User } from "../model";
+import { Conversation, ConversationUser, Message, User } from "../model";
 import { Op } from "sequelize";
 import { conversationPresenter } from "../presenter/conversation.presenter";
 
@@ -10,7 +10,7 @@ export const conversationController = {
    createConversation: expressAsyncHandler(async ( req: IRequest<{ userIds: number[], conversationName?: string }, any, any>, res: Response ) => {
       const { userIds, conversationName } = req.body;
 
-      const newConversation = await Conversation.create({ conversationName, isGroupConversation: !!conversationName });
+      const newConversation = await Conversation.create({ conversationName, isGroupConversation: !!conversationName, adminId: conversationName ? req.userId : undefined });
 
       const promises = userIds.map(async ( id ) => await ConversationUser.create({
          conversationId: newConversation.id,
@@ -44,11 +44,22 @@ export const conversationController = {
 
       const conversationList = await Conversation.findAll({
          where: { id: { [Op.in]: conversationsIds } },
-         include: {
-            model: User,
-            as: 'users',
-            attributes: [ "id", "username", "email", "image" ]
-         }
+         include: [
+            {
+               model: User,
+               as: 'users',
+               attributes: [ "id", "username", "email", "image" ],
+            },
+            {
+               model: User,
+               as: 'admin',
+               attributes: [ "id", "username", "email", "image" ],
+            },
+            {
+               model: Message,
+               as: 'messages',
+            }
+         ],
       }).then(res => {
          if (res) return res.map(item => conversationPresenter(item.toJSON(), req.userId!));
          return res;
@@ -58,10 +69,28 @@ export const conversationController = {
    }),
 
    deleteConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string }>, res: Response ) => {
-      await Promise.all([
-         Conversation.destroy({ where: { id: req.query.conversationId } }),
-         ConversationUser.destroy({ where: { conversationId: req.query.conversationId } })
-      ]);
+      const conversationId = req.query.conversationId;
+
+      const isConversationHasOneUser = await Conversation
+          .findByPk(conversationId, { include: 'users' })
+          .then(res => {
+             if (res) return Boolean(res?.users.length < 2);
+          });
+
+      if (isConversationHasOneUser) {
+         await Promise.all([
+            Conversation.destroy({ where: { id: conversationId } }),
+            ConversationUser.destroy({ where: { conversationId } })
+         ]);
+
+      } else {
+         await ConversationUser.destroy({
+            where: {
+               conversationId: conversationId,
+               userId: req.userId
+            }
+         });
+      }
 
       const conversationsIds = await ConversationUser.findAll({
          where: { userId: 1 }
@@ -72,7 +101,6 @@ export const conversationController = {
          where: { id: { [Op.in]: conversationsIds } },
          include: {
             model: User, as: "users",
-            where: { id: { [Op.ne]: 1 } },
             attributes: [ "id", "username", "email", "image" ],
          }
       }).then(res => {
