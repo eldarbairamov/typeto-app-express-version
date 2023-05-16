@@ -41,7 +41,7 @@ export class Conversation extends Model<ConversationAttr, ConversationCreationAt
    @BelongsTo(() => User, "adminId")
    admin: User;
 
-   @HasMany(() => Message, 'conversationId')
+   @HasMany(() => Message, { foreignKey: 'conversationId' })
    messages: Message[];
 
    @BeforeCreate

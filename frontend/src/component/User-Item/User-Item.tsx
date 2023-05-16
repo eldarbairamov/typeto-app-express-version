@@ -2,11 +2,10 @@ import { Avatar, Button, Heading, HStack } from "@chakra-ui/react";
 import { IUserBySearch } from "../../interface/user.interface.ts";
 import { Icon } from "@chakra-ui/icons";
 import { AiOutlineMessage, FiUserPlus, FiUserCheck } from "react-icons/all";
-import { userService } from "../../service/user.service.ts";
 import { useAppDispatch } from "../../hook/redux.hook.ts";
-import { conversationService } from "../../service/conversation.service.ts";
-import { conversationActions } from "../../store/slice/conversation.slice.ts";
+import { conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { useState } from "react";
+import { userAsyncActions } from "../../store/slice/user.slice.ts";
 
 interface IUserItemProps {
    user: IUserBySearch,
@@ -19,30 +18,19 @@ export function UserItem( { user, onModalClose }: IUserItemProps ) {
    const dispatch = useAppDispatch();
 
    const addContact = async () => {
-      try {
-         await userService.addContact(user.id);
+      const result = await dispatch(userAsyncActions.addContact({ contactId: user.id }));
+      if (userAsyncActions.addContact.fulfilled.match(result)) {
          setIsAdded(true);
-      } catch (e) {
-         console.log(e);
       }
    };
 
    const createConversation = async () => {
-      try {
-         const { data } = await conversationService.createConversation([ user.id ]);
-         dispatch(conversationActions.createConversation(data));
-
-         dispatch(conversationActions.setActiveConversation({
-            ...data,
-            username: user.username
-         }));
-
+      const result = await dispatch(conversationAsyncActions.createConversation({ userIds: [ user.id ] }));
+      if (conversationAsyncActions.createConversation.fulfilled.match(result)) {
          onModalClose();
-
-      } catch (e) {
-         console.log(e);
       }
    };
+
 
    return (
        <HStack w={ "85%" }

@@ -1,12 +1,20 @@
 import { Avatar, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import moment from "moment";
 import { IMessage } from "../../interface/message.interface.ts";
+import { useEffect, useRef } from "react";
 
 export function IncomingMessage( { message }: { message: IMessage } ) {
    const conversationTime = moment(+message.lastModified).format('HH:mm');
 
+   const ref = useRef<any>();
+
+   useEffect(() => {
+      ref.current?.scrollIntoView({ behavior: 'auto' });
+   }, []);
+
    return (
        <VStack alignItems={ "flex-start" }
+               ref={ ref }
                w={ "100%" }>
 
           <HStack alignItems={ "flex-start" }

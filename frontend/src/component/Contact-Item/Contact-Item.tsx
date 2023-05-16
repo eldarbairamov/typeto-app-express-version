@@ -2,11 +2,9 @@ import { Avatar, Button, Heading, HStack } from "@chakra-ui/react";
 import { IUser } from "../../interface/user.interface.ts";
 import { Icon } from "@chakra-ui/icons";
 import { AiOutlineMessage, AiOutlineUsergroupAdd, AiOutlineDelete } from "react-icons/all";
-import { userService } from "../../service/user.service.ts";
 import { useAppDispatch } from "../../hook/redux.hook.ts";
-import { userActions } from "../../store/slice/user.slice.ts";
-import { conversationService } from "../../service/conversation.service.ts";
-import { conversationActions } from "../../store/slice/conversation.slice.ts";
+import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
+import { conversationActions, conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 
 interface IUserItemProps {
    user: IUser,
@@ -18,29 +16,10 @@ interface IUserItemProps {
 export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }: IUserItemProps ) {
    const dispatch = useAppDispatch();
 
-   const deleteContact = async () => {
-      try {
-         const { data } = await userService.deleteContact(user.id);
-         dispatch(userActions.setContacts(data));
-      } catch (e) {
-         console.log(e);
-      }
-   };
-
    const createConversation = async () => {
-      try {
-         const { data } = await conversationService.createConversation([ user.id ]);
-         dispatch(conversationActions.createConversation(data));
-
-         dispatch(conversationActions.setActiveConversation({
-            ...data,
-            username: user.username
-         }));
-
+      const result = await dispatch(conversationAsyncActions.createConversation({ userIds: [ user.id ], username: user.username }));
+      if (conversationAsyncActions.createConversation.fulfilled.match(result)) {
          onModalClose && onModalClose();
-
-      } catch (e) {
-         console.log(e);
       }
    };
 
@@ -81,7 +60,7 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
              { canDelete &&
                  <Button variant={ "unstyled" }
                          display={ "flex" }
-                         onClick={ deleteContact }
+                         onClick={ () => dispatch(userAsyncActions.deleteContact({ contactId: user.id })) }
                          alignItems={ "center" }>
 
                      <Icon as={ AiOutlineDelete }

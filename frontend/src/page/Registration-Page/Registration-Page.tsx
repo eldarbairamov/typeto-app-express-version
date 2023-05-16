@@ -7,7 +7,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { IRegistrationForm } from "../../interface/form.interface.ts";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { registrationValidator } from "../../validator/auth.validator.ts";
-import { authService } from "../../service/auth.service.ts";
+import { useAppDispatch } from "../../hook/redux.hook.ts";
+import { authAsyncActions } from "../../store/slice/auth.slice.ts";
 
 export function RegistrationPage() {
    const { register, handleSubmit, formState: { errors, isValid } } = useForm<IRegistrationForm>({
@@ -15,8 +16,13 @@ export function RegistrationPage() {
       mode: "onTouched",
    });
 
+   const dispatch = useAppDispatch();
+
    const onSubmit: SubmitHandler<IRegistrationForm> = async ( data: IRegistrationForm ) => {
-      await authService.registration(data, () => UnauthorizedRouter.navigate(UnauthorizedRoutesEnum.LoginPage));
+      const result = await dispatch(authAsyncActions.registration({ data }));
+      if (authAsyncActions.registration.fulfilled.match(result)) {
+         UnauthorizedRouter.navigate(UnauthorizedRoutesEnum.LoginPage);
+      }
    };
 
    const { isShow, handleClick } = useHidePass();

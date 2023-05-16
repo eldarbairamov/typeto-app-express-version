@@ -34,7 +34,7 @@ export class Message extends Model<MessageAttr, MessageCreationAttr> {
    @BelongsTo(() => User, "senderId")
    sender: User;
 
-   @BelongsTo(() => Conversation, "conversationId")
+   @BelongsTo(() => Conversation, { foreignKey: 'conversationId', onDelete: "CASCADE" })
    conversation: Conversation;
 
    @BeforeCreate

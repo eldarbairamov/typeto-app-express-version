@@ -3,11 +3,10 @@ import { useEffect } from "react";
 import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
-import { userService } from "../../service/user.service.ts";
 import { v4 } from "uuid";
 import { useInputHandler } from "../../hook/use-input-handler.ts";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { userActions } from "../../store/slice/user.slice.ts";
+import {  userAsyncActions } from "../../store/slice/user.slice.ts";
 import { ContactItem } from "../Contact-Item/Contact-Item.tsx";
 
 export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
@@ -18,9 +17,7 @@ export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: 
    const dispatch = useAppDispatch();
 
    useEffect(() => {
-      userService
-          .getContacts(value)
-          .then(( res => dispatch(userActions.setContacts(res.data)) ));
+      dispatch(userAsyncActions.getContacts({ searchKey: value }));
    }, [ value ]);
 
    return (

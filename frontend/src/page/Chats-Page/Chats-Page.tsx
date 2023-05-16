@@ -3,9 +3,9 @@ import { SideBar } from "../../component/Side-Bar/Side-Bar.tsx";
 import { ChatBox } from "../../component/Chat-Box/Chat-Box.tsx";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { useEffect } from "react";
-import { conversationService } from "../../service/conversation.service.ts";
-import { conversationActions } from "../../store/slice/conversation.slice.ts";
+import { conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { EmptyBox } from "../../component/Empty-Box/Empty-Box.tsx";
+import { socketActions } from "../../store/slice/socket.slice.ts";
 
 export function ChatsPage() {
    const { conversations } = useAppSelector(state => state.conversationReducer);
@@ -13,23 +13,17 @@ export function ChatsPage() {
    const dispatch = useAppDispatch();
 
    const getConversations = async () => {
-      try {
-         const { data } = await conversationService.getConversations();
-
-         if (data.length) {
-            dispatch(conversationActions.setConversations(data));
-            dispatch(conversationActions.setActiveConversation(data[0]));
-         }
-
-      } catch (e) {
-         console.log(e);
+      const result = await dispatch(conversationAsyncActions.getConversations({}));
+      if (conversationAsyncActions.createConversation.rejected.match(result)) {
+         console.log(result.payload);
       }
    };
 
    useEffect(() => {
       getConversations();
-   }, []);
 
+      dispatch(socketActions.connect());
+   }, []);
 
    return (
        <VStack w={ "100%" }

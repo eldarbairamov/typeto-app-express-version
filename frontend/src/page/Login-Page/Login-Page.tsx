@@ -7,9 +7,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { ILoginForm } from "../../interface/form.interface.ts";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { loginValidator } from "../../validator/auth.validator.ts";
-import { authService } from "../../service/auth.service.ts";
 import { useAppDispatch } from "../../hook/redux.hook.ts";
-import { authActions } from "../../store/slice/auth.slice.ts";
+import { authAsyncActions } from "../../store/slice/auth.slice.ts";
 
 export function LoginPage() {
    const { register, handleSubmit, formState: { errors, isValid } } = useForm<ILoginForm>({
@@ -19,9 +18,7 @@ export function LoginPage() {
 
    const dispatch = useAppDispatch();
 
-   const onSubmit: SubmitHandler<ILoginForm> = async ( data: ILoginForm ) => {
-      await authService.login(data, ( response ) => dispatch(authActions.setUserInfo(response)));
-   };
+   const onSubmit: SubmitHandler<ILoginForm> = async ( data: ILoginForm ) => dispatch(authAsyncActions.login({ body: data }));
 
    const { isShow, handleClick } = useHidePass();
 

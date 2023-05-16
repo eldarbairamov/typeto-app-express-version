@@ -19,6 +19,7 @@ export function Header() {
       onOpen();
    };
 
+
    return (
        <HStack w={ "95%" }
                spacing={ 0 }

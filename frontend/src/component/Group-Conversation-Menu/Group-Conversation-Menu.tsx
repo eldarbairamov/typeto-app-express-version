@@ -3,15 +3,13 @@ import { useEffect, useState } from "react";
 import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, HStack, Avatar, Heading, Button } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
-import { userService } from "../../service/user.service.ts";
 import { v4 } from "uuid";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { userActions } from "../../store/slice/user.slice.ts";
+import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
 import { ContactItem } from "../Contact-Item/Contact-Item.tsx";
-import { conversationActions } from "../../store/slice/conversation.slice.ts";
+import { conversationActions, conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { IUser } from "../../interface/user.interface.ts";
 import { TypedOnChange } from "../../interface/common.interface.ts";
-import { conversationService } from "../../service/conversation.service.ts";
 
 export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const [ values, setValues ] = useState<{ searchValue: string, groupName: string }>({
@@ -33,10 +31,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
    const dispatch = useAppDispatch();
 
    useEffect(() => {
-      userService
-          .getContacts(values.searchValue)
-          .then(( res => dispatch(userActions.setContacts(res.data)) ));
-
+      dispatch(userAsyncActions.getContacts({ searchKey: values.searchValue }));
    }, [ values.searchValue ]);
 
    useEffect(() => {
@@ -51,17 +46,9 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
    const createGroupConversation = async () => {
       const ids = groupMembers.map(member => member.id);
 
-      try {
-         const { data } = await conversationService.createConversation(ids, values.groupName);
-
-         dispatch(conversationActions.createConversation(data));
-
-         dispatch(conversationActions.setActiveConversation(data));
-
+      const result = await dispatch(conversationAsyncActions.createConversation({ userIds: ids, conversationName: values.groupName }));
+      if (conversationAsyncActions.createConversation.fulfilled.match(result)) {
          onModalClose && onModalClose();
-
-      } catch (e) {
-         console.log(e);
       }
    };
 

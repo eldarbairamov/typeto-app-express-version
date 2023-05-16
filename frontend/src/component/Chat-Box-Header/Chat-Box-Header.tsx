@@ -1,8 +1,7 @@
 import { Avatar, AvatarGroup, Divider, Heading, HStack, IconButton, Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { conversationService } from "../../service/conversation.service.ts";
-import { conversationActions } from "../../store/slice/conversation.slice.ts";
+import { conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { v4 } from "uuid";
 
 export function ChatBoxHeader() {
@@ -11,13 +10,9 @@ export function ChatBoxHeader() {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
    const deleteConversation = async () => {
-      try {
-         const { data } = await conversationService.deleteConversation(activeConversation.id);
-         dispatch(conversationActions.setConversations(data));
-         if (data.length) dispatch(conversationActions.setActiveConversation(data[0]));
-
-      } catch (e) {
-         console.log(e);
+      const result = await dispatch(conversationAsyncActions.deleteConversation({ conversationId: activeConversation.id }));
+      if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
+         console.log(result.payload);
       }
    };
 
@@ -64,7 +59,7 @@ export function ChatBoxHeader() {
 
                 <MenuItem color={ 'orange.400' }
                           onClick={ deleteConversation }>
-                   Видалити чат
+                   Завершити бесіду
                 </MenuItem>
              </MenuList>
 

@@ -9,9 +9,21 @@ export const messageController = {
       const { conversationId, content } = req.body;
       const senderId = req.userId as number;
 
-      const newMessage = await Message.create({ content, senderId, conversationId });
+      const newMessage = await Message.create({
+         content,
+         senderId,
+         conversationId
+      });
 
-      res.json(newMessage);
+      const messageWithSender = await Message.findByPk(newMessage.id, {
+         include: {
+            model: User,
+            as: 'sender',
+            attributes: [ "id", "username", "email", "image" ]
+         }
+      });
+
+      res.json(messageWithSender);
    }),
 
    getMessages: expressAsyncHandler(async ( req: IRequest<any, { conversationId: number }, any>, res: Response ) => {

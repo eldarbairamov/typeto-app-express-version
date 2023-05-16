@@ -71,29 +71,35 @@ export const conversationController = {
    deleteConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string }>, res: Response ) => {
       const conversationId = req.query.conversationId;
 
-      const isConversationHasOneUser = await Conversation
+      const isConversationHasUsers = await Conversation
           .findByPk(conversationId, { include: 'users' })
           .then(res => {
-             if (res) return Boolean(res?.users.length < 2);
+             if (res) return Boolean(res?.users.length < 3);
           });
 
-      if (isConversationHasOneUser) {
-         await Promise.all([
-            Conversation.destroy({ where: { id: conversationId } }),
-            ConversationUser.destroy({ where: { conversationId } })
-         ]);
+      await Promise.all([
+         Conversation.destroy({ where: { id: conversationId } }),
+         ConversationUser.destroy({ where: { conversationId }})
+      ]);
 
-      } else {
-         await ConversationUser.destroy({
-            where: {
-               conversationId: conversationId,
-               userId: req.userId
-            }
-         });
-      }
+      // if (isConversationHasUsers) {
+      //    await Promise.all([
+      //       Conversation.destroy({ where: { id: conversationId }, cascade: true }),
+      //       ConversationUser.destroy({ where: { conversationId }, cascade: true })
+      //    ]);
+      //
+      // } else {
+      //    console.log('asd');
+      //    await ConversationUser.destroy({
+      //       where: {
+      //          conversationId: conversationId,
+      //       },
+      //       cascade: true
+      //    });
+      // }
 
       const conversationsIds = await ConversationUser.findAll({
-         where: { userId: 1 }
+         where: { userId: req.userId }
       })
           .then(res => res.map(item => item.conversationId));
 

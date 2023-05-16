@@ -10,7 +10,7 @@ const app: Application = express();
 
 app.use(express.json())
     .use(express.urlencoded({ extended: true }))
-    .use(cors())
+    .use(cors({ origin: "*" }))
     .use(appRouter)
     .use(errorMiddleware);
 

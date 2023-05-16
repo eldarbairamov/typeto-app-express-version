@@ -9,5 +9,5 @@ export function useInputHandler() {
       setValue(e.target.value);
    };
 
-   return { handleChange, value };
+   return { handleChange, value, setValue };
 }

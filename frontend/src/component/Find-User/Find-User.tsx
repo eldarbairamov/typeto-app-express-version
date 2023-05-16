@@ -1,11 +1,10 @@
 import { Box, Button, Center, Divider, Input, InputGroup, InputLeftElement, InputRightElement, VStack } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { UserItem } from "../User-Item/User-Item.tsx";
-import { userService } from "../../service/user.service.ts";
 import { RiUserSearchLine } from "react-icons/all";
 import { useInputHandler } from "../../hook/use-input-handler.ts";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { userActions } from "../../store/slice/user.slice.ts";
+import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
 import { useEffect } from "react";
 import { IUserBySearch } from "../../interface/user.interface.ts";
 
@@ -18,12 +17,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
    const findUser = async () => {
       if (value !== "") {
-         try {
-            const { data } = await userService.findUser(value);
-            dispatch(userActions.setUser(data));
-         } catch (e) {
-            console.log(e);
-         }
+         dispatch(userAsyncActions.findUser({ userEmail: value }));
       }
    };
 
