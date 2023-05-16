@@ -13,8 +13,6 @@ export const socketMiddleware: Middleware = ( store ) => ( next ) => async ( act
 
    const dispatch = store.dispatch as AppDispatch;
 
-   console.log(action);
-
    if (!socket && socketReducer.connect === ConnectionType.Disconnect && authReducer.isLogin) {
       socket = io('ws://localhost:3200');
 
@@ -23,6 +21,11 @@ export const socketMiddleware: Middleware = ( store ) => ( next ) => async ( act
       socket.emit('add_user', authReducer.currentUserId);
 
       socket.on('who_is_online', ( users ) => console.log(users));
+
+      socket.on('get_message', ( message: IMessage ) => {
+         dispatch(messageActions.addMessage(message));
+      });
+
    }
 
    if (socket && socketReducer.connect === ConnectionType.Connect) {
@@ -31,10 +34,8 @@ export const socketMiddleware: Middleware = ( store ) => ( next ) => async ( act
          socket.off();
 
          socket.emit('send_message', action.payload);
-         console.log('send');
 
          socket.on('get_message', ( message: IMessage ) => {
-            console.log('get');
             dispatch(messageActions.addMessage(message));
          });
       }
