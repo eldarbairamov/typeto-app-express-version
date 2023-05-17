@@ -7,4 +7,6 @@ export const conversationRouter = Router();
 conversationRouter
     .post("/", authMiddleware.isAccessExists, conversationController.createConversation)
     .get("/", authMiddleware.isAccessExists, conversationController.getConversations)
-    .delete('/', authMiddleware.isAccessExists, conversationController.deleteConversation);
+    .delete('/', authMiddleware.isAccessExists, conversationController.deleteConversation)
+    .delete('/admin', authMiddleware.isAccessExists, conversationController.deleteGroupConversation)
+    .delete('/leave', authMiddleware.isAccessExists, conversationController.leaveGroupConversation);
