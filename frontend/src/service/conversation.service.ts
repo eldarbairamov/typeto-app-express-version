@@ -14,6 +14,14 @@ export const conversationService = {
 
    deleteConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
       return await axiosInstance.delete<IConversation[]>('/conversations', { params: { conversationId } });
+   },
+
+   deleteGroupConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
+      return await axiosInstance.delete<IConversation[]>('/conversations/admin', { params: { conversationId } });
+   },
+
+   leaveGroupConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
+      return await axiosInstance.delete<IConversation[]>('/conversations/leave', { params: { conversationId } });
    }
 
 };

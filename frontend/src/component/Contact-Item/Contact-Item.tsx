@@ -1,8 +1,8 @@
-import { Avatar, Button, Heading, HStack } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Button, Heading, HStack } from "@chakra-ui/react";
 import { IUser } from "../../interface/user.interface.ts";
 import { Icon } from "@chakra-ui/icons";
 import { AiOutlineMessage, AiOutlineUsergroupAdd, AiOutlineDelete } from "react-icons/all";
-import { useAppDispatch } from "../../hook/redux.hook.ts";
+import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
 import { conversationActions, conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 
@@ -14,6 +14,8 @@ interface IUserItemProps {
 }
 
 export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }: IUserItemProps ) {
+   const { onlineContactsIds } = useAppSelector(state => state.userReducer);
+
    const dispatch = useAppDispatch();
 
    const createConversation = async () => {
@@ -36,7 +38,9 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
           <HStack spacing={ 5 }>
 
              <Avatar name={ user.username }
-                     size={ "md" }/>
+                     size={ "md" }>
+                { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 5 } bg={ 'green.500' }/> }
+             </Avatar>
 
              <Heading size={ "md" }>
                 { user.username }

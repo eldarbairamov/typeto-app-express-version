@@ -8,13 +8,15 @@ interface IInitialState {
    userBySearch: IUserBySearch;
    isLoading: boolean,
    errorMessage: string | undefined
+   onlineContactsIds: number[]
 }
 
 const initialState: IInitialState = {
    contacts: [] as IUser[],
    userBySearch: {} as IUserBySearch,
    isLoading: false,
-   errorMessage: undefined
+   errorMessage: undefined,
+   onlineContactsIds: [] as number[]
 };
 
 const getContacts = createAsyncThunk<IUser[], { searchKey?: string }, { rejectValue: string }>(
@@ -88,6 +90,10 @@ const userSlice = createSlice({
          if (payload.action === 'add') state.contacts = state.contacts.filter(contact => contact.id !== payload.id);
       },
 
+      setOnlineContacts: ( state, { payload }: PayloadAction<number[]> ) => {
+         state.onlineContactsIds = payload;
+      }
+
    },
 
    extraReducers: builder => builder
@@ -106,6 +112,8 @@ const userSlice = createSlice({
           state.isLoading = false;
        })
 
+       // *************** //
+
        .addCase(findUser.pending, ( state ) => {
           state.isLoading = true;
        })
@@ -120,6 +128,8 @@ const userSlice = createSlice({
           state.isLoading = false;
        })
 
+       // *************** //
+
        .addCase(deleteContact.pending, ( state ) => {
           state.isLoading = true;
        })
@@ -133,6 +143,8 @@ const userSlice = createSlice({
           state.errorMessage = payload;
           state.isLoading = false;
        })
+
+       // *************** //
 
        .addCase(addContact.pending, ( state ) => {
           state.isLoading = true;

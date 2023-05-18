@@ -7,6 +7,7 @@ import { ILoginForm, IRegistrationForm } from "../../interface/form.interface.ts
 
 interface IInitialState {
    currentUserId: number;
+   currentUsername: string;
    isLogin: boolean;
    isOnline: boolean;
    isLoading: boolean;
@@ -14,8 +15,9 @@ interface IInitialState {
 }
 
 const initialState: IInitialState = {
-   isLogin: !!storageService.getAccessToken(),
    currentUserId: Number(storageService.getUserId()),
+   currentUsername: String(storageService.getUsername()),
+   isLogin: !!storageService.getAccessToken(),
    isOnline: false,
    isLoading: false,
    errorMessage: undefined
@@ -74,6 +76,7 @@ const authSlice = createSlice({
           state.isLogin = true;
 
           storageService.setTokens({
+             username: payload.username,
              accessToken: payload.accessToken,
              refreshToken: payload.refreshToken,
              userId: payload.userId

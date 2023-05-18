@@ -5,12 +5,27 @@ import { conversationAsyncActions } from "../../store/slice/conversation.slice.t
 import { v4 } from "uuid";
 
 export function ChatBoxHeader() {
-   const dispatch = useAppDispatch();
-
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+   const { currentUserId } = useAppSelector(state => state.authReducer);
+
+   const dispatch = useAppDispatch();
 
    const deleteConversation = async () => {
       const result = await dispatch(conversationAsyncActions.deleteConversation({ conversationId: activeConversation.id }));
+      if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
+         console.log(result.payload);
+      }
+   };
+
+   const leaveGroupConversation = async () => {
+      const result = await dispatch(conversationAsyncActions.leaveGroupConversation({ conversationId: activeConversation.id }));
+      if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
+         console.log(result.payload);
+      }
+   };
+
+   const deleteGroupConversation = async () => {
+      const result = await dispatch(conversationAsyncActions.deleteGroupConversation({ conversationId: activeConversation.id }));
       if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
          console.log(result.payload);
       }
@@ -58,8 +73,10 @@ export function ChatBoxHeader() {
                 <Divider/>
 
                 <MenuItem color={ 'orange.400' }
-                          onClick={ deleteConversation }>
-                   Завершити бесіду
+                          onClick={
+                             activeConversation.adminId === currentUserId ? deleteGroupConversation : activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation
+                          }>
+                   { ( activeConversation.adminId === currentUserId || !activeConversation.isGroupConversation ) ? "Завершити бесіду" : "Покинути бесіду" }
                 </MenuItem>
              </MenuList>
 

@@ -63,6 +63,36 @@ const deleteConversation = createAsyncThunk<IConversation[], { conversationId: n
     }
 );
 
+const deleteGroupConversation = createAsyncThunk<IConversation[], { conversationId: number }, { rejectValue: string }>(
+    'conversation/deleteGroupConversation',
+    async ( { conversationId }, { rejectWithValue } ) => {
+       try {
+          const { data } = await conversationService.deleteGroupConversation(conversationId);
+          return data;
+
+       } catch (e) {
+          const axiosError = e as Error;
+          return rejectWithValue(axiosError.message);
+       }
+
+    }
+);
+
+const leaveGroupConversation = createAsyncThunk<IConversation[], { conversationId: number }, { rejectValue: string }>(
+    'conversation/leaveGroupConversation',
+    async ( { conversationId }, { rejectWithValue } ) => {
+       try {
+          const { data } = await conversationService.leaveGroupConversation(conversationId);
+          return data;
+
+       } catch (e) {
+          const axiosError = e as Error;
+          return rejectWithValue(axiosError.message);
+       }
+
+    }
+);
+
 const conversationSlice = createSlice({
    name: "conversation",
    initialState,
@@ -83,6 +113,15 @@ const conversationSlice = createSlice({
       setActiveConversation: ( state, { payload }: PayloadAction<IActiveConversation> ) => {
          state.activeConversation = payload;
       },
+
+      addConversation: ( state, { payload }: PayloadAction<IConversation> ) => {
+         const username = payload.conversationWith[0].username;
+
+         state.conversations.push(payload);
+         state.conversations = state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
+         state.activeConversation =
+             !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
+      }
    },
 
    extraReducers: builder => builder
@@ -95,7 +134,7 @@ const conversationSlice = createSlice({
           const { username } = meta.arg;
           state.conversations.push(payload);
           state.activeConversation =
-              username ? { ...payload, username: username ? username : undefined } : payload;
+              !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
           state.conversations = state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
           state.isLoading = false;
        })
@@ -104,6 +143,8 @@ const conversationSlice = createSlice({
           state.errorMessage = payload;
           state.isLoading = false;
        })
+
+       // *************** //
 
        .addCase(getConversations.pending, ( state ) => {
           state.isLoading = true;
@@ -120,6 +161,8 @@ const conversationSlice = createSlice({
           state.isLoading = false;
        })
 
+       // *************** //
+
        .addCase(deleteConversation.pending, ( state ) => {
           state.isLoading = true;
        })
@@ -135,8 +178,48 @@ const conversationSlice = createSlice({
           state.errorMessage = payload;
        })
 
+       // *************** //
+
+       .addCase(deleteGroupConversation.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(deleteGroupConversation.fulfilled, ( state, { payload } ) => {
+          state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+          state.activeConversation = state.conversations[0];
+          state.isLoading = false;
+       })
+
+       .addCase(deleteGroupConversation.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
+       // *************** //
+
+       .addCase(leaveGroupConversation.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(leaveGroupConversation.fulfilled, ( state, { payload } ) => {
+          state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+          state.activeConversation = state.conversations[0];
+          state.isLoading = false;
+       })
+
+       .addCase(leaveGroupConversation.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
 });
 
 export const conversationActions = conversationSlice.actions;
-export const conversationAsyncActions = { getConversations, createConversation, deleteConversation };
+export const conversationAsyncActions = {
+   getConversations,
+   createConversation,
+   deleteConversation,
+   deleteGroupConversation,
+   leaveGroupConversation
+};
 export const conversationReducer = conversationSlice.reducer;
