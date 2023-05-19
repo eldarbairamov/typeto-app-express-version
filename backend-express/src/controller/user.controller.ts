@@ -10,11 +10,11 @@ export const userController = {
       const [ user, isAlreadyAdded ] = await Promise.all([
          User.findOne({
             where: { email: req.query.userEmail },
-            attributes: [ 'id', 'username', 'email', 'image' ]
+            attributes: [ "id", "username", "email", "image" ]
          })
              .then(res => res?.dataValues),
-         User.findByPk(1, {
-            include: 'contacts'
+         User.findByPk(req.userId, {
+            include: "contacts"
          })
              .then(res => res?.contacts.find(contact => contact.email === req.query.userEmail))
       ]);
@@ -45,7 +45,7 @@ export const userController = {
          contactId: req.body.contactId
       });
 
-      res.send('ok');
+      res.send("ok");
    }),
 
    deleteContact: expressAsyncHandler(async ( req: IRequest<any, any, { contactId: string }>, res: Response ) => {

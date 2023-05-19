@@ -138,10 +138,10 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                     placeholder={ 'введіть назву бесіди' }/>
 
              <Button size={ 'lg' }
-                     bg={ 'orange.200' }
+                     bg={ 'messenger.200' }
                      rounded={ 10 }
                      onClick={ createGroupConversation }
-                     _hover={ { bg: 'orange.300' } }
+                     _hover={ { bg: 'messenger.300' } }
                      isDisabled={ !groupMembers.length || values.groupName == '' }
                      w={ '80%' }>
                 Створити

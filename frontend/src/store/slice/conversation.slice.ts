@@ -8,8 +8,9 @@ interface IInitialState {
    conversations: IConversation[];
    activeConversation: IActiveConversation;
    groupMembers: IUser[];
-   isLoading: boolean,
-   errorMessage: string | undefined
+   isLoading: boolean;
+   errorMessage: string | undefined;
+   actionMessage: string | undefined;
 }
 
 const initialState: IInitialState = {
@@ -17,17 +18,21 @@ const initialState: IInitialState = {
    activeConversation: {} as IActiveConversation,
    groupMembers: [] as IUser[],
    isLoading: false,
-   errorMessage: undefined
+   errorMessage: undefined,
+   actionMessage: undefined
 };
 
-const createConversation = createAsyncThunk<IConversation, { userIds: number[], conversationName?: string, username?: string }, { rejectValue: string }>(
+const createConversation = createAsyncThunk<IConversation, { userIds: number[], conversationName?: string, username?: string }, {
+   rejectValue: string
+}>(
     'conversation/createConversation',
     async ( { userIds, conversationName, username }, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.createConversation(userIds, conversationName);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -41,21 +46,23 @@ const getConversations = createAsyncThunk<IConversation[], {}, { rejectValue: st
           const { data } = await conversationService.getConversations();
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as Error;
           return rejectWithValue(axiosError.message);
        }
     }
 );
 
-const deleteConversation = createAsyncThunk<IConversation[], { conversationId: number }, { rejectValue: string }>(
+const deleteConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
     'conversation/deleteConversation',
-    async ( { conversationId }, { rejectWithValue } ) => {
+    async ( { conversation }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.deleteConversation(conversationId);
+          const { data } = await conversationService.deleteConversation(conversation.id);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as Error;
           return rejectWithValue(axiosError.message);
        }
@@ -63,14 +70,15 @@ const deleteConversation = createAsyncThunk<IConversation[], { conversationId: n
     }
 );
 
-const deleteGroupConversation = createAsyncThunk<IConversation[], { conversationId: number }, { rejectValue: string }>(
+const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
     'conversation/deleteGroupConversation',
-    async ( { conversationId }, { rejectWithValue } ) => {
+    async ( { conversation }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.deleteGroupConversation(conversationId);
+          const { data } = await conversationService.deleteGroupConversation(conversation.id);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as Error;
           return rejectWithValue(axiosError.message);
        }
@@ -78,14 +86,15 @@ const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation
     }
 );
 
-const leaveGroupConversation = createAsyncThunk<IConversation[], { conversationId: number }, { rejectValue: string }>(
+const leaveGroupConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
     'conversation/leaveGroupConversation',
-    async ( { conversationId }, { rejectWithValue } ) => {
+    async ( { conversation }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.leaveGroupConversation(conversationId);
+          const { data } = await conversationService.leaveGroupConversation(conversation.id);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as Error;
           return rejectWithValue(axiosError.message);
        }
@@ -115,12 +124,20 @@ const conversationSlice = createSlice({
       },
 
       addConversation: ( state, { payload }: PayloadAction<IConversation> ) => {
-         const username = payload.conversationWith[0].username;
+         const username = payload.conversationWith && payload.conversationWith[0].username;
 
          state.conversations.push(payload);
          state.conversations = state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
-         state.activeConversation =
-             !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
+         state.activeConversation = !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
+      },
+
+      setConversations: ( state, { payload }: PayloadAction<IConversation[]> ) => {
+         state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+         state.activeConversation = state.conversations[0];
+      },
+
+      setActionMessage: ( state, { payload } ) => {
+         state.actionMessage = payload;
       }
    },
 

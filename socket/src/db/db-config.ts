@@ -1,6 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import process from "process";
-import { ActionToken, Contacts, Conversation, ConversationUser, Message, OAuth, User } from "../model";
+import { Conversation } from "../model/conversation.model";
+import { User } from "../model/user.model";
+import { Message } from "../model/message.model";
+import { ConversationUser } from "../model/conversation-user.model";
+import { Contacts } from "../model/contacts.model";
 
 export const sequelize = new Sequelize(
     String(process.env.DB_NAME),
@@ -10,6 +14,7 @@ export const sequelize = new Sequelize(
        dialect: "postgres",
        host: process.env.DB_HOST,
        port: Number(process.env.DB_PORT),
-       models: [ Message, User, Conversation, ConversationUser, OAuth, ActionToken, Contacts ],
        logging: false,
-    });
+       models: [ Conversation, User, Message, ConversationUser, Contacts ]
+    }
+);

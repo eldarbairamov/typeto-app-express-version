@@ -55,7 +55,7 @@ export const conversationController = {
          },
       })
           .then(res => {
-             if (res && !conversationName) return conversationPresenter(res?.toJSON(), req.userId!);
+             if (res && !res.isGroupConversation) return conversationPresenter(res?.toJSON(), req.userId!);
              return res;
           });
 
@@ -131,6 +131,10 @@ export const conversationController = {
                as: 'admin',
                attributes: [ "id", "username", "email", "image" ],
             },
+            {
+               model: Message,
+               as: 'messages',
+            }
          ]
       })
           .then(res => {
@@ -175,6 +179,10 @@ export const conversationController = {
                as: 'admin',
                attributes: [ "id", "username", "email", "image" ],
             },
+            {
+               model: Message,
+               as: 'messages',
+            }
          ]
       })
           .then(res => {
@@ -203,11 +211,22 @@ export const conversationController = {
 
       const conversationList = await Conversation.findAll({
          where: { id: { [Op.in]: conversationsIds } },
-         include: {
-            model: User,
-            as: "users",
-            attributes: [ "id", "username", "email", "image" ],
-         }
+         include: [
+            {
+               model: User,
+               as: 'users',
+               attributes: [ "id", "username", "email", "image" ],
+            },
+            {
+               model: User,
+               as: 'admin',
+               attributes: [ "id", "username", "email", "image" ],
+            },
+            {
+               model: Message,
+               as: 'messages',
+            }
+         ],
       })
           .then(res => {
              if (res) return res.map(item => conversationPresenter(item.toJSON(), req.userId!));

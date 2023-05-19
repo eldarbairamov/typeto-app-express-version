@@ -9,3 +9,10 @@ export interface ISocketUser {
    userId: number;
    socketId: string
 }
+
+export interface IUserFromConversation extends IUser {
+   ConversationUser: {
+      conversationId: number,
+      userId: number
+   };
+}

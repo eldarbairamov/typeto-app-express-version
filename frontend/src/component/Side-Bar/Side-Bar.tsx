@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { Box, Button, calc, Divider, Modal, ModalContent, ModalOverlay, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { SearchBar } from "../Search-Bar/Search-Bar.tsx";
 import { useAppSelector } from "../../hook/redux.hook.ts";
@@ -6,7 +8,6 @@ import { v4 } from "uuid";
 import { Icon } from "@chakra-ui/icons";
 import { FiUsers } from "react-icons/all";
 import { GroupConversationMenu } from "../Group-Conversation-Menu/Group-Conversation-Menu.tsx";
-import { useState } from "react";
 
 export function SideBar() {
    const { conversations } = useAppSelector(state => state.conversationReducer);
@@ -44,7 +45,8 @@ export function SideBar() {
                    if (conversation.isGroupConversation) {
                       return <Conversation key={ v4() } conversation={ conversation }/>;
                    }
-                   return conversation.conversationWith.map(user => <Conversation key={ v4() } user={ user } conversation={ conversation }/>);
+                   return conversation.conversationWith.map(user => <Conversation key={ v4() } user={ user }
+                                                                                  conversation={ conversation }/>);
                 }) }
 
              </VStack>
@@ -54,33 +56,33 @@ export function SideBar() {
 
           { Boolean(conversations.length) &&
               <>
-                  <Divider/>
+                <Divider/>
 
-                  <Box p={ 2 }>
-                      <Button p={ 8 }
-                              variant={ 'ghost' }
-                              rounded={ 20 }
-                              gap={ 5 }
-                              _hover={ { bg: "transparent" } }
-                              onClick={ createGroupConversation }>
+                <Box p={ 2 }>
+                  <Button p={ 8 }
+                          variant={ 'ghost' }
+                          rounded={ 20 }
+                          gap={ 5 }
+                          _hover={ { bg: "transparent" } }
+                          onClick={ createGroupConversation }>
 
-                          <Text color={ "gray.600" }
-                                fontSize={ 17 }>
-                              створити групову бесіду?
-                          </Text>
+                    <Text color={ "gray.600" }
+                          fontSize={ 17 }>
+                      створити групову бесіду?
+                    </Text>
 
-                          <Divider orientation={ 'horizontal' }
-                                   borderColor={ 'gray.400' }
-                                   borderWidth={ 1 }
-                                   h={ 5 }/>
+                    <Divider orientation={ 'horizontal' }
+                             borderColor={ 'gray.400' }
+                             borderWidth={ 1 }
+                             h={ 5 }/>
 
-                          <Icon as={ FiUsers }
-                                boxSize={ 30 }
-                                cursor={ 'pointer' }
-                                color={ 'orange.400' }/>
+                    <Icon as={ FiUsers }
+                          boxSize={ 30 }
+                          cursor={ 'pointer' }
+                          color={ 'messenger.400' }/>
 
-                      </Button>
-                  </Box>
+                  </Button>
+                </Box>
               </>
           }
 

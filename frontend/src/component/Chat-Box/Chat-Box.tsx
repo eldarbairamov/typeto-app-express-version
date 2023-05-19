@@ -104,9 +104,9 @@ export function ChatBox() {
                         _hover={ { bg: "transparent" } }>
 
                    <Icon as={ SiTelegram }
-                         _hover={ { color: "orange.500" } }
+                         _hover={ { color: "messenger.500" } }
                          boxSize={ "50px" }
-                         color={ "orange.400" }/>
+                         color={ "messenger.400" }/>
 
                 </Button>
              </HStack>

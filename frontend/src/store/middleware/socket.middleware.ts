@@ -7,26 +7,31 @@ import { messageActions } from "../slice/message.slice.ts";
 import { IConversation } from "../../interface/conversation.interface.ts";
 import { userActions } from "../slice/user.slice.ts";
 import { conversationActions } from "../slice/conversation.slice.ts";
+import { IUserFromConversation } from "../../interface/user.interface.ts";
 
 let socket: Socket;
 
 export const socketMiddleware: Middleware = ( store ) => ( next ) => async ( action ) => {
-   const { socketReducer, authReducer } = store.getState() as RootState;
+   const { socketReducer, authReducer, conversationReducer } = store.getState() as RootState;
 
    const dispatch = store.dispatch as AppDispatch;
 
+   let conversationWith;
+   let conversationId;
+
    if (!socket && socketReducer.connect === ConnectionType.Disconnect && authReducer.isLogin) {
-      socket = io('ws://localhost:3200');
+
+      socket = io("ws://localhost:3200");
 
       socket.connect();
 
-      socket.emit('add_user', authReducer.currentUserId);
+      socket.emit("add_user", authReducer.currentUserId);
 
-      socket.on('who_is_online', ( userIds: number[] ) => {
+      socket.on("who_is_online", ( userIds: number[] ) => {
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
-      socket.on('get_message', ( message: IMessage ) => {
+      socket.on("get_message", ( message: IMessage ) => {
          dispatch(messageActions.addMessage(message));
       });
 
@@ -34,50 +39,100 @@ export const socketMiddleware: Middleware = ( store ) => ( next ) => async ( act
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
-      socket.on('get_conversation', ( conversation ) => {
+      socket.on("get_conversation", ( conversation: IConversation ) => {
          dispatch(conversationActions.addConversation(conversation));
       });
+
+      socket.on("get_delete_result", ( conversations: IConversation[], whoLeave: string ) => {
+         dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
+         dispatch(conversationActions.setConversations(conversations));
+      });
+
+      // socket.on('get_delete_group_result', ( deleteResult, adminUsername: string ) => {
+      //    console.log(deleteResult, adminUsername);
+      // });
 
    }
 
    if (socket && socketReducer.connect === ConnectionType.Connect) {
 
-      if (action.type === "message/sendMessage/fulfilled") {
-         socket.off();
+      socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
+         const conv = conversationReducer.conversations;
 
-         socket.emit('send_message', action.payload);
-
-         socket.on('get_message', ( message: IMessage ) => {
-            dispatch(messageActions.addMessage(message));
+         const updated = conv.map(c => {
+            if (c.id === conversation.id) return conversation;
+            return c;
          });
-      }
+
+         dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
+         dispatch(conversationActions.setConversations(updated));
+      });
 
       switch (action.type) {
+         case "message/sendMessage/fulfilled":
+            socket.off();
+            socket.emit("send_message", action.payload);
+            socket.on("get_message", ( message: IMessage ) => {
+               dispatch(messageActions.addMessage(message));
+            });
+
+            break;
 
          case "conversation/setActiveConversation":
-            socket.emit('conversation', action.payload);
+            socket.emit("conversation", action.payload.id);
+
             break;
 
          case "conversation/getConversations/fulfilled":
-            const lastConversation = action.payload.sort(( a: IConversation, b: IConversation ) => b.lastModified - a.lastModified);
-            lastConversation.length && socket.emit('conversation', lastConversation[0]);
+            const lastConversation = action.payload.sort(( a: IConversation, b: IConversation ) => b.lastModified - a.lastModified)[0];
+            lastConversation && socket.emit("conversation", lastConversation.id);
+
             break;
 
          case "conversation/createConversation/fulfilled":
-            socket.emit('conversation', action.payload);
+            const userIds = action.meta.arg.userIds;
+            conversationWith = userIds.length ? userIds : userIds[0];
 
-            const conversation = JSON.parse(JSON.stringify(action.payload));
-            conversation.conversationWith[0].username = authReducer.currentUsername;
+            socket.emit("create_conversation", action.payload.id, authReducer.currentUserId, conversationWith);
+            socket.emit("conversation", action.payload.id);
 
-            socket.emit('create_conversation', conversation);
             break;
 
          case "conversation/addConversation":
-            socket.emit('conversation', action.payload);
+            socket.emit("conversation", action.payload.id);
+
+            break;
+
+         case "conversation/deleteConversation/fulfilled":
+            conversationWith = action.meta.arg.conversation.conversationWith[0].id;
+            conversationId = action.meta.arg.conversation.id;
+            socket.emit("delete_conversation", conversationId, conversationWith, { id: authReducer.currentUserId, username: authReducer.currentUsername });
+
+            break;
+
+         case "conversation/leaveGroupConversation/fulfilled":
+            conversationWith = action.meta.arg.conversation.users
+                .map(( u: IUserFromConversation ) => {
+                   if (u.id !== authReducer.currentUserId) return u.id;
+                   return null;
+                })
+                .filter(( id: number ) => id !== null);
+
+            conversationId = action.meta.arg.conversation.id;
+
+            socket.emit("leave_group_conversation", conversationId, conversationWith, authReducer.currentUsername);
+
+            break;
+
+          // case "conversation/deleteGroupConversation/fulfilled":
+          //    conversation = action.meta.arg.conversation;
+          //    deleteResult = action.payload;
+          //    socket.emit('delete_group_conversation', deleteResult, conversation, authReducer.currentUsername);
+          //    break;
       }
 
    }
 
-
    return next(action);
+
 };

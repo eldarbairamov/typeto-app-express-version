@@ -31,7 +31,7 @@ export function Header() {
           <Heading cursor={ 'default' }
                    size={ "xl" }>
              <Highlight query={ "to" }
-                        styles={ { color: "white", p: "2px 10px", rounded: "lg", bg: "orange.400" } }>
+                        styles={ { color: "white", p: "2px 10px", rounded: "lg", bg: "messenger.400" } }>
                 typeto
              </Highlight>
           </Heading>

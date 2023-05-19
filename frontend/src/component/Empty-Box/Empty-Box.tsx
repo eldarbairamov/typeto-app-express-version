@@ -49,7 +49,7 @@ export function EmptyBox() {
                 <Icon as={ AiOutlineMessage }
                       boxSize={ 30 }
                       cursor={ 'pointer' }
-                      color={ 'orange.400' }/>
+                      color={ 'messenger.400' }/>
 
              </Button>
 
@@ -73,7 +73,7 @@ export function EmptyBox() {
                 <Icon as={ FiUsers }
                       boxSize={ 30 }
                       cursor={ 'pointer' }
-                      color={ 'orange.400' }/>
+                      color={ 'messenger.400' }/>
 
              </Button>
 
