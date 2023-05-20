@@ -2,14 +2,15 @@ import { Avatar, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { IMessage } from "../../interface/message.interface.ts";
 import moment from "moment/moment";
 import { useEffect, useRef } from "react";
+import { MAIN_COLOR_MESSAGE } from "../../constant/color.constant.ts";
 
 export function OutcomingMessage( { message }: { message: IMessage } ) {
-   const conversationTime = moment(+message.lastModified).format('HH:mm');
+   const conversationTime = moment(+message.lastModified).format("HH:mm");
 
    const ref = useRef<any>();
 
    useEffect(() => {
-      ref.current?.scrollIntoView({ behavior: 'auto' });
+      ref.current?.scrollIntoView({ behavior: "auto" });
    }, []);
 
    return (
@@ -22,11 +23,11 @@ export function OutcomingMessage( { message }: { message: IMessage } ) {
                   marginBottom={ 10 }>
 
              <VStack maxW={ [ null, null, null, 300, 600 ] }
-                     bg={ "orange.100" }
-                     alignItems={ 'flex-end' }
+                     bg={ MAIN_COLOR_MESSAGE }
+                     alignItems={ "flex-end" }
                      rounded={ 20 }
                      p={ 5 }>
-                <Heading size={ 'sm' }> { message.sender.username } </Heading>
+                <Heading size={ "sm" }> { message.sender.username } </Heading>
 
                 <Text>
                    { message.content }
@@ -37,7 +38,7 @@ export function OutcomingMessage( { message }: { message: IMessage } ) {
                 <Avatar name={ message.sender.username }
                         size={ "md" }/>
 
-                <Text color={ 'gray.500' }> { conversationTime } </Text>
+                <Text color={ "gray.500" }> { conversationTime } </Text>
              </VStack>
 
 

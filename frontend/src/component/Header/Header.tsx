@@ -1,9 +1,10 @@
-import { Button, Heading, Highlight, HStack, Modal, ModalContent, ModalOverlay, useDisclosure } from "@chakra-ui/react";
-import { Icon } from "@chakra-ui/icons";
+import { Highlight, HStack, Modal, ModalContent, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
 import { BiSearch, IoMdLogOut, FiUsers } from "react-icons/all";
 import { useState } from "react";
 import { FindUser } from "../Find-User/Find-User.tsx";
 import { ContactList } from "../Contact-List/Contact-List.tsx";
+import { ButtonIcon } from "../UI/Button-Icon/Button-Icon.tsx";
+import { MAIN_COLOR } from "../../constant/color.constant.ts";
 
 export function Header() {
    const { isOpen, onOpen, onClose } = useDisclosure();
@@ -19,7 +20,6 @@ export function Header() {
       onOpen();
    };
 
-
    return (
        <HStack w={ "95%" }
                spacing={ 0 }
@@ -28,35 +28,20 @@ export function Header() {
                justify={ "space-between" }
                h={ "100px" }>
 
-          <Heading cursor={ 'default' }
-                   size={ "xl" }>
+          <Text cursor={ "default" }
+                fontWeight={ "bold" }
+                fontSize={ 30 }>
              <Highlight query={ "to" }
-                        styles={ { color: "white", p: "2px 10px", rounded: "lg", bg: "messenger.400" } }>
+                        styles={ { color: "white", p: "2px 10px", rounded: "lg", bg: MAIN_COLOR } }>
                 typeto
              </Highlight>
-          </Heading>
+          </Text>
 
-          <HStack spacing={ 5 }>
+          <HStack spacing={ 0 }>
 
-             <Button variant={ "unstyled" }
-                     onClick={ openFriendList }>
-                <Icon as={ FiUsers }
-                      boxSize={ "30px" }
-                      color={ "gray.600" }/>
-             </Button>
-
-             <Button variant={ "unstyled" }
-                     onClick={ openFindUsers }>
-                <Icon as={ BiSearch }
-                      boxSize={ "32px" }
-                      color={ "gray.600" }/>
-             </Button>
-
-             <Button variant={ "unstyled" }>
-                <Icon as={ IoMdLogOut }
-                      boxSize={ "30px" }
-                      color={ "gray.600" }/>
-             </Button>
+             <ButtonIcon size={ 8 } as={ FiUsers } rounded={ 5 } color={ MAIN_COLOR } p={ 5 } fn={ openFriendList }/>
+             <ButtonIcon size={ 8 } as={ BiSearch } rounded={ 5 } color={ MAIN_COLOR } p={ 5 } fn={ openFindUsers }/>
+             <ButtonIcon size={ 8 } as={ IoMdLogOut } rounded={ 5 } color={ MAIN_COLOR } p={ 5 }/>
 
           </HStack>
 

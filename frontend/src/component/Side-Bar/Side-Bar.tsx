@@ -1,13 +1,13 @@
 import { useState } from "react";
 
-import { Box, Button, calc, Divider, Modal, ModalContent, ModalOverlay, Text, useDisclosure, VStack } from "@chakra-ui/react";
+import { Box, calc, Center, useDisclosure, VStack } from "@chakra-ui/react";
 import { SearchBar } from "../Search-Bar/Search-Bar.tsx";
 import { useAppSelector } from "../../hook/redux.hook.ts";
 import { Conversation } from "../Conversation/Conversation.tsx";
-import { v4 } from "uuid";
-import { Icon } from "@chakra-ui/icons";
-import { FiUsers } from "react-icons/all";
 import { GroupConversationMenu } from "../Group-Conversation-Menu/Group-Conversation-Menu.tsx";
+import { ConversationList } from "../Conversation-List/Conversation-List.tsx";
+import { CreateConversationButton } from "../UI/Create-Conversation-Button/Create-Conversation-Button.tsx";
+import { AppModal } from "../UI/App-Modal/App-Modal.tsx";
 
 export function SideBar() {
    const { conversations } = useAppSelector(state => state.conversationReducer);
@@ -23,86 +23,38 @@ export function SideBar() {
 
    return (
        <VStack bg={ "white" }
-               h={ calc("100vh").subtract("150px").toString() }
+               h={ "100%" }
+               borderRight={ "1px" }
+               borderColor={ "gray.100" }
                spacing={ 0 }
-               rounded={ 20 }>
+               borderRadius={ "20px 0 0 20px" }
+               w={ "400px" }
+               display={ [ "none", "none", "none", "none", "flex" ] }>
 
           <SearchBar/>
 
-          <Divider/>
+          <Box p={ "20px 20px 0 20px" }
+               alignItems={ "flex-start" }
+               w={ "100%" }
+               h={ calc("100%").subtract("160px").toString() }>
 
-          <Box
-              p={ "20px 20px 0 20px" }
-              alignItems={ "flex-start" }
-              h={ calc("100%").subtract("60px").toString() }
-              w={ "400px" }>
-
-             <VStack overflow={ "scroll" }
-                     h={ "100%" }
-                     spacing={ 0 }>
-
-                { Boolean(conversations.length) && conversations.map(conversation => {
-                   if (conversation.isGroupConversation) {
-                      return <Conversation key={ v4() } conversation={ conversation }/>;
-                   }
-                   return conversation.conversationWith.map(user => <Conversation key={ v4() } user={ user }
-                                                                                  conversation={ conversation }/>);
-                }) }
-
-             </VStack>
-
+             <ConversationList Conversation={ Conversation }/>
 
           </Box>
 
           { Boolean(conversations.length) &&
               <>
-                <Divider/>
+                <Center h={ "100px" }>
 
-                <Box p={ 2 }>
-                  <Button p={ 8 }
-                          variant={ 'ghost' }
-                          rounded={ 20 }
-                          gap={ 5 }
-                          _hover={ { bg: "transparent" } }
-                          onClick={ createGroupConversation }>
+                  <CreateConversationButton isGroup={ true }
+                                            isNoBg={ true }
+                                            createGroupConversation={ createGroupConversation }/>
 
-                    <Text color={ "gray.600" }
-                          fontSize={ 17 }>
-                      створити групову бесіду?
-                    </Text>
-
-                    <Divider orientation={ 'horizontal' }
-                             borderColor={ 'gray.400' }
-                             borderWidth={ 1 }
-                             h={ 5 }/>
-
-                    <Icon as={ FiUsers }
-                          boxSize={ 30 }
-                          cursor={ 'pointer' }
-                          color={ 'messenger.400' }/>
-
-                  </Button>
-                </Box>
+                </Center>
               </>
           }
 
-
-          <Modal isOpen={ isOpen }
-                 onClose={ onClose }
-                 isCentered={ true }
-                 motionPreset={ "slideInBottom" }>
-
-             <ModalOverlay bg={ "blackAlpha.200" }
-                           backdropFilter={ "auto" }
-                           backdropBlur={ "5px" }/>
-
-             <ModalContent w={ 400 }
-                           p={ 2 }
-                           rounded={ 20 }>
-                { content }
-             </ModalContent>
-
-          </Modal>
+          <AppModal isOpen={ isOpen } onClose={ onClose } content={ content }/>
 
        </VStack>
    );

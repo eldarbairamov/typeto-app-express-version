@@ -1,67 +1,43 @@
-import { calc, HStack, useToast, VStack } from "@chakra-ui/react";
+import { useEffect } from "react";
+
+import { calc, HStack } from "@chakra-ui/react";
 import { SideBar } from "../../component/Side-Bar/Side-Bar.tsx";
 import { ChatBox } from "../../component/Chat-Box/Chat-Box.tsx";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { useEffect, useState } from "react";
-import { conversationActions, conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
+import { conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { EmptyBox } from "../../component/Empty-Box/Empty-Box.tsx";
 import { socketActions } from "../../store/slice/socket.slice.ts";
+import { Toast } from "../../component/Toast/Toast.tsx";
 
 export function ChatsPage() {
    const { conversations, actionMessage } = useAppSelector(state => state.conversationReducer);
-
-   const toast = useToast();
-
-   const [ activateToast, setActivateToast ] = useState<boolean>(false);
 
    const dispatch = useAppDispatch();
 
    const getConversations = async () => {
       const result = await dispatch(conversationAsyncActions.getConversations({}));
       if (conversationAsyncActions.createConversation.rejected.match(result)) {
-         console.log(result.payload);
       }
    };
 
    useEffect(() => {
-      getConversations();
       dispatch(socketActions.connect());
+      getConversations();
    }, []);
 
-   useEffect(() => {
-      actionMessage && setActivateToast(true);
-   }, [ actionMessage ]);
-
-
    return (
-       <VStack w={ "100%" }
-               spacing={ 0 }
-               gap={ "20px" }
-               h={ calc("100vh").subtract("100px").toString() }>
+       <HStack spacing={ 0 }
+               w={ "100%" }
+               h={ calc("100vh").subtract("150px").toString() }
+               justify={ "space-between" }
+               alignItems={ "flex-start" }>
 
-          <HStack h={ calc("100%").subtract("80px").toString() }
-                  spacing={ 0 }
-                  w={ "100%" }
-                  justify={ "space-between" }
-                  alignItems={ "flex-start" }>
-             <SideBar/>
+          { Boolean(conversations.length) && <SideBar/> }
 
-             { Boolean(conversations.length) ? <ChatBox/> : <EmptyBox/> }
+          { Boolean(conversations.length) ? <ChatBox/> : <EmptyBox/> }
 
-             { (activateToast && actionMessage) && toast({
-                description: actionMessage,
-                colorScheme: "blue",
-                status: "info",
-                duration: 1500,
-                position: "top",
-                onCloseComplete: () => {
-                   dispatch(conversationActions.setActionMessage(undefined));
-                   setActivateToast(false);
-                }
-             }) }
+          <Toast actionMessage={ actionMessage }/>
 
-          </HStack>
-
-       </VStack>
+       </HStack>
    );
 }

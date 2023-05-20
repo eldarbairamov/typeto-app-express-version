@@ -4,7 +4,7 @@ import { userReducer } from "./slice/user.slice.ts";
 import { conversationReducer } from "./slice/conversation.slice.ts";
 import { messageReducer } from "./slice/message.slice.ts";
 import { socketReducer } from "./slice/socket.slice.ts";
-import { socketMiddleware } from "./middleware/socket.middleware.ts";
+import { listenerMiddleware } from "./middleware/listener.middleware.ts";
 
 export const store = configureStore({
    reducer: {
@@ -14,7 +14,7 @@ export const store = configureStore({
       messageReducer,
       socketReducer
    },
-   middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(socketMiddleware)
+   middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>

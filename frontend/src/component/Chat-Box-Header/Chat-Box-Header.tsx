@@ -31,9 +31,9 @@ export function ChatBoxHeader() {
 
    return (
        <HStack width={ "100%" }
-               h={ '60px' }
+               h={ "60px" }
                spacing={ 0 }
-               justify={ 'center' }
+               justify={ "center" }
                style={ { position: "relative" } }>
 
           <HStack spacing={ 3 }>
@@ -43,25 +43,25 @@ export function ChatBoxHeader() {
                  <AvatarGroup size="sm" max={ 2 }>
                     { activeConversation.users.map(user => <Avatar key={ v4() } name={ user.username }
                                                                    size={ "lg" }> { onlineContactsIds.includes(user.id) &&
-                        <AvatarBadge boxSize={ 3 } bg={ 'green.500' }/> } </Avatar>) }
+                        <AvatarBadge boxSize={ 3 } bg={ "green.500" }/> } </Avatar>) }
                  </AvatarGroup>
                  :
                  <Avatar name={ activeConversation.conversationWith[0].username }
                          size={ "sm" }/>
              }
-             <Heading size={ 'md' }
-                      color={ 'gray.600' }>
+             <Heading size={ "md" }
+                      color={ "gray.600" }>
                 { activeConversation.conversationName ? activeConversation.conversationName : activeConversation.conversationWith[0].username }
              </Heading>
 
           </HStack>
 
           <Menu>
-             <MenuButton style={ { position: 'absolute', right: 30 } }
+             <MenuButton style={ { position: "absolute", right: 30 } }
                          as={ IconButton }
-                         aria-label={ 'Options' }
+                         aria-label={ "Options" }
                          icon={ <HamburgerIcon boxSize={ 5 }/> }
-                         variant={ 'outline' }/>
+                         variant={ "outline" }/>
 
              <MenuList>
                 <MenuItem>
@@ -70,9 +70,10 @@ export function ChatBoxHeader() {
 
                 <Divider/>
 
-                <MenuItem color={ 'red.400' }
+                <MenuItem color={ "red.400" }
                           onClick={
-                             activeConversation.adminId === currentUserId ? deleteGroupConversation : activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation
+                             activeConversation.adminId === currentUserId ? deleteGroupConversation :
+                                 activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation
                           }>
                    { (activeConversation.adminId === currentUserId || !activeConversation.isGroupConversation) ? "Завершити бесіду" : "Покинути бесіду" }
                 </MenuItem>

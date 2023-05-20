@@ -1,0 +1,6 @@
+export const MAIN_COLOR = 'cyan.400'
+export const MAIN_COLOR_MESSAGE = 'cyan.100'
+export const MAIN_COLOR_HOVER = 'cyan.500'
+export const MAIN_COLOR_HOVER2 = 'cyan.50'
+export const MAIN_COLOR_HOVER3 = 'cyan.100'
+export const MAIN_COLOR_ACTIVE = 'cyan.100'

@@ -6,7 +6,7 @@ export function SearchBar() {
        <Center bg={ "white" }
                rounded={ 20 }
                height={ '60px' }
-               w={ "400px" }>
+               w={ "90%" }>
 
           <InputGroup w={ "90%" }>
              <InputLeftElement pointerEvents={ "none" }

@@ -22,7 +22,7 @@ export const ConversationRepository = {
           }) as IConversation;
    },
 
-   findAll: async ( userId: number ) => {
+   findAll: async ( userId: number ): Promise<IConversation> => {
       const conversationsIds = await ConversationUser.findAll({
          where: { userId }
       })
@@ -46,11 +46,14 @@ export const ConversationRepository = {
                as: "messages",
             }
          ],
+         order: [
+            [ "lastModified", "DESC" ]
+         ]
       })
           .then(res => {
-             if (res) return res.map(item => conversationPresenter(item.toJSON(), userId));
+             if (res) return res.map(item => conversationPresenter(item.toJSON(), undefined, userId));
              return res;
-          });
+          }) as IConversation;
    }
 
 };

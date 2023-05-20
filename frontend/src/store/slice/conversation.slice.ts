@@ -25,7 +25,7 @@ const initialState: IInitialState = {
 const createConversation = createAsyncThunk<IConversation, { userIds: number[], conversationName?: string, username?: string }, {
    rejectValue: string
 }>(
-    'conversation/createConversation',
+    "conversation/createConversation",
     async ( { userIds, conversationName, username }, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.createConversation(userIds, conversationName);
@@ -40,7 +40,7 @@ const createConversation = createAsyncThunk<IConversation, { userIds: number[], 
 );
 
 const getConversations = createAsyncThunk<IConversation[], {}, { rejectValue: string }>(
-    'conversation/getConversations',
+    "conversation/getConversations",
     async ( {}, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.getConversations();
@@ -55,7 +55,7 @@ const getConversations = createAsyncThunk<IConversation[], {}, { rejectValue: st
 );
 
 const deleteConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
-    'conversation/deleteConversation',
+    "conversation/deleteConversation",
     async ( { conversation }, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.deleteConversation(conversation.id);
@@ -71,7 +71,7 @@ const deleteConversation = createAsyncThunk<IConversation[], { conversation: ICo
 );
 
 const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
-    'conversation/deleteGroupConversation',
+    "conversation/deleteGroupConversation",
     async ( { conversation }, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.deleteGroupConversation(conversation.id);
@@ -87,7 +87,7 @@ const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation
 );
 
 const leaveGroupConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
-    'conversation/leaveGroupConversation',
+    "conversation/leaveGroupConversation",
     async ( { conversation }, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.leaveGroupConversation(conversation.id);
@@ -127,13 +127,16 @@ const conversationSlice = createSlice({
          const username = payload.conversationWith && payload.conversationWith[0].username;
 
          state.conversations.push(payload);
-         state.conversations = state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
          state.activeConversation = !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
       },
 
       setConversations: ( state, { payload }: PayloadAction<IConversation[]> ) => {
-         state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+         state.conversations = payload;
          state.activeConversation = state.conversations[0];
+      },
+
+      updateConversations: ( state, { payload }: PayloadAction<IConversation[]> ) => {
+         state.conversations = payload;
       },
 
       setActionMessage: ( state, { payload } ) => {
@@ -168,7 +171,7 @@ const conversationSlice = createSlice({
        })
 
        .addCase(getConversations.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+          state.conversations = payload;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
        })
@@ -185,7 +188,7 @@ const conversationSlice = createSlice({
        })
 
        .addCase(deleteConversation.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+          state.conversations = payload;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
        })
@@ -202,7 +205,7 @@ const conversationSlice = createSlice({
        })
 
        .addCase(deleteGroupConversation.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+          state.conversations = payload;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
        })
@@ -219,7 +222,7 @@ const conversationSlice = createSlice({
        })
 
        .addCase(leaveGroupConversation.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload.sort(( a, b ) => b.lastModified - a.lastModified);
+          state.conversations = payload;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
        })

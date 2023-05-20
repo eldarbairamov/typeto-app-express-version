@@ -18,7 +18,7 @@ export const conversationController = {
          include: [
             {
                model: User,
-               as: 'users',
+               as: "users",
                where: {
                   id: {
                      [Op.in]: userIds.concat(req.userId!)
@@ -29,7 +29,7 @@ export const conversationController = {
       })
           .then(res => Boolean(res.filter(conv => conv.users.length === 2).length));
 
-      if (isConversationExist && !conversationName) throw new ApiException('Conversation with this user is already exists', 400);
+      if (isConversationExist && !conversationName) throw new ApiException("Conversation with this user is already exists", 400);
 
       const newConversation = await Conversation.create({
          conversationName,
@@ -73,19 +73,22 @@ export const conversationController = {
          include: [
             {
                model: User,
-               as: 'users',
+               as: "users",
                attributes: [ "id", "username", "email", "image" ],
             },
             {
                model: User,
-               as: 'admin',
+               as: "admin",
                attributes: [ "id", "username", "email", "image" ],
             },
             {
                model: Message,
-               as: 'messages',
+               as: "messages",
             }
          ],
+         order: [
+            [ "lastModified", "DESC" ]
+         ]
       })
           .then(res => {
              if (res) return res.map(item => conversationPresenter(item.toJSON(), req.userId!));
@@ -105,8 +108,8 @@ export const conversationController = {
              Boolean(res?.isGroupConversation === true)
           ]);
 
-      if (!isGroupConversation) throw new ApiException('It is not group conversation', 400);
-      if (!isUserAdmin) throw new ApiException('You are not admin', 401);
+      if (!isGroupConversation) throw new ApiException("It is not group conversation", 400);
+      if (!isUserAdmin) throw new ApiException("You are not admin", 401);
 
       await Promise.all([
          await Conversation.destroy({ where: { id: conversationId } }),
@@ -128,13 +131,16 @@ export const conversationController = {
             },
             {
                model: User,
-               as: 'admin',
+               as: "admin",
                attributes: [ "id", "username", "email", "image" ],
             },
             {
                model: Message,
-               as: 'messages',
+               as: "messages",
             }
+         ],
+         order: [
+            [ "lastModified", "DESC" ]
          ]
       })
           .then(res => {
@@ -155,9 +161,9 @@ export const conversationController = {
              Boolean(res?.isGroupConversation === true)
           ]);
 
-      if (!isGroupConversation) throw new ApiException('It is not group conversation', 400);
+      if (!isGroupConversation) throw new ApiException("It is not group conversation", 400);
 
-      if (isUserAdmin) throw new ApiException('Admin can not leave own conversation', 400);
+      if (isUserAdmin) throw new ApiException("Admin can not leave own conversation", 400);
 
       await ConversationUser.destroy({ where: { conversationId, userId: req.userId } });
 
@@ -176,13 +182,16 @@ export const conversationController = {
             },
             {
                model: User,
-               as: 'admin',
+               as: "admin",
                attributes: [ "id", "username", "email", "image" ],
             },
             {
                model: Message,
-               as: 'messages',
+               as: "messages",
             }
+         ],
+         order: [
+            [ "lastModified", "DESC" ]
          ]
       })
           .then(res => {
@@ -197,7 +206,7 @@ export const conversationController = {
       const conversationId = req.query.conversationId;
 
       const isGroupConversation = await Conversation.findByPk(conversationId).then(res => Boolean(res?.isGroupConversation === true));
-      if (isGroupConversation) throw new ApiException('You can not delete group conversation', 401);
+      if (isGroupConversation) throw new ApiException("You can not delete group conversation", 401);
 
       await Promise.all([
          Conversation.destroy({ where: { id: conversationId } }),
@@ -214,19 +223,22 @@ export const conversationController = {
          include: [
             {
                model: User,
-               as: 'users',
+               as: "users",
                attributes: [ "id", "username", "email", "image" ],
             },
             {
                model: User,
-               as: 'admin',
+               as: "admin",
                attributes: [ "id", "username", "email", "image" ],
             },
             {
                model: Message,
-               as: 'messages',
+               as: "messages",
             }
          ],
+         order: [
+            [ "lastModified", "DESC" ]
+         ]
       })
           .then(res => {
              if (res) return res.map(item => conversationPresenter(item.toJSON(), req.userId!));

@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { IRequest } from "../interface/express.interface";
 import { Response } from "express";
-import { Message, User } from "../model";
+import { Conversation, Message, User } from "../model";
 
 export const messageController = {
 
@@ -15,10 +15,12 @@ export const messageController = {
          conversationId
       });
 
+      await Conversation.update({ lastModified: Date.now() }, { where: { id: newMessage.conversationId } });
+
       const messageWithSender = await Message.findByPk(newMessage.id, {
          include: {
             model: User,
-            as: 'sender',
+            as: "sender",
             attributes: [ "id", "username", "email", "image" ]
          }
       });
@@ -31,10 +33,10 @@ export const messageController = {
 
       const messages = await Message.findAll({
          where: { conversationId },
-         attributes: [ 'id', "content", "conversationId", "lastModified" ],
+         attributes: [ "id", "content", "conversationId", "lastModified" ],
          include: {
             model: User,
-            as: 'sender',
+            as: "sender",
             attributes: [ "id", "username", "email", "image" ]
          }
       });

@@ -5,6 +5,7 @@ import { conversationActions } from "../../store/slice/conversation.slice.ts";
 import { IConversation } from "../../interface/conversation.interface.ts";
 import moment from "moment";
 import { v4 } from "uuid";
+import { MAIN_COLOR_ACTIVE, MAIN_COLOR_HOVER2 } from "../../constant/color.constant.ts";
 
 interface IConversationProps {
    conversation: IConversation;
@@ -30,8 +31,8 @@ export function Conversation( { user, conversation }: IConversationProps ) {
        <VStack width={ "100%" }>
 
           <VStack width={ "100%" }
-                  _hover={ { bg: "gray.100", transition: ".3s" } }
-                  bg={ conversation.id === activeConversation.id ? "gray.100" : undefined }
+                  _hover={ { bg: conversation.id === activeConversation.id ? MAIN_COLOR_ACTIVE : MAIN_COLOR_HOVER2, transition: ".3s" } }
+                  bg={ conversation.id === activeConversation.id ? MAIN_COLOR_ACTIVE : undefined }
                   p={ 4 }
                   rounded={ 10 }
                   spacing={ 5 }
@@ -73,15 +74,18 @@ export function Conversation( { user, conversation }: IConversationProps ) {
 
                 </HStack>
 
-                <Box>
+                <Box h={ "100%" }>
                    <Text>
                       { conversationTime }
                    </Text>
                 </Box>
 
              </HStack>
+
           </VStack>
-          <Divider width={ 200 }/>
+
+          <Divider width={ 300 }/>
+
        </VStack>
    );
 }

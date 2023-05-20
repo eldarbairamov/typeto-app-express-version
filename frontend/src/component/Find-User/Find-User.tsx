@@ -38,7 +38,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
                        placeholder={ "введіть e-mail користувача" }/>
 
                 <InputRightElement w={ 130 } justifyContent={ "flex-end" }>
-                   <Button onClick={ findUser } bg={ "orange.100" } _hover={ { bg: "orange.200" } }>
+                   <Button onClick={ findUser } bg={ "#eff0f3" } _hover={ { bg: "telegram.100" } }>
                       Знайти
                    </Button>
                 </InputRightElement>

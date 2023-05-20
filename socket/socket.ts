@@ -46,6 +46,8 @@ export const startSocket = () => {
       });
 
       socket.on("create_conversation", async ( conversationId: number, whoCreatedId: number, conversationWith: number[] ) => {
+         console.log(conversationId, whoCreatedId, conversationWith);
+
          const conversation = await ConversationRepository.findByPk(conversationId, whoCreatedId);
 
          if (!conversation.isGroupConversation) {
@@ -70,13 +72,14 @@ export const startSocket = () => {
          io.to(to).emit("get_leave_result", conversation, whoLeft);
       });
 
-      // socket.on('delete_group_conversation', ( deleteResult: IConversation[], conversation: IConversation, adminUsername: string ) => {
-      //    const to = getUsers(conversation.users.map(u => u.id)) as string[];
-      //    io.to(to).emit('get_delete_group_result', deleteResult, adminUsername);
-      // });
+      socket.on("delete_group_conversation", ( conversationWith: number[], conversationId: number, adminName: string ) => {
+         const to = String(getUsers(conversationWith));
+         io.to(to).emit("get_delete_group_result", conversationId, adminName);
+      });
 
-      socket.on("send_message", ( message: IMessage ) => {
-         io.in(String(message.conversationId)).emit("get_message", message);
+      socket.on("send_message", async ( message: IMessage ) => {
+         const conversations = await ConversationRepository.findAll(message.senderId);
+         io.in(String(message.conversationId)).emit("get_message", message, conversations);
       });
 
       socket.on("disconnect", () => {
