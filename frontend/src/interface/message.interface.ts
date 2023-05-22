@@ -5,6 +5,10 @@ export interface IMessage {
    content: string;
    senderId: number;
    conversationId: number;
-   lastModified: string;
+   lastModified: number;
    sender: IUser;
+}
+
+export interface INewMessageReceived {
+   conversationId: number,
 }

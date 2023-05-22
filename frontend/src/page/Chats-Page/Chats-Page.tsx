@@ -28,7 +28,7 @@ export function ChatsPage() {
    return (
        <HStack spacing={ 0 }
                w={ "100%" }
-               h={ calc("100vh").subtract("150px").toString() }
+               h={ calc("100%").subtract("150px").toString() }
                justify={ "space-between" }
                alignItems={ "flex-start" }>
 

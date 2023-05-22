@@ -8,6 +8,7 @@ import { GroupConversationMenu } from "../Group-Conversation-Menu/Group-Conversa
 import { AppModal } from "../UI/App-Modal/App-Modal.tsx";
 import { ConversationList } from "../Conversation-List/Conversation-List.tsx";
 import { ButtonIcon } from "../UI/Button-Icon/Button-Icon.tsx";
+import { MAIN_COLOR } from "../../constant/color.constant.ts";
 
 export function MiniSideBar() {
 
@@ -46,7 +47,7 @@ export function MiniSideBar() {
           <Center h={ "100px" }>
              <ButtonIcon size={ 30 }
                          as={ FiUsers }
-                         color={ "telegram.400" }
+                         color={ MAIN_COLOR }
                          fn={ createGroupConversation }/>
           </Center>
 

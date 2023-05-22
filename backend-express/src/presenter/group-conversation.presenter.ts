@@ -1,21 +1,17 @@
 import { ConversationAttr, ConversationUserAttr, User } from "../model";
 
-export const conversationPresenter = ( conversation: ConversationAttr, whoCreated?: number, whoWillReceive?: number ) => {
+export const groupConversationPresenter = ( conversation: ConversationAttr, userId: number ) => {
    const { messages, ...conv } = conversation;
 
-   const { users, ...presentedData } = Object.assign(
+   return Object.assign(
        {},
-       { ...conv },
-       {
-          conversationWith:
-              whoCreated ? conv.users.filter(user => user.id === whoCreated) : conv.users.filter(user => user.id !== whoWillReceive)
-       },
+       conv,
        {
           isNewMessagesExist: conv.users
               .map(( user ) => {
                  const userWithAssociation = user as User & { ConversationUser: ConversationUserAttr };
 
-                 if (userWithAssociation.id === whoWillReceive) {
+                 if (userWithAssociation.id === userId) {
                     return userWithAssociation.ConversationUser.isNewMessagesExist;
                  }
 
@@ -26,8 +22,5 @@ export const conversationPresenter = ( conversation: ConversationAttr, whoCreate
        {
           lastMessage:
               messages ? conversation.messages.sort(( a, b ) => b.lastModified - a.lastModified)[0] : undefined
-       }
-   );
-
-   return conversation.isGroupConversation ? conversation : presentedData;
+       });
 };

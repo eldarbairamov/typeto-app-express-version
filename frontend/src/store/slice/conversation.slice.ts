@@ -19,7 +19,7 @@ const initialState: IInitialState = {
    groupMembers: [] as IUser[],
    isLoading: false,
    errorMessage: undefined,
-   actionMessage: undefined
+   actionMessage: undefined,
 };
 
 const createConversation = createAsyncThunk<IConversation, { userIds: number[], conversationName?: string, username?: string }, {
@@ -128,6 +128,7 @@ const conversationSlice = createSlice({
 
          state.conversations.push(payload);
          state.activeConversation = !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
+         state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
       },
 
       setConversations: ( state, { payload }: PayloadAction<IConversation[]> ) => {
@@ -135,13 +136,20 @@ const conversationSlice = createSlice({
          state.activeConversation = state.conversations[0];
       },
 
-      updateConversations: ( state, { payload }: PayloadAction<IConversation[]> ) => {
-         state.conversations = payload;
+      updateConversations: ( state, { payload }: PayloadAction<IConversation> ) => {
+         state.conversations = state.conversations.map(c => {
+            if (c.id === payload.id) {
+               return payload;
+            }
+            return c;
+         });
+         state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
       },
 
-      setActionMessage: ( state, { payload } ) => {
+      setActionMessage: ( state, { payload }: PayloadAction<string> ) => {
          state.actionMessage = payload;
-      }
+      },
+
    },
 
    extraReducers: builder => builder
@@ -172,7 +180,6 @@ const conversationSlice = createSlice({
 
        .addCase(getConversations.fulfilled, ( state, { payload } ) => {
           state.conversations = payload;
-          state.activeConversation = state.conversations[0];
           state.isLoading = false;
        })
 

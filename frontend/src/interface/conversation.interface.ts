@@ -11,6 +11,7 @@ export interface IConversation {
    users: IUserFromConversation[];
    lastMessage: IMessage;
    admin: IUserFromConversation;
+   isNewMessagesExist: boolean;
 }
 
 export interface IActiveConversation extends IConversation {

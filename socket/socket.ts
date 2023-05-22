@@ -1,8 +1,8 @@
 import { Server } from "socket.io";
-import { ISocketUser } from "./src/interface/user.interface";
-import { IMessage } from "./src/interface/message.interface";
 import { config } from "./src/config/config";
-import { ConversationRepository } from "./src/repository/conversation.repository";
+import { createConversationService, deleteConversationService, leaveGroupConversationService, sendMessageService } from "./src/service";
+import { IMessage, ISocketUser } from "./src/interface";
+import { Conversation, User } from "./src/model";
 
 const io = new Server(3200, { cors: { origin: config.CLIENT_URL } });
 
@@ -46,9 +46,7 @@ export const startSocket = () => {
       });
 
       socket.on("create_conversation", async ( conversationId: number, whoCreatedId: number, conversationWith: number[] ) => {
-         console.log(conversationId, whoCreatedId, conversationWith);
-
-         const conversation = await ConversationRepository.findByPk(conversationId, whoCreatedId);
+         const conversation = await createConversationService(conversationId, whoCreatedId);
 
          if (!conversation.isGroupConversation) {
             const to = String(getUser(conversationWith[0]));
@@ -61,31 +59,45 @@ export const startSocket = () => {
       });
 
       socket.on("delete_conversation", async ( conversationId: number, conversationWith: number, whoDeleted: { id: number, username: string } ) => {
-         const conversations = await ConversationRepository.findAll(conversationWith);
+         const conversations = await deleteConversationService(conversationWith);
          const to = String(getUser(conversationWith));
          io.to(to).emit("get_delete_result", conversations, whoDeleted.username);
       });
 
       socket.on("leave_group_conversation", async ( conversationId: number, conversationWith: number[], whoLeft: string ) => {
-         const conversation = await ConversationRepository.findByPk(conversationId);
-         const to = String(getUsers(conversationWith));
+         const conversation = await leaveGroupConversationService(conversationId);
+         const to = getUsers(conversationWith) as string[];
          io.to(to).emit("get_leave_result", conversation, whoLeft);
       });
 
       socket.on("delete_group_conversation", ( conversationWith: number[], conversationId: number, adminName: string ) => {
-         const to = String(getUsers(conversationWith));
-         io.to(to).emit("get_delete_group_result", conversationId, adminName);
+         const to = getUsers(conversationWith) as string[];
+         if (to.length) io.to(to).emit("get_delete_group_result", conversationId, adminName);
       });
 
       socket.on("send_message", async ( message: IMessage ) => {
-         const conversations = await ConversationRepository.findAll(message.senderId);
-         io.in(String(message.conversationId)).emit("get_message", message, conversations);
+         const [ conversationForSender, conversationForReceiver, conversationWith ] = await Promise.all([
+            sendMessageService(message.conversationId, message.senderId, "sender"),
+            sendMessageService(message.conversationId, message.senderId, "receiver"),
+            Conversation
+                .findByPk(message.conversationId, {
+                   include: {
+                      model: User,
+                      as: "users",
+                      attributes: [ "id", "username", "email", "image" ],
+                   }
+                }).then(res => res?.users.map(u => u.id))
+         ]);
+
+         const to = getUsers(conversationWith!) as string[];
+
+         io.to(to).emit("get_message", message, conversationForSender, conversationForReceiver);
       });
 
       socket.on("disconnect", () => {
          removeUser(socket.id);
-         console.log("user " + socket.id + " is disconnected");
          io.emit("refresh_online_users", users.map(u => u.userId));
+         console.log("user " + socket.id + " is disconnected");
       });
 
    });

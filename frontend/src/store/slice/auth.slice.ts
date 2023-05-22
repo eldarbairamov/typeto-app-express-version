@@ -105,6 +105,5 @@ const authSlice = createSlice({
 });
 
 
-export const authActions = authSlice.actions;
 export const authReducer = authSlice.reducer;
 export const authAsyncActions = { login, registration };

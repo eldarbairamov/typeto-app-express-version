@@ -23,13 +23,12 @@ export function ChatBox() {
    useEffect(() => {
       getMessages();
    }, [ activeConversation.id ]);
-
-
+   
    return (
        <HStack w={ [ "100%", "100%", "100%", "100%", calc("100%").subtract("400px").toString() ] }
                spacing={ 0 }
                justify={ "space-between" }
-               h={ calc("100vh").subtract("150px").toString() }>
+               h={ "100%" }>
 
           <MiniSideBar/>
 

@@ -1,15 +1,16 @@
 import { axiosInstance } from "./axios.service.ts";
 import { storageService } from "./storage.service.ts";
-import { IAccessTokenPair, ILogin, IRegistration } from "../interface/auth.interface.ts";
+import { IAccessTokenPair } from "../interface/auth.interface.ts";
 import { AxiosResponse } from "axios";
+import { ILoginForm, IRegistrationForm } from "../interface/form.interface.ts";
 
 export const authService = {
 
-   registration: async ( data: IRegistration ): Promise<void> => {
+   registration: async ( data: IRegistrationForm ): Promise<void> => {
       await axiosInstance.post("/auth/registration", data);
    },
 
-   login: async ( body: ILogin ): Promise<AxiosResponse<IAccessTokenPair>> => {
+   login: async ( body: ILoginForm ): Promise<AxiosResponse<IAccessTokenPair>> => {
       return await axiosInstance.post<IAccessTokenPair>("/auth/login", body);
 
    },

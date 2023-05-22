@@ -11,7 +11,6 @@ export interface IUserBySearch extends IUser {
 
 export interface IUserFromConversation extends IUser {
    ConversationUser: {
-      conversationId: number,
-      userId: number
+      isNewMessageReceived: boolean
    };
 }

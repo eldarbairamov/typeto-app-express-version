@@ -1,10 +1,10 @@
 import "dotenv/config";
 import cors from "cors";
 import express, { Application } from "express";
-import { appRouter } from "./router/app.router";
 import { config } from "./config/config";
 import { sequelize } from "./db/db-config";
-import { errorMiddleware } from "./middleware/error.middleware";
+import { appRouter } from "./router";
+import { errorMiddleware } from "./middleware";
 
 const app: Application = express();
 

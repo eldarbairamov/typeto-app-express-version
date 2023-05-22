@@ -1,4 +1,4 @@
-import { Avatar, AvatarBadge, AvatarGroup, Box, Divider, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, AvatarGroup, Badge, Divider, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { IUserFromConversation } from "../../interface/user.interface.ts";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { conversationActions } from "../../store/slice/conversation.slice.ts";
@@ -74,11 +74,16 @@ export function Conversation( { user, conversation }: IConversationProps ) {
 
                 </HStack>
 
-                <Box h={ "100%" }>
+                <VStack h={ "100%" } justify={ "space-between" }>
                    <Text>
                       { conversationTime }
                    </Text>
-                </Box>
+
+                   { conversation.isNewMessagesExist &&
+                       <Badge bg={ "cyan.100" } fontSize={ 13 } w={ 1 } h={ 4 } px={ 2 } rounded={ 20 }>
+                       </Badge>
+                   }
+                </VStack>
 
              </HStack>
 

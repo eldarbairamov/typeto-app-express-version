@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { conversationController } from "../controller/conversation.controller";
-import { authMiddleware } from "../middleware/auth.middleware";
+import { authMiddleware } from "../middleware";
+import { conversationController } from "../controller";
 
 export const conversationRouter = Router();
 
