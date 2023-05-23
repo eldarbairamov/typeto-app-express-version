@@ -96,8 +96,6 @@ listenerMiddleware.startListening({
 
       socket.emit("conversation", action.payload.id);
 
-      socket.off("get_message");
-
       socket.on("get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
          console.log("socket: get_message");
 
@@ -136,31 +134,14 @@ listenerMiddleware.startListening({
 
       console.log("get conversations");
 
-      const { conversationReducer, authReducer } = api.getState() as RootState;
+      const { conversationReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
-      let activeConversation: IConversation;
 
       if (conversationReducer.conversations.length) {
          dispatch(conversationActions.setActiveConversation(conversationReducer.conversations[0]));
-         activeConversation = conversationReducer.conversations[0];
       }
-
-      socket.on("get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
-         console.log("socket: get_message");
-         const senderId = message.senderId;
-         const currentUserId = authReducer.currentUserId;
-         const conversationId = message.conversationId;
-
-         if (senderId === currentUserId && conversationId !== activeConversation.id) {
-            dispatch(conversationActions.updateConversations(conversationForSender));
-         }
-
-         if (senderId !== currentUserId && conversationId !== activeConversation.id) {
-            dispatch(conversationActions.updateConversations(conversationForReceiver));
-         }
-      });
 
       socket.on("get_conversation", ( conversation: IConversation ) => {
          console.log("socket: get_conversation");
