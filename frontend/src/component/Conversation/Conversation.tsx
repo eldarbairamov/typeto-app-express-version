@@ -45,7 +45,7 @@ export function Conversation( { user, conversation }: IConversationProps ) {
                 <HStack spacing={ 5 }>
 
                    { conversation.isGroupConversation &&
-                       <AvatarGroup size="md" max={ 2 }>
+                       <AvatarGroup size={ "md" } max={ 2 }>
                           { conversation.users.map(user =>
                               <Avatar key={ v4() } name={ user.username } size={ "lg" }>
                                  { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 4 } bg={ "green.500" }/> }

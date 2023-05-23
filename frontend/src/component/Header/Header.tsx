@@ -1,14 +1,22 @@
-import { Highlight, HStack, Modal, ModalContent, ModalOverlay, Text, useDisclosure } from "@chakra-ui/react";
+import { Highlight, HStack, Text, useDisclosure } from "@chakra-ui/react";
 import { BiSearch, IoMdLogOut, FiUsers } from "react-icons/all";
 import { useState } from "react";
 import { FindUser } from "../Find-User/Find-User.tsx";
 import { ContactList } from "../Contact-List/Contact-List.tsx";
 import { ButtonIcon } from "../UI/Button-Icon/Button-Icon.tsx";
 import { MAIN_COLOR } from "../../constant/color.constant.ts";
+import { AppModal } from "../UI/App-Modal/App-Modal.tsx";
+import { useAppDispatch } from "../../hook/redux.hook.ts";
+import { authAsyncActions } from "../../store/slice/auth.slice.ts";
+import { UnauthorizedRouter } from "../../router/Unuathorized.router.tsx";
+import { UnauthorizedRoutesEnum } from "../../router/unauthorized.type.ts";
+import { socketActions } from "../../store/slice/socket.slice.ts";
 
 export function Header() {
    const { isOpen, onOpen, onClose } = useDisclosure();
    const [ content, setContent ] = useState<JSX.Element>();
+
+   const dispatch = useAppDispatch();
 
    const openFindUsers = () => {
       setContent(<FindUser onModalClose={ onClose }/>);
@@ -18,6 +26,14 @@ export function Header() {
    const openFriendList = () => {
       setContent(<ContactList onModalClose={ onClose }/>);
       onOpen();
+   };
+
+   const logout = async () => {
+      const result = await dispatch(authAsyncActions.logout());
+      if (authAsyncActions.logout.fulfilled.match(result)) {
+         dispatch(socketActions.disconnect());
+         UnauthorizedRouter.navigate(UnauthorizedRoutesEnum.LoginPage);
+      }
    };
 
    return (
@@ -41,26 +57,11 @@ export function Header() {
 
              <ButtonIcon size={ 8 } as={ FiUsers } rounded={ 5 } color={ MAIN_COLOR } p={ 5 } fn={ openFriendList }/>
              <ButtonIcon size={ 8 } as={ BiSearch } rounded={ 5 } color={ MAIN_COLOR } p={ 5 } fn={ openFindUsers }/>
-             <ButtonIcon size={ 8 } as={ IoMdLogOut } rounded={ 5 } color={ MAIN_COLOR } p={ 5 }/>
+             <ButtonIcon size={ 8 } as={ IoMdLogOut } rounded={ 5 } color={ MAIN_COLOR } p={ 5 } fn={ logout }/>
 
           </HStack>
 
-          <Modal isOpen={ isOpen }
-                 onClose={ onClose }
-                 isCentered={ true }
-                 motionPreset={ "slideInBottom" }>
-
-             <ModalOverlay bg={ "blackAlpha.200" }
-                           backdropFilter={ "auto" }
-                           backdropBlur={ "5px" }/>
-
-             <ModalContent w={ 400 }
-                           p={ 2 }
-                           rounded={ 20 }>
-                { content }
-             </ModalContent>
-
-          </Modal>
+          <AppModal isOpen={ isOpen } onClose={ onClose } content={ content }/>
 
        </HStack>
    );

@@ -15,29 +15,40 @@ let socket: Socket;
 export const listenerMiddleware = createListenerMiddleware();
 
 listenerMiddleware.startListening({
-   actionCreator: authAsyncActions.login.fulfilled,
-   effect: ( action, api ) => {
+   actionCreator: authAsyncActions.logout.fulfilled,
+   effect: () => {
+      socket.disconnect();
+   }
+});
 
-      console.log("login");
+listenerMiddleware.startListening({
+   actionCreator: authAsyncActions.login.fulfilled,
+   effect: ( _a, api ) => {
 
       const dispatch = api.dispatch;
 
-      socket = io("ws://localhost:3200");
+      const { authReducer } = api.getState() as RootState;
 
-      socket.connect();
-
-      socket.emit("add_user", action.payload.userId);
+      socket.emit("add_user", authReducer.currentUserId);
 
       socket.on("who_is_online", ( userIds: number[] ) => {
+         console.log("socket: who_is_online");
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
       socket.on("refresh_online_users", ( userIds: number[] ) => {
+         console.log("socket: refresh_online_users");
          dispatch(userActions.setOnlineContacts(userIds));
+      });
+
+      socket.on("get_conversation", ( conversation: IConversation ) => {
+         console.log("socket: get_conversation");
+         dispatch(conversationActions.addConversation(conversation));
       });
 
    }
 });
+
 
 listenerMiddleware.startListening({
    actionCreator: socketActions.connect,
@@ -55,17 +66,18 @@ listenerMiddleware.startListening({
 
       if (await api.condition(( _, currentState ) => {
          const state = currentState as RootState;
-         return state.authReducer.currentUserId > 0;
+         return Boolean(state.authReducer.currentUserId);
       })) {
          socket.emit("add_user", authReducer.currentUserId);
       }
 
-
       socket.on("who_is_online", ( userIds: number[] ) => {
+         console.log("socket: who_is_online");
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
       socket.on("refresh_online_users", ( userIds: number[] ) => {
+         console.log("socket: refresh_online_users");
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
@@ -78,20 +90,44 @@ listenerMiddleware.startListening({
 
       console.log("set active conversation");
 
-      const { conversationReducer } = api.getState() as RootState;
+      const { authReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
       socket.emit("conversation", action.payload.id);
 
-      socket.on("get_message", ( message: IMessage, _, conversationForReceiver: IConversation ) => {
-         if (message.conversationId === conversationReducer.activeConversation.id) {
+      socket.off("get_message");
+
+      socket.on("get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
+         console.log("socket: get_message");
+
+         const senderId = message.senderId;
+         const currentUserId = authReducer.currentUserId;
+         const conversationId = message.conversationId;
+
+         if (senderId === currentUserId && conversationId === action.payload.id) {
+            conversationForSender.isNewMessagesExist = false;
             dispatch(messageActions.addMessage(message));
+            dispatch(conversationActions.updateConversations(conversationForSender));
+         }
+
+         if (senderId !== currentUserId && conversationId === action.payload.id) {
+            conversationForReceiver.isNewMessagesExist = false;
+            dispatch(messageActions.addMessage(message));
+            dispatch(conversationActions.updateConversations(conversationForReceiver));
+         }
+
+
+         if (senderId === currentUserId && conversationId !== action.payload.id) {
+            dispatch(conversationActions.updateConversations(conversationForSender));
+         }
+
+         if (senderId !== currentUserId && conversationId !== action.payload.id) {
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
       });
 
-   }
+   },
 });
 
 listenerMiddleware.startListening({
@@ -100,51 +136,59 @@ listenerMiddleware.startListening({
 
       console.log("get conversations");
 
-      const { conversationReducer } = api.getState() as RootState;
+      const { conversationReducer, authReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
+      let activeConversation: IConversation;
+
       if (conversationReducer.conversations.length) {
          dispatch(conversationActions.setActiveConversation(conversationReducer.conversations[0]));
+         activeConversation = conversationReducer.conversations[0];
       }
 
-      socket.on("get_message", ( message: IMessage, _, conversationForReceiver: IConversation ) => {
-         if (message.conversationId !== conversationReducer.activeConversation.id) {
+      socket.on("get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
+         console.log("socket: get_message");
+         const senderId = message.senderId;
+         const currentUserId = authReducer.currentUserId;
+         const conversationId = message.conversationId;
+
+         if (senderId === currentUserId && conversationId !== activeConversation.id) {
+            dispatch(conversationActions.updateConversations(conversationForSender));
+         }
+
+         if (senderId !== currentUserId && conversationId !== activeConversation.id) {
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
       });
 
       socket.on("get_conversation", ( conversation: IConversation ) => {
+         console.log("socket: get_conversation");
          dispatch(conversationActions.addConversation(conversation));
       });
 
       if (await api.condition(() => Boolean(conversationReducer.conversations.length))) {
 
          socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-            console.log(conversationReducer.conversations);
-
-            const updated = conversationReducer.conversations.map(c => {
-               if (c.id === conversation.id) return conversation;
-               return c;
-            });
-
+            console.log("socket: get_leave_result");
             dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
-            dispatch(conversationActions.setConversations(updated));
+            dispatch(conversationActions.updateConversations(conversation));
          });
 
-         socket.on("get_delete_result", ( conversations: IConversation[], whoLeave: string ) => {
+         socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
+            console.log("socket: get_delete_result");
             dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
-            dispatch(conversationActions.setConversations(conversations));
+            dispatch(conversationActions.deleteConversation(conversationId));
          });
 
          socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-            const updated = conversationReducer.conversations.filter(c => c.id !== conversationId);
-
+            console.log("socket: get_delete_group_result");
             dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
-            dispatch(conversationActions.setConversations(updated));
+            dispatch(conversationActions.deleteConversation(conversationId));
          });
 
       }
+
    }
 });
 
@@ -163,25 +207,21 @@ listenerMiddleware.startListening({
       }
 
       socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-         const updated = conversationReducer.conversations.map(c => {
-            if (c.id === conversation.id) return conversation;
-            return c;
-         });
-
+         console.log("socket: get_leave_result");
          dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
-         dispatch(conversationActions.setConversations(updated));
+         dispatch(conversationActions.updateConversations(conversation));
       });
 
-      socket.on("get_delete_result", ( conversations: IConversation[], whoLeave: string ) => {
+      socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
+         console.log("socket: get_delete_result");
          dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
-         dispatch(conversationActions.setConversations(conversations));
+         dispatch(conversationActions.deleteConversation(conversationId));
       });
 
       socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-         const updated = conversationReducer.conversations.filter(c => c.id !== conversationId);
-
+         console.log("socket: get_delete_group_result");
          dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
-         dispatch(conversationActions.setConversations(updated));
+         dispatch(conversationActions.deleteConversation(conversationId));
       });
 
    }
@@ -193,7 +233,7 @@ listenerMiddleware.startListening({
 
       console.log("create conversation");
 
-      const { authReducer, conversationReducer } = api.getState() as RootState;
+      const { authReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
@@ -205,25 +245,21 @@ listenerMiddleware.startListening({
       dispatch(conversationActions.setActiveConversation(action.payload));
 
       socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-         const updated = conversationReducer.conversations.map(c => {
-            if (c.id === conversation.id) return conversation;
-            return c;
-         });
-
+         console.log("socket: get_leave_result");
          dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
-         dispatch(conversationActions.setConversations(updated));
+         dispatch(conversationActions.updateConversations(conversation));
       });
 
-      socket.on("get_delete_result", ( conversations: IConversation[], whoLeave: string ) => {
+      socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
+         console.log("socket: get_delete_result");
          dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
-         dispatch(conversationActions.setConversations(conversations));
+         dispatch(conversationActions.deleteConversation(conversationId));
       });
 
       socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-         const updated = conversationReducer.conversations.filter(c => c.id !== conversationId);
-
+         console.log("socket: get_delete_group_result");
          dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
-         dispatch(conversationActions.setConversations(updated));
+         dispatch(conversationActions.deleteConversation(conversationId));
       });
 
    }
@@ -246,9 +282,10 @@ listenerMiddleware.startListening({
 listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.deleteGroupConversation.fulfilled,
    effect: ( action, api ) => {
-      const { authReducer } = api.getState() as RootState;
 
       console.log("delete group conversation");
+
+      const { authReducer } = api.getState() as RootState;
 
       const conversationWith = action.meta.arg.conversation.users
           .map(( u: IUserFromConversation ) => {
@@ -307,19 +344,11 @@ listenerMiddleware.startListening({
 
 listenerMiddleware.startListening({
    actionCreator: messageAsyncActions.sendMessage.fulfilled,
-   effect: ( action, api ) => {
+   effect: ( action ) => {
 
       console.log("send message");
 
-      const dispatch = api.dispatch;
-
-      socket.off("get_message");
       socket.emit("send_message", action.payload);
-
-      socket.on("get_message", ( message: IMessage, conversationForSender: IConversation ) => {
-         dispatch(messageActions.addMessage(message));
-         dispatch(conversationActions.updateConversations(conversationForSender));
-      });
    }
 });
 

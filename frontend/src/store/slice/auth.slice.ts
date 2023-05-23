@@ -9,7 +9,6 @@ interface IInitialState {
    currentUserId: number;
    currentUsername: string;
    isLogin: boolean;
-   isOnline: boolean;
    isLoading: boolean;
    errorMessage: string | undefined;
 }
@@ -18,19 +17,19 @@ const initialState: IInitialState = {
    currentUserId: Number(storageService.getUserId()),
    currentUsername: String(storageService.getUsername()),
    isLogin: !!storageService.getAccessToken(),
-   isOnline: false,
    isLoading: false,
-   errorMessage: undefined
+   errorMessage: undefined,
 };
 
 const login = createAsyncThunk<IAccessTokenPair, { body: ILoginForm }, { rejectValue: string }>(
-    'auth/login',
+    "auth/login",
     async ( { body }, { rejectWithValue } ) => {
        try {
           const { data } = await authService.login(body);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -38,12 +37,26 @@ const login = createAsyncThunk<IAccessTokenPair, { body: ILoginForm }, { rejectV
 );
 
 const registration = createAsyncThunk<void, { data: IRegistrationForm }, { rejectValue: string }>(
-    'auth/registration',
+    "auth/registration",
     async ( { data }, { rejectWithValue } ) => {
        try {
           await authService.registration(data);
 
-       } catch (e) {
+       }
+       catch (e) {
+          const axiosError = e as AxiosError;
+          return rejectWithValue(axiosError.message);
+       }
+    }
+);
+
+const logout = createAsyncThunk<void, void, { rejectValue: string }>(
+    "auth/logout",
+    async ( _, { rejectWithValue } ) => {
+       try {
+          await authService.logout();
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -58,10 +71,6 @@ const authSlice = createSlice({
 
       setIsLogin: ( state, { payload }: PayloadAction<boolean> ) => {
          state.isLogin = payload;
-      },
-
-      setIsOnline: ( state, { payload }: PayloadAction<boolean> ) => {
-         state.isOnline = payload;
       },
    },
 
@@ -98,6 +107,23 @@ const authSlice = createSlice({
        })
 
        .addCase(registration.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
+       .addCase(logout.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(logout.fulfilled, ( state ) => {
+          state.isLogin = false;
+          state.isLoading = false;
+          storageService.deleteAuthData();
+
+       })
+
+       .addCase(logout.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
           state.errorMessage = payload;
        })
 
@@ -106,4 +132,4 @@ const authSlice = createSlice({
 
 
 export const authReducer = authSlice.reducer;
-export const authAsyncActions = { login, registration };
+export const authAsyncActions = { login, registration, logout };

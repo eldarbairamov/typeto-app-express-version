@@ -15,9 +15,11 @@ export const storageService = {
    getUsername: () => localStorage.getItem(USERNAME),
    getRefreshToken: () => localStorage.getItem(REFRESH_TOKEN),
 
-   deleteTokens: () => {
+   deleteAuthData: () => {
       localStorage.removeItem(ACCESS_TOKEN);
       localStorage.removeItem(REFRESH_TOKEN);
+      localStorage.removeItem(USER_ID);
+      localStorage.removeItem(USERNAME);
    }
 
 };

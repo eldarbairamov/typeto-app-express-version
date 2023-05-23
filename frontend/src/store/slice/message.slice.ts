@@ -16,13 +16,14 @@ const initialState: IInitialState = {
 };
 
 const getMessages = createAsyncThunk<IMessage[], { conversationId: number }, { rejectValue: string }>(
-    'message/getMessages',
+    "message/getMessages",
     async ( { conversationId }, { rejectWithValue } ) => {
        try {
           const { data } = await messageService.getMessages(conversationId);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -30,13 +31,14 @@ const getMessages = createAsyncThunk<IMessage[], { conversationId: number }, { r
     });
 
 const sendMessage = createAsyncThunk<IMessage, { content: string, conversationId: number }, { rejectValue: string }>(
-    'message/sendMessage',
+    "message/sendMessage",
     async ( { content, conversationId }, { rejectWithValue } ) => {
        try {
           const { data } = await messageService.sendMessage(conversationId, content);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -45,11 +47,16 @@ const sendMessage = createAsyncThunk<IMessage, { content: string, conversationId
 
 
 const messageSlice = createSlice({
-   name: 'message',
+   name: "message",
    initialState,
    reducers: {
+
       addMessage: ( state, { payload }: PayloadAction<IMessage> ) => {
          state.messages.push(payload);
+      },
+
+      resetMessages: ( state ) => {
+         state.messages = [];
       }
    },
    extraReducers: ( builder ) => builder

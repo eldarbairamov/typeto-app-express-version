@@ -143,12 +143,22 @@ const conversationSlice = createSlice({
             }
             return c;
          });
+
+         if (state.activeConversation.id === payload.id) {
+            state.activeConversation = payload;
+         }
+
          state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
       },
 
-      setActionMessage: ( state, { payload }: PayloadAction<string> ) => {
+      setActionMessage: ( state, { payload }: PayloadAction<string | undefined> ) => {
          state.actionMessage = payload;
       },
+
+      deleteConversation: ( state, { payload }: PayloadAction<number> ) => {
+         state.conversations = state.conversations.filter(c => c.id !== payload);
+         state.activeConversation = state.conversations[0]
+      }
 
    },
 

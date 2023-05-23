@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 import { config } from "./src/config/config";
-import { createConversationService, deleteConversationService, leaveGroupConversationService, sendMessageService } from "./src/service";
+import { createConversationService, leaveGroupConversationService, sendMessageService } from "./src/service";
 import { IMessage, ISocketUser } from "./src/interface";
 import { Conversation, User } from "./src/model";
 
@@ -9,18 +9,12 @@ const io = new Server(3200, { cors: { origin: config.CLIENT_URL } });
 let users: ISocketUser[] = [];
 
 const addUser = ( userId: number, socketId: string ) => {
-   if (!users.some(user => user.userId === userId)) {
-      users.push({ userId, socketId });
-   }
+   if (!users.some(user => user.userId === userId)) users.push({ userId, socketId });
 };
 
-const removeUser = ( socketId: string ) => {
-   users = users.filter(( user ) => user.socketId !== socketId);
-};
+const removeUser = ( socketId: string ) => users = users.filter(( user ) => user.socketId !== socketId);
 
-const getUser = ( userId: number ) => {
-   return users.find(( user ) => user.userId === userId)?.socketId;
-};
+const getUser = ( userId: number ) => users.find(( user ) => user.userId === userId)?.socketId;
 
 const getUsers = ( userIds: number[] ) => {
    return users
@@ -32,6 +26,7 @@ const getUsers = ( userIds: number[] ) => {
 };
 
 export const startSocket = () => {
+
    io.on("connection", ( socket ) => {
       console.log("user " + socket.id + " is connected");
 
@@ -59,9 +54,8 @@ export const startSocket = () => {
       });
 
       socket.on("delete_conversation", async ( conversationId: number, conversationWith: number, whoDeleted: { id: number, username: string } ) => {
-         const conversations = await deleteConversationService(conversationWith);
          const to = String(getUser(conversationWith));
-         io.to(to).emit("get_delete_result", conversations, whoDeleted.username);
+         io.to(to).emit("get_delete_result", conversationId, whoDeleted.username);
       });
 
       socket.on("leave_group_conversation", async ( conversationId: number, conversationWith: number[], whoLeft: string ) => {
@@ -76,7 +70,7 @@ export const startSocket = () => {
       });
 
       socket.on("send_message", async ( message: IMessage ) => {
-         const [ conversationForSender, conversationForReceiver, conversationWith ] = await Promise.all([
+         const [ conversationForSender, conversationForReceiver, users ] = await Promise.all([
             sendMessageService(message.conversationId, message.senderId, "sender"),
             sendMessageService(message.conversationId, message.senderId, "receiver"),
             Conversation
@@ -89,7 +83,7 @@ export const startSocket = () => {
                 }).then(res => res?.users.map(u => u.id))
          ]);
 
-         const to = getUsers(conversationWith!) as string[];
+         const to = getUsers(users!) as string[];
 
          io.to(to).emit("get_message", message, conversationForSender, conversationForReceiver);
       });
