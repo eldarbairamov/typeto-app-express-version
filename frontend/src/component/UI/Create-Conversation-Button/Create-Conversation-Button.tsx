@@ -1,7 +1,7 @@
 import { Button, Divider, Text } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { AiOutlineMessage, FiUsers } from "react-icons/all";
-import { MAIN_COLOR, MAIN_COLOR_HOVER3 } from "../../../constant/color.constant.ts";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../../constant/color.constant.ts";
 
 interface IGroupConversationButtonProps {
    isGroup?: boolean;
@@ -13,27 +13,29 @@ interface IGroupConversationButtonProps {
 export function CreateConversationButton( { createGroupConversation, openFriendList, isGroup, isNoBg }: IGroupConversationButtonProps ) {
    return (
        <Button p={ 8 }
-               variant={ isNoBg ? "ghost" : "solid" }
-               rounded={ 20 }
+               variant={ isNoBg ? "ghost" : "ghost" }
+               bg={ isNoBg ? "none" : BUTTON_COLOR }
+               _hover={ {
+                  bg: isNoBg ? "transparent" : BUTTON_HOVER_COLOR
+               } }
+               rounded={ 10 }
                gap={ 5 }
-               bg={ isNoBg ? "transparent" : "#eff0f3" }
-               _hover={ { bg: isNoBg ? "transparent" : MAIN_COLOR_HOVER3 } }
                onClick={ isGroup ? createGroupConversation : openFriendList }>
 
-          <Text color={ "gray.600" }
+          <Text color={ isNoBg ? "gray.600" : "white" }
                 fontSize={ 17 }>
              { isGroup ? "створити групову бесіду?" : "створити бесіду?" }
           </Text>
 
           <Divider orientation={ "horizontal" }
-                   borderColor={ "gray.400" }
+                   borderColor={ isNoBg ? "gray.600" : "white" }
                    borderWidth={ 1 }
                    h={ 5 }/>
 
           <Icon as={ isGroup ? FiUsers : AiOutlineMessage }
                 boxSize={ 30 }
                 cursor={ "pointer" }
-                color={ MAIN_COLOR }/>
+                color={ isNoBg ? MAIN_COLOR : "white" }/>
 
        </Button>
    );

@@ -1,8 +1,9 @@
+import { useEffect, useRef } from "react";
+
 import { Avatar, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { IMessage } from "../../interface/message.interface.ts";
 import moment from "moment/moment";
-import { useEffect, useRef } from "react";
-import { MAIN_COLOR_MESSAGE } from "../../constant/color.constant.ts";
+import { MESSAGE_OUTCOMING_COLOR_ } from "../../constant/color.constant.ts";
 
 export function OutcomingMessage( { message }: { message: IMessage } ) {
    const conversationTime = moment(+message.lastModified).format("HH:mm");
@@ -23,13 +24,13 @@ export function OutcomingMessage( { message }: { message: IMessage } ) {
                   marginBottom={ 10 }>
 
              <VStack maxW={ [ null, null, null, 300, 600 ] }
-                     bg={ MAIN_COLOR_MESSAGE }
+                     bg={ MESSAGE_OUTCOMING_COLOR_ }
                      alignItems={ "flex-end" }
-                     rounded={ 20 }
+                     borderRadius={ "20px 0 20px 20px" }
                      p={ 5 }>
-                <Heading size={ "sm" }> { message.sender.username } </Heading>
+                <Heading size={ "sm" } color={ "white" }> { message.sender.username } </Heading>
 
-                <Text>
+                <Text color={ "white" }>
                    { message.content }
                 </Text>
              </VStack>
@@ -38,7 +39,7 @@ export function OutcomingMessage( { message }: { message: IMessage } ) {
                 <Avatar name={ message.sender.username }
                         size={ "md" }/>
 
-                <Text color={ "gray.500" }> { conversationTime } </Text>
+                <Text> { conversationTime } </Text>
              </VStack>
 
 

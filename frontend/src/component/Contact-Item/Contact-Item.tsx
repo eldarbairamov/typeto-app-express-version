@@ -27,7 +27,7 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
 
    const addContactToGroup = () => {
       dispatch(conversationActions.addContactToGroup(user));
-      dispatch(userActions.groupModeMove({ id: user.id, action: 'add' }));
+      dispatch(userActions.groupModeMove({ id: user.id, action: "add" }));
    };
 
    return (
@@ -39,7 +39,7 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
 
              <Avatar name={ user.username }
                      size={ "md" }>
-                { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 5 } bg={ 'green.500' }/> }
+                { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 5 } bg={ "green.500" }/> }
              </Avatar>
 
              <Heading size={ "md" }>
@@ -67,9 +67,9 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
                          onClick={ () => dispatch(userAsyncActions.deleteContact({ contactId: user.id })) }
                          alignItems={ "center" }>
 
-                     <Icon as={ AiOutlineDelete }
-                           boxSize={ "25px" }
-                           color={ "gray.600" }/>
+                   <Icon as={ AiOutlineDelete }
+                         boxSize={ "25px" }
+                         color={ "gray.600" }/>
 
                  </Button>
              }

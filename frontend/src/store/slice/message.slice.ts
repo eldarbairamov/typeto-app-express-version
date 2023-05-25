@@ -77,6 +77,10 @@ const messageSlice = createSlice({
           state.isLoading = true;
        })
 
+       .addCase(sendMessage.fulfilled, ( state, { payload } ) => {
+          state.messages.push(payload);
+       })
+
        .addCase(sendMessage.rejected, ( state, { payload } ) => {
           state.errorMessage = payload;
           state.isLoading = false;

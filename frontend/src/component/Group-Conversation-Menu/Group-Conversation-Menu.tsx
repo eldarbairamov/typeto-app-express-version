@@ -10,11 +10,12 @@ import { ContactItem } from "../Contact-Item/Contact-Item.tsx";
 import { conversationActions, conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { IUser } from "../../interface/user.interface.ts";
 import { TypedOnChange } from "../../interface/common.interface.ts";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant/color.constant.ts";
 
 export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const [ values, setValues ] = useState<{ searchValue: string, groupName: string }>({
-      searchValue: '',
-      groupName: ''
+      searchValue: "",
+      groupName: ""
    });
 
    const handleChange = ( e: TypedOnChange, fieldName: string ) => {
@@ -40,7 +41,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
 
    const deleteContactFromGroup = ( member: IUser ) => {
       dispatch(conversationActions.deleteContactFromGroup({ id: member.id }));
-      dispatch(userActions.groupModeMove({ id: member.id, action: 'delete', user: member }));
+      dispatch(userActions.groupModeMove({ id: member.id, action: "delete", user: member }));
    };
 
    const createGroupConversation = async () => {
@@ -57,21 +58,21 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
 
           <VStack spacing={ 5 }
                   p={ 5 }
-                  w={ '100%' }>
+                  w={ "100%" }>
 
              { Boolean(!groupMembers.length)
                  ?
-                 <Heading size={ 'md' }> Оберіть учасників </Heading>
+                 <Heading size={ "md" }> Оберіть учасників </Heading>
                  :
 
                  <VStack spacing={ 7 }>
-                    <Heading size={ 'md' }> Учасники </Heading>
+                    <Heading size={ "md" }> Учасники </Heading>
 
                     <HStack>
                        { groupMembers && groupMembers.map(member =>
-                           <Avatar cursor={ 'pointer' }
+                           <Avatar cursor={ "pointer" }
                                    key={ v4() }
-                                   size={ 'sm' }
+                                   size={ "sm" }
                                    name={ member.username }
                                    onClick={ () => deleteContactFromGroup(member) }/>
                        ) }
@@ -89,7 +90,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                 <Input border={ "none" }
                        focusBorderColor={ "white" }
                        value={ values.searchValue }
-                       onChange={ ( e ) => handleChange(e, 'searchValue') }
+                       onChange={ ( e ) => handleChange(e, "searchValue") }
                        placeholder={ "знайти контакт" }/>
              </InputGroup>
           </Box>
@@ -99,7 +100,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
           { contacts
               ?
               <VStack w={ "100%" }
-                      h={ '100%' }
+                      h={ "100%" }
                       paddingTop={ 5 }
                       spacing={ 5 }
                       overflow={ "scroll" }>
@@ -123,27 +124,28 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
               </Center>
           }
 
-          <VStack w={ '100%' }
+          <VStack w={ "100%" }
                   h={ 200 }>
 
-             <Input w={ '70%' }
-                    variant={ 'flushed' }
+             <Input w={ "70%" }
+                    variant={ "flushed" }
                     h={ 12 }
                     fontSize={ 16 }
                     fontWeight={ 700 }
                     value={ values.groupName }
-                    onChange={ ( e ) => handleChange(e, 'groupName') }
-                    textAlign={ 'center' }
+                    onChange={ ( e ) => handleChange(e, "groupName") }
+                    textAlign={ "center" }
                     focusBorderColor={ "white" }
-                    placeholder={ 'введіть назву бесіди' }/>
+                    placeholder={ "введіть назву бесіди" }/>
 
-             <Button size={ 'lg' }
-                     bg={ 'telegram.200' }
+             <Button size={ "lg" }
                      rounded={ 10 }
+                     bg={ BUTTON_COLOR }
+                     color={'white'}
+                     _hover={ { bg: BUTTON_HOVER_COLOR } }
                      onClick={ createGroupConversation }
-                     _hover={ { bg: 'telegram.300' } }
-                     isDisabled={ !groupMembers.length || values.groupName == '' }
-                     w={ '80%' }>
+                     isDisabled={ !groupMembers.length || values.groupName == "" }
+                     w={ "80%" }>
                 Створити
              </Button>
 

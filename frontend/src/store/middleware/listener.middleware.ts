@@ -96,6 +96,8 @@ listenerMiddleware.startListening({
 
       socket.emit("conversation", action.payload.id);
 
+      socket.off("get_message");
+
       socket.on("get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
          console.log("socket: get_message");
 
@@ -105,13 +107,11 @@ listenerMiddleware.startListening({
 
          if (senderId === currentUserId && conversationId === action.payload.id) {
             conversationForSender.isNewMessagesExist = false;
-            dispatch(messageActions.addMessage(message));
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
          if (senderId !== currentUserId && conversationId === action.payload.id) {
             conversationForReceiver.isNewMessagesExist = false;
-            dispatch(messageActions.addMessage(message));
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
@@ -137,7 +137,6 @@ listenerMiddleware.startListening({
       const { conversationReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
-
 
       if (conversationReducer.conversations.length) {
          dispatch(conversationActions.setActiveConversation(conversationReducer.conversations[0]));
@@ -253,6 +252,10 @@ listenerMiddleware.startListening({
       console.log("delete conversation");
 
       const { authReducer } = api.getState() as RootState;
+
+      const dispatch = api.dispatch;
+
+      dispatch(messageActions.resetMessages());
 
       const conversationWith = action.meta.arg.conversation.conversationWith[0].id;
       const conversationId = action.meta.arg.conversation.id;

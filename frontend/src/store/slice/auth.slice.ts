@@ -11,6 +11,7 @@ interface IInitialState {
    isLogin: boolean;
    isLoading: boolean;
    errorMessage: string | undefined;
+   avatar: string | undefined;
 }
 
 const initialState: IInitialState = {
@@ -19,6 +20,7 @@ const initialState: IInitialState = {
    isLogin: !!storageService.getAccessToken(),
    isLoading: false,
    errorMessage: undefined,
+   avatar: undefined
 };
 
 const login = createAsyncThunk<IAccessTokenPair, { body: ILoginForm }, { rejectValue: string }>(
@@ -83,8 +85,10 @@ const authSlice = createSlice({
        .addCase(login.fulfilled, ( state, { payload } ) => {
           state.isLoading = false;
           state.isLogin = true;
+          state.currentUserId = payload.userId;
+          state.currentUsername = payload.username;
 
-          storageService.setTokens({
+          storageService.setAuthInfo({
              username: payload.username,
              accessToken: payload.accessToken,
              refreshToken: payload.refreshToken,

@@ -32,7 +32,7 @@ export function MiniSideBar() {
                h={ "100%" }>
 
           <Center h={ "60px" }>
-             <ButtonIcon size={ 5 } as={ Search2Icon } color={ "telegram.400" }/>
+             <ButtonIcon size={ 5 } as={ Search2Icon } color={ MAIN_COLOR }/>
           </Center>
 
           <Box p={ "20px 20px 0 20px" }

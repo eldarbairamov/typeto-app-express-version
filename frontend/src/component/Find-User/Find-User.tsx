@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
 import { useEffect } from "react";
 import { IUserBySearch } from "../../interface/user.interface.ts";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant/color.constant.ts";
 
 export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
    const { userBySearch } = useAppSelector(state => state.userReducer);
@@ -38,7 +39,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
                        placeholder={ "введіть e-mail користувача" }/>
 
                 <InputRightElement w={ 130 } justifyContent={ "flex-end" }>
-                   <Button onClick={ findUser } bg={ "#eff0f3" } _hover={ { bg: "telegram.100" } }>
+                   <Button onClick={ findUser } bg={ BUTTON_COLOR } color={ "white" } _hover={ { bg: BUTTON_HOVER_COLOR } }>
                       Знайти
                    </Button>
                 </InputRightElement>

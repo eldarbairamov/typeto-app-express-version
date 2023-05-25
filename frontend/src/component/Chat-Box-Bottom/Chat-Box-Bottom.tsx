@@ -1,10 +1,10 @@
-import { Box, Button, HStack, Textarea } from "@chakra-ui/react";
-import { Icon } from "@chakra-ui/icons";
-import { SiTelegram } from "react-icons/all";
+import { Box, HStack, Textarea } from "@chakra-ui/react";
 import { useInputHandler } from "../../hook/use-input-handler.ts";
 import { messageAsyncActions } from "../../store/slice/message.slice.ts";
 import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { MAIN_COLOR, MAIN_COLOR_HOVER } from "../../constant/color.constant.ts";
+import { MAIN_COLOR } from "../../constant/color.constant.ts";
+import { MdOutlineTextsms } from "react-icons/all";
+import { ButtonIcon } from "../UI/Button-Icon/Button-Icon.tsx";
 
 export function ChatBoxBottom() {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
@@ -29,7 +29,7 @@ export function ChatBoxBottom() {
 
           <Box w={ "60%" }
                bg={ "#eff0f3" }
-               rounded={ 20 }
+               rounded={ 15 }
                padding={ 3 }>
 
              <Textarea rows={ 1 }
@@ -41,21 +41,13 @@ export function ChatBoxBottom() {
                        onChange={ handleChange }
                        focusBorderColor={ "transparent" }
                        placeholder={ "Написати..." }/>
-
           </Box>
 
-          <Button bg={ "transparent" }
-                  height={ "50px" }
-                  color={ "white" }
-                  onClick={ sendMessage }
-                  _hover={ { bg: "transparent" } }>
+          <ButtonIcon size={ 12 }
+                      as={ MdOutlineTextsms }
+                      color={ MAIN_COLOR }
+                      fn={ value !== "" ? sendMessage : undefined }/>
 
-             <Icon as={ SiTelegram }
-                   _hover={ { color: MAIN_COLOR_HOVER } }
-                   boxSize={ "50px" }
-                   color={ MAIN_COLOR }/>
-
-          </Button>
        </HStack>
 
    );

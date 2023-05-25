@@ -19,6 +19,7 @@ export function AppModal( { onClose, isOpen, content }: IModalProps ) {
 
           <ModalContent w={ 400 }
                         p={ 2 }
+                        boxShadow={ "xl" }
                         rounded={ 20 }>
              { content }
           </ModalContent>

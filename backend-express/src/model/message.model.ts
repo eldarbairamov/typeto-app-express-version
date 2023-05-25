@@ -31,10 +31,13 @@ export class Message extends Model<MessageAttr, MessageCreationAttr> {
    @Column({ type: DataType.BIGINT, allowNull: true })
    lastModified: number;
 
+   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
+   isImage: boolean;
+
    @BelongsTo(() => User, "senderId")
    sender: User;
 
-   @BelongsTo(() => Conversation, { foreignKey: 'conversationId', onDelete: "CASCADE" })
+   @BelongsTo(() => Conversation, { foreignKey: "conversationId", onDelete: "CASCADE" })
    conversation: Conversation;
 
    @BeforeCreate

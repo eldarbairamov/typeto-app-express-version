@@ -3,7 +3,7 @@ import { ACCESS_TOKEN, REFRESH_TOKEN, USER_ID, USERNAME } from "../constant/stor
 
 export const storageService = {
 
-   setTokens: ( { refreshToken, accessToken, userId, username }: IAccessTokenPair ) => {
+   setAuthInfo: ( { refreshToken, accessToken, userId, username }: IAccessTokenPair ) => {
       localStorage.setItem(ACCESS_TOKEN, accessToken);
       localStorage.setItem(REFRESH_TOKEN, refreshToken);
       localStorage.setItem(USER_ID, String(userId));

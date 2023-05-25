@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
 import { conversationActions } from "../../store/slice/conversation.slice.ts";
 import { IConversation } from "../../interface/conversation.interface.ts";
 import { v4 } from "uuid";
-import { MAIN_COLOR_ACTIVE, MAIN_COLOR_HOVER2 } from "../../constant/color.constant.ts";
+import { CONVERSATION_ACTIVE_COLOR } from "../../constant/color.constant.ts";
 
 interface IConversationProps {
    conversation: IConversation;
@@ -28,13 +28,11 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
        <VStack width={ "100%" }>
 
           <Center p={ 4 }
-                  _hover={ { bg: conversation.id === activeConversation.id ? MAIN_COLOR_ACTIVE : MAIN_COLOR_HOVER2, transition: ".3s" } }
-                  bg={ conversation.id === activeConversation.id ? MAIN_COLOR_ACTIVE : undefined }
+                  bg={ conversation.id === activeConversation.id ? CONVERSATION_ACTIVE_COLOR : undefined }
                   w={ "100%" }
                   rounded={ 10 }
                   onClick={ selectConversation }
                   cursor={ "pointer" }>
-
 
              { conversation.isGroupConversation &&
                  <AvatarGroup size={ "xs" } max={ 2 }>

@@ -5,7 +5,7 @@ import { conversationActions } from "../../store/slice/conversation.slice.ts";
 import { IConversation } from "../../interface/conversation.interface.ts";
 import moment from "moment";
 import { v4 } from "uuid";
-import { MAIN_COLOR_ACTIVE, MAIN_COLOR_HOVER2 } from "../../constant/color.constant.ts";
+import { CONVERSATION_ACTIVE_COLOR } from "../../constant/color.constant.ts";
 
 interface IConversationProps {
    conversation: IConversation;
@@ -31,10 +31,11 @@ export function Conversation( { user, conversation }: IConversationProps ) {
        <VStack width={ "100%" }>
 
           <VStack width={ "100%" }
-                  _hover={ { bg: conversation.id === activeConversation.id ? MAIN_COLOR_ACTIVE : MAIN_COLOR_HOVER2, transition: ".3s" } }
-                  bg={ conversation.id === activeConversation.id ? MAIN_COLOR_ACTIVE : undefined }
+                  bg={ conversation.id === activeConversation.id ? CONVERSATION_ACTIVE_COLOR : undefined }
                   p={ 4 }
                   rounded={ 10 }
+                  justify={'center'}
+                  h={'80px'}
                   spacing={ 5 }
                   onClick={ selectConversation }
                   cursor={ "pointer" }>
@@ -64,9 +65,12 @@ export function Conversation( { user, conversation }: IConversationProps ) {
                            h={ "100%" }
                            justify={ "center" }>
 
-                      <Heading size={ "sm" }> { conversation.isGroupConversation ? conversation.conversationName : user?.username } </Heading>
+                      <Heading size={ "sm" }
+                               color={ conversation.id === activeConversation.id ? "white" : "default" }>
+                         { conversation.isGroupConversation ? conversation.conversationName : user?.username }
+                      </Heading>
 
-                      <Text color={ "gray.500" } noOfLines={ 1 }>
+                      <Text color={ conversation.id === activeConversation.id ? "gray.200" : "gray.500" } noOfLines={ 1 }>
                          { conversation.lastMessage?.content ? conversation.lastMessage.content : "" }
                       </Text>
 
@@ -75,7 +79,7 @@ export function Conversation( { user, conversation }: IConversationProps ) {
                 </HStack>
 
                 <VStack h={ "100%" } justify={ "space-between" }>
-                   <Text>
+                   <Text color={ conversation.id === activeConversation.id ? "white" : "default" }>
                       { conversationTime }
                    </Text>
 

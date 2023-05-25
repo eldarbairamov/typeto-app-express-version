@@ -3,6 +3,7 @@ import { Center, VStack } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
 
 export function MainLayout() {
+
    return (
        <Center w={ [ "800px", "100%", "100%", "100%", "100%" ] }>
           <VStack w={ "90%" }
@@ -13,4 +14,5 @@ export function MainLayout() {
           </VStack>
        </Center>
    );
+
 }
