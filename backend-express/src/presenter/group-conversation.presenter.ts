@@ -11,9 +11,7 @@ export const groupConversationPresenter = ( conversation: ConversationAttr, user
               .map(( user ) => {
                  const userWithAssociation = user as User & { ConversationUser: ConversationUserAttr };
 
-                 if (userWithAssociation.id === userId) {
-                    return userWithAssociation.ConversationUser.isNewMessagesExist;
-                 }
+                 if (userWithAssociation.id === userId) return userWithAssociation.ConversationUser.isNewMessagesExist;
 
                  return null;
               })

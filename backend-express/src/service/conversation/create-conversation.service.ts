@@ -48,7 +48,7 @@ export const createConversationService = async ( userIds: number[], conversation
          attributes: [ "id", "username", "email", "image" ],
          through: {
             attributes: [ "isNewMessagesExist" ]
-         }
+         },
       },
    })
        .then(res => {

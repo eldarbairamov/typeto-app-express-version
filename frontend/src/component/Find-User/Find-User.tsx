@@ -28,36 +28,55 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
    return (
        <VStack h={ 200 }>
+
           <Box p={ 2 }>
+
              <InputGroup w={ 350 }>
+
                 <InputLeftElement pointerEvents={ "none" }
                                   children={ <Search2Icon color={ "gray.500" }/> }/>
+
                 <Input border={ "none" }
                        focusBorderColor={ "white" }
                        value={ value }
                        onChange={ handleChange }
                        placeholder={ "введіть e-mail користувача" }/>
 
-                <InputRightElement w={ 130 } justifyContent={ "flex-end" }>
-                   <Button onClick={ findUser } bg={ BUTTON_COLOR } color={ "white" } _hover={ { bg: BUTTON_HOVER_COLOR } }>
+                <InputRightElement w={ 130 }
+                                   justifyContent={ "flex-end" }>
+
+                   <Button onClick={ findUser }
+                           bg={ BUTTON_COLOR }
+                           color={ "white" }
+                           _hover={ { bg: BUTTON_HOVER_COLOR } }>
                       Знайти
                    </Button>
+
                 </InputRightElement>
+
              </InputGroup>
+
           </Box>
+
           <Divider/>
 
           { Object.keys(userBySearch).length
               ?
-              <Center w={ "100%" } h={ "100%" }>
-                 <UserItem onModalClose={ onModalClose } user={ userBySearch }/>
+              <Center w={ "100%" }
+                      h={ "100%" }>
+
+                 <UserItem onModalClose={ onModalClose }
+                           user={ userBySearch }/>
+
               </Center>
               :
               <Center w={ "100%" }
                       h={ "100%" }>
+
                  <Icon as={ RiUserSearchLine }
                        boxSize={ "70px" }
                        color={ "gray.300" }/>
+
               </Center>
           }
 

@@ -1,6 +1,5 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
 import { ApiException } from "../../exception/api.exception";
-import { Op } from "sequelize";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 
 export const deleteConversationService = async ( conversationId: string, currentUserId: number ) => {
@@ -21,47 +20,33 @@ export const deleteConversationService = async ( conversationId: string, current
       })
    ]);
 
-   const conversationsIds = await ConversationUser.findAll({
-      where: {
-         userId: currentUserId
+   return await User.findByPk(currentUserId, {
+      include: {
+         model: Conversation,
+         as: "conversations",
+         through: {
+            attributes: []
+         },
+         include: [
+            {
+               model: User,
+               as: "users",
+            },
+            {
+               model: Message,
+               as: "messages"
+            }
+         ],
       }
    })
-       .then(res => res.map(item => item.conversationId));
-
-   return await Conversation.findAll({
-      where: {
-         id: {
-            [Op.in]: conversationsIds
-         }
-      },
-      include: [
-         {
-            model: User,
-            as: "users",
-            attributes: [ "id", "username", "email", "image" ],
-            through: {
-               attributes: [ "isNewMessagesExist" ]
-            }
-         },
-         {
-            model: User,
-            as: "admin",
-            attributes: [ "id", "username", "email", "image" ],
-         },
-         {
-            model: Message,
-            as: "messages",
-         }
-      ],
-      order: [
-         [ "lastModified", "DESC" ]
-      ]
-   })
        .then(res => {
-          if (res) return res.map(item => {
+          const conversations = res?.conversations || undefined;
+
+          if (conversations) return conversations.map(item => {
              if (item.isGroupConversation) return groupConversationPresenter(item.toJSON(), currentUserId);
              if (!item.isGroupConversation) return privateConversationPresenter(item.toJSON(), currentUserId);
-          });
-          return res;
+          }).sort(( a, b ) => b.lastModified - a.lastModified);
+
+          return conversations;
        });
 };

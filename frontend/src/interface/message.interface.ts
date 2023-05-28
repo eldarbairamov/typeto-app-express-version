@@ -7,6 +7,7 @@ export interface IMessage {
    conversationId: number;
    lastModified: number;
    sender: IUser;
+   isImage: boolean;
 }
 
 export interface INewMessageReceived {

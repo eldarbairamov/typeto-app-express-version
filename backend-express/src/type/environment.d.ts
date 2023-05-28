@@ -1,5 +1,6 @@
 import { User } from "../model";
 import { Secret } from "jsonwebtoken";
+import fileUpload from "express-fileupload";
 
 export {};
 
@@ -24,6 +25,7 @@ declare global {
          user?: User;
          userId?: number;
          token?: string;
+         files?: fileUpload.FileArray | null | undefined
       }
    }
 }

@@ -18,6 +18,18 @@ export const userService = {
 
    deleteContact: async ( contactId: number ): Promise<AxiosResponse<IUser[]>> => {
       return await axiosInstance.delete<IUser[]>("/users/delete_contact", { params: { contactId } });
+   },
+
+   uploadAvatar: async ( formData: FormData ): Promise<AxiosResponse<{ imageName: string }>> => {
+      return await axiosInstance.patch<{ imageName: string }>("/users/avatar", formData);
+   },
+
+   deleteAvatar: async (): Promise<AxiosResponse<void>> => {
+      return await axiosInstance.delete("/users/avatar");
+   },
+
+   getCurrentUser: async (): Promise<AxiosResponse<IUser>> => {
+      return await axiosInstance.get<IUser>("/users/get_current_user");
    }
 
 };

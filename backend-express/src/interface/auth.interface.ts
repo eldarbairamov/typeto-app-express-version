@@ -20,8 +20,6 @@ export interface IResetPassword {
 }
 
 export interface IOAuthResponse {
-   readonly userId: number;
-   readonly username: string;
    readonly accessToken: string;
    readonly refreshToken: string;
 }

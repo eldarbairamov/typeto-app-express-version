@@ -5,13 +5,18 @@ import { config } from "./config/config";
 import { sequelize } from "./db/db-config";
 import { appRouter } from "./router";
 import { errorMiddleware } from "./middleware";
+import fileUpload from "express-fileupload";
+import path from "node:path";
+import process from "process";
 
 const app: Application = express();
 
 app.use(express.json())
     .use(express.urlencoded({ extended: true }))
     .use(cors({ origin: "*" }))
+    .use(fileUpload())
     .use(appRouter)
+    .use(express.static(path.join(process.cwd(), "client")))
     .use(errorMiddleware);
 
 const start = async () => {

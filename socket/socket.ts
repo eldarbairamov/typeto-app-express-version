@@ -3,6 +3,7 @@ import { config } from "./src/config/config";
 import { createConversationService, leaveGroupConversationService, sendMessageService } from "./src/service";
 import { IMessage, ISocketUser } from "./src/interface";
 import { Conversation, User } from "./src/model";
+import { CYAN_COLOR, GREEN_COLOR, RED_COLOR } from "./src/constant/colors.constant";
 
 const io = new Server(3200, { cors: { origin: config.CLIENT_URL } });
 
@@ -28,7 +29,7 @@ const getUsers = ( userIds: number[] ) => {
 export const startSocket = () => {
 
    io.on("connection", ( socket ) => {
-      console.log("user " + socket.id + " is connected");
+      console.log(GREEN_COLOR, "user " + socket.id + " is connected");
 
       socket.on("add_user", ( userId: number ) => {
          addUser(userId, socket.id);
@@ -37,7 +38,7 @@ export const startSocket = () => {
 
       socket.on("conversation", ( conversationId: number ) => {
          socket.join(String(conversationId));
-         console.log("user " + socket.id + " joined to conversation: " + conversationId);
+         console.log(CYAN_COLOR, "user " + socket.id + " joined to conversation: " + conversationId);
       });
 
       socket.on("create_conversation", async ( conversationId: number, whoCreatedId: number, conversationWith: number[] ) => {
@@ -91,7 +92,7 @@ export const startSocket = () => {
       socket.on("disconnect", () => {
          removeUser(socket.id);
          io.emit("refresh_online_users", users.map(u => u.userId));
-         console.log("user " + socket.id + " is disconnected");
+         console.log(RED_COLOR, "user " + socket.id + " is disconnected");
       });
 
    });

@@ -9,6 +9,7 @@ export * from "./conversation/leave-group-conversation.service";
 export * from "./conversation/create-conversation.service";
 export * from "./conversation/delete-group-conversation.service";
 export * from "./conversation/get-conversations.service";
+export * from "./conversation/get-conversations-by-search.service";
 
 export * from "./message/get-messages.service";
 export * from "./message/send-message.service";

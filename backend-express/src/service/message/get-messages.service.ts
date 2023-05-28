@@ -5,7 +5,7 @@ export const getMessagesService = async ( conversationId: number, currentUserId:
    const [ messages ] = await Promise.all([
       Message.findAll({
          where: { conversationId },
-         attributes: [ "id", "content", "conversationId", "lastModified" ],
+         attributes: [ "id", "content", "conversationId", "lastModified", "isImage" ],
          include: {
             model: User,
             as: "sender",

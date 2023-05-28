@@ -1,7 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { Response } from "express";
 import { IRequest } from "../interface";
-import { createConversationService, deleteConversationService, deleteGroupConversationService, getConversationsService, leaveGroupConversationService } from "../service";
+import { createConversationService, deleteConversationService, deleteGroupConversationService, getConversationsBySearchService, getConversationsService, leaveGroupConversationService } from "../service";
 
 export const conversationController = {
 
@@ -11,8 +11,13 @@ export const conversationController = {
       res.json(conversationWithUsers);
    }),
 
-   getConversations: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
-      const conversationList = await getConversationsService(req.userId!);
+   getConversations: expressAsyncHandler(async ( req: IRequest<any, any, { searchKey?: string }>, res: Response ) => {
+      const searchKey = req.query.searchKey;
+      let conversationList;
+
+      if (searchKey) conversationList = await getConversationsBySearchService(req.userId!, searchKey);
+      else conversationList = await getConversationsService(req.userId!);
+
       res.json(conversationList);
    }),
 

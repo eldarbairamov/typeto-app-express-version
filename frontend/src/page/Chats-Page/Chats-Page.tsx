@@ -1,29 +1,11 @@
-import { useEffect } from "react";
-
 import { calc, HStack } from "@chakra-ui/react";
-import { SideBar } from "../../component/Side-Bar/Side-Bar.tsx";
-import { ChatBox } from "../../component/Chat-Box/Chat-Box.tsx";
-import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
-import { EmptyBox } from "../../component/Empty-Box/Empty-Box.tsx";
-import { socketActions } from "../../store/slice/socket.slice.ts";
-import { Toast } from "../../component/Toast/Toast.tsx";
+import { SideBar } from "../../component/SIde-Bar/Side-Bar/Side-Bar.tsx";
+import { ChatBox } from "../../component/Chat-Box/Chat-Box/Chat-Box.tsx";
+import { useAppSelector } from "../../hook/redux.hook.ts";
+import { Toast } from "../../component/UI/Toast/Toast.tsx";
 
 export function ChatsPage() {
-   const { conversations, actionMessage } = useAppSelector(state => state.conversationReducer);
-
-   const dispatch = useAppDispatch();
-
-   const getConversations = async () => {
-      const result = await dispatch(conversationAsyncActions.getConversations({}));
-      if (conversationAsyncActions.createConversation.rejected.match(result)) {
-      }
-   };
-
-   useEffect(() => {
-      dispatch(socketActions.connect());
-      getConversations();
-   }, []);
+   const { actionMessage } = useAppSelector(state => state.conversationReducer);
 
    return (
        <HStack spacing={ 0 }
@@ -34,9 +16,9 @@ export function ChatsPage() {
                justify={ "space-between" }
                alignItems={ "flex-start" }>
 
-          { Boolean(conversations.length) && <SideBar/> }
+          <SideBar/>
 
-          { Boolean(conversations.length) ? <ChatBox/> : <EmptyBox/> }
+          <ChatBox/>
 
           <Toast actionMessage={ actionMessage }/>
 

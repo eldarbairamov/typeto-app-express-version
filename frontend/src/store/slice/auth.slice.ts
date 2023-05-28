@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { storageService } from "../../service/storage.service.ts";
 import { IAccessTokenPair } from "../../interface/auth.interface.ts";
 import { authService } from "../../service/auth.service.ts";
@@ -6,21 +6,15 @@ import { AxiosError } from "axios";
 import { ILoginForm, IRegistrationForm } from "../../interface/form.interface.ts";
 
 interface IInitialState {
-   currentUserId: number;
-   currentUsername: string;
    isLogin: boolean;
    isLoading: boolean;
    errorMessage: string | undefined;
-   avatar: string | undefined;
 }
 
 const initialState: IInitialState = {
-   currentUserId: Number(storageService.getUserId()),
-   currentUsername: String(storageService.getUsername()),
    isLogin: !!storageService.getAccessToken(),
    isLoading: false,
    errorMessage: undefined,
-   avatar: undefined
 };
 
 const login = createAsyncThunk<IAccessTokenPair, { body: ILoginForm }, { rejectValue: string }>(
@@ -69,13 +63,7 @@ const logout = createAsyncThunk<void, void, { rejectValue: string }>(
 const authSlice = createSlice({
    name: "auth",
    initialState,
-   reducers: {
-
-      setIsLogin: ( state, { payload }: PayloadAction<boolean> ) => {
-         state.isLogin = payload;
-      },
-   },
-
+   reducers: {},
    extraReducers: builder => builder
 
        .addCase(login.pending, ( state ) => {
@@ -85,22 +73,21 @@ const authSlice = createSlice({
        .addCase(login.fulfilled, ( state, { payload } ) => {
           state.isLoading = false;
           state.isLogin = true;
-          state.currentUserId = payload.userId;
-          state.currentUsername = payload.username;
 
           storageService.setAuthInfo({
-             username: payload.username,
              accessToken: payload.accessToken,
              refreshToken: payload.refreshToken,
-             userId: payload.userId
           });
 
        })
+
 
        .addCase(login.rejected, ( state, { payload } ) => {
           state.isLoading = false;
           state.errorMessage = payload;
        })
+
+       // *************** //
 
        .addCase(registration.pending, ( state ) => {
           state.isLoading = true;
@@ -114,6 +101,8 @@ const authSlice = createSlice({
           state.isLoading = false;
           state.errorMessage = payload;
        })
+
+       // *************** //
 
        .addCase(logout.pending, ( state ) => {
           state.isLoading = true;

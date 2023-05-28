@@ -9,6 +9,10 @@ export const messageService = {
    },
 
    sendMessage: async ( conversationId: number, content: string ): Promise<AxiosPromise<IMessage>> => {
-      return await axiosInstance.post<IMessage>('/messages', { conversationId, content });
+      return await axiosInstance.post<IMessage>("/messages", { conversationId, content });
+   },
+
+   sendImage: async ( formData: FormData ): Promise<AxiosPromise<IMessage>> => {
+      return await axiosInstance.post<IMessage>("/messages/image", formData);
    }
 };

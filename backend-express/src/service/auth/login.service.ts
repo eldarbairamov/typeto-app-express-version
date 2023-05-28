@@ -1,4 +1,4 @@
-import { ILogin, IOAuthResponse } from "../../interface/auth.interface";
+import { ILogin, IOAuthResponse } from "../../interface";
 import { passwordService } from "../password.service";
 import { ApiException } from "../../exception/api.exception";
 import { OAuth, User } from "../../model";
@@ -18,5 +18,5 @@ export const loginService = async ( body: ILogin, user: User ): Promise<IOAuthRe
 
    await OAuth.create({ accessToken, refreshToken, ownerId: user.id });
 
-   return { userId: user.id, username: user.username, accessToken, refreshToken };
+   return { accessToken, refreshToken };
 };

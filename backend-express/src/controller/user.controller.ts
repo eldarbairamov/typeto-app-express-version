@@ -2,6 +2,8 @@ import expressAsyncHandler from "express-async-handler";
 import { Response } from "express";
 import { IRequest } from "../interface";
 import { addContactService, deleteContactService, findUserService, getContactsService } from "../service";
+import { User } from "../model";
+import { uploadAvatarService } from "../service/user/upload-avatar.service";
 
 export const userController = {
 
@@ -27,6 +29,27 @@ export const userController = {
       const contactId = req.query.contactId;
       const usersContacts = await deleteContactService(+contactId, req.userId!);
       res.json(usersContacts);
+   }),
+
+   getCurrentUser: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
+      const user = await User.findByPk(req.userId, {
+         attributes: [ "id", "username", "email", "image" ]
+      });
+      res.json(user);
+   }),
+
+   uploadAvatar: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response ) => {
+      const imageName = await uploadAvatarService(req.userId!, req.files!);
+      res.json({ imageName });
+   }),
+
+   deleteAvatar: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response<{ message: string }> ) => {
+      await User.findByPk(req.userId).then(res => {
+         res?.set({ image: null });
+         res?.save({ hooks: false });
+      });
+      res.json({ message: "Success" });
    })
+
 
 };

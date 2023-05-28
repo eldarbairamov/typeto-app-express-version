@@ -6,9 +6,10 @@ import { AxiosError } from "axios";
 interface IInitialState {
    contacts: IUser[];
    userBySearch: IUserBySearch;
-   isLoading: boolean,
-   errorMessage: string | undefined
-   onlineContactsIds: number[]
+   isLoading: boolean;
+   errorMessage: string | undefined;
+   onlineContactsIds: number[];
+   currentUserInfo: IUser;
 }
 
 const initialState: IInitialState = {
@@ -16,17 +17,19 @@ const initialState: IInitialState = {
    userBySearch: {} as IUserBySearch,
    isLoading: false,
    errorMessage: undefined,
-   onlineContactsIds: [] as number[]
+   onlineContactsIds: [] as number[],
+   currentUserInfo: {} as IUser
 };
 
 const getContacts = createAsyncThunk<IUser[], { searchKey?: string }, { rejectValue: string }>(
-    'user/getContacts',
+    "user/getContacts",
     async ( { searchKey }, { rejectWithValue } ) => {
        try {
           const { data } = await userService.getContacts(searchKey);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -34,12 +37,13 @@ const getContacts = createAsyncThunk<IUser[], { searchKey?: string }, { rejectVa
 );
 
 const addContact = createAsyncThunk<void, { contactId: number }, { rejectValue: string }>(
-    'user/addContact',
+    "user/addContact",
     async ( { contactId }, { rejectWithValue } ) => {
        try {
           await userService.addContact(contactId);
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -47,13 +51,14 @@ const addContact = createAsyncThunk<void, { contactId: number }, { rejectValue: 
 );
 
 const findUser = createAsyncThunk<IUserBySearch, { userEmail: string }, { rejectValue: string }>(
-    'user/findUser',
+    "user/findUser",
     async ( { userEmail }, { rejectWithValue } ) => {
        try {
           const { data } = await userService.findUser(userEmail);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -61,15 +66,58 @@ const findUser = createAsyncThunk<IUserBySearch, { userEmail: string }, { reject
     }
 );
 
+const uploadAvatar = createAsyncThunk<{ imageName: string }, FormData, { rejectValue: string }>(
+    "user/uploadAvatar",
+    async ( formData, { rejectWithValue } ) => {
+       try {
+          const { data } = await userService.uploadAvatar(formData);
+          return data;
+       }
+       catch (e) {
+          const axiosError = e as AxiosError;
+          return rejectWithValue(axiosError.message);
+       }
+    }
+);
+
+const deleteAvatar = createAsyncThunk<void, void, { rejectValue: string }>(
+    "user/deleteAvatar",
+    async ( _, { rejectWithValue } ) => {
+       try {
+          await userService.deleteAvatar();
+       }
+       catch (e) {
+          const axiosError = e as AxiosError;
+          return rejectWithValue(axiosError.message);
+       }
+    }
+);
+
 
 const deleteContact = createAsyncThunk<IUser[], { contactId: number }, { rejectValue: string }>(
-    'user/deleteContact',
+    "user/deleteContact",
     async ( { contactId }, { rejectWithValue } ) => {
        try {
           const { data } = await userService.deleteContact(contactId);
           return data;
 
-       } catch (e) {
+       }
+       catch (e) {
+          const axiosError = e as AxiosError;
+          return rejectWithValue(axiosError.message);
+       }
+    }
+);
+
+const getCurrentUser = createAsyncThunk<IUser, void, { rejectValue: string }>(
+    "user/getCurrentUser",
+    async ( _, { rejectWithValue } ) => {
+       try {
+          const { data } = await userService.getCurrentUser();
+          return data;
+
+       }
+       catch (e) {
           const axiosError = e as AxiosError;
           return rejectWithValue(axiosError.message);
        }
@@ -86,13 +134,13 @@ const userSlice = createSlice({
       },
 
       groupModeMove: ( state, { payload }: PayloadAction<{ id: number, action: "delete" | "add", user?: IUser }> ) => {
-         if (payload.action === 'delete' && payload.user) state.contacts.push(payload.user);
-         if (payload.action === 'add') state.contacts = state.contacts.filter(contact => contact.id !== payload.id);
+         if (payload.action === "delete" && payload.user) state.contacts.push(payload.user);
+         if (payload.action === "add") state.contacts = state.contacts.filter(contact => contact.id !== payload.id);
       },
 
       setOnlineContacts: ( state, { payload }: PayloadAction<number[]> ) => {
          state.onlineContactsIds = payload;
-      }
+      },
 
    },
 
@@ -159,8 +207,56 @@ const userSlice = createSlice({
           state.isLoading = false;
        })
 
+       // *************** //
+
+       .addCase(uploadAvatar.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(uploadAvatar.fulfilled, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.currentUserInfo.image = payload.imageName;
+       })
+
+       .addCase(uploadAvatar.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
+       // *************** //
+
+       .addCase(getCurrentUser.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(getCurrentUser.fulfilled, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.currentUserInfo = payload;
+       })
+
+       .addCase(getCurrentUser.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
+       // *************** //
+
+       .addCase(deleteAvatar.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(deleteAvatar.fulfilled, ( state ) => {
+          state.isLoading = false;
+          state.currentUserInfo.image = null;
+       })
+
+       .addCase(deleteAvatar.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
 });
 
 export const userActions = userSlice.actions;
-export const userAsyncActions = { getContacts, findUser, addContact, deleteContact };
+export const userAsyncActions = { getContacts, findUser, addContact, deleteContact, uploadAvatar, getCurrentUser, deleteAvatar };
 export const userReducer = userSlice.reducer;

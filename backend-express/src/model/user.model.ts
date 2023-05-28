@@ -2,21 +2,22 @@ import { BeforeCreate, BeforeUpdate, BelongsToMany, Column, DataType, Model, Tab
 import { Contacts } from "./contacts.model";
 import { Conversation } from "./conversation.model";
 import { ConversationUser } from "./conversation-user.model";
-import { passwordService } from "../service/password.service";
+import { passwordService } from "../service";
 
 export interface UserAttr {
    id: number;
    username: string;
    email: string;
    password: string;
-   image?: string;
+   image?: string | null;
+   conversations: Conversation[];
 }
 
 interface UserCreationAttr {
    username: string;
    email: string;
    password: string;
-   image?: string;
+   image?: string | null;
 }
 
 @Table({ tableName: "user", timestamps: false })
@@ -32,7 +33,7 @@ export class User extends Model<UserAttr, UserCreationAttr> {
    password: string;
 
    @Column({ type: DataType.STRING, allowNull: true })
-   image: string;
+   image: string | null;
 
    @BelongsToMany(() => Conversation, () => ConversationUser, "userId")
    conversations: Conversation[];

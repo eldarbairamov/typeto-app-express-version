@@ -19,7 +19,7 @@ export function LoginPage() {
 
    const dispatch = useAppDispatch();
 
-   const onSubmit: SubmitHandler<ILoginForm> = async ( data: ILoginForm ) => dispatch(authAsyncActions.login({ body: data }));
+   const onSubmit: SubmitHandler<ILoginForm> = async ( data: ILoginForm ) => await dispatch(authAsyncActions.login({ body: data }));
 
    const { isShow, handleClick } = useHidePass();
 
@@ -66,6 +66,7 @@ export function LoginPage() {
                       <InputGroup>
 
                          <Input { ...register("password") }
+                                autoComplete={ "" }
                                 focusBorderColor={ MAIN_COLOR_LIGHTER }
                                 variant={ "flushed" }
                                 _invalid={ { borderColor: "red.500" } }

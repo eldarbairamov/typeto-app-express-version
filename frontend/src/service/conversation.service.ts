@@ -8,20 +8,24 @@ export const conversationService = {
       return await axiosInstance.post<IConversation>("/conversations", { userIds, conversationName });
    },
 
-   getConversations: async (): Promise<AxiosResponse<IConversation[]>> => {
-      return await axiosInstance.get<IConversation[]>("/conversations");
+   getConversations: async ( searchKey?: string ): Promise<AxiosResponse<IConversation[]>> => {
+      return await axiosInstance.get<IConversation[]>("/conversations", {
+         params: {
+            searchKey: searchKey ? searchKey : null
+         }
+      });
    },
 
    deleteConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
-      return await axiosInstance.delete<IConversation[]>('/conversations', { params: { conversationId } });
+      return await axiosInstance.delete<IConversation[]>("/conversations", { params: { conversationId } });
    },
 
    deleteGroupConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
-      return await axiosInstance.delete<IConversation[]>('/conversations/admin', { params: { conversationId } });
+      return await axiosInstance.delete<IConversation[]>("/conversations/admin", { params: { conversationId } });
    },
 
    leaveGroupConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
-      return await axiosInstance.delete<IConversation[]>('/conversations/leave', { params: { conversationId } });
+      return await axiosInstance.delete<IConversation[]>("/conversations/leave", { params: { conversationId } });
    }
 
 };

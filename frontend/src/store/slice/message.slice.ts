@@ -45,6 +45,20 @@ const sendMessage = createAsyncThunk<IMessage, { content: string, conversationId
     }
 );
 
+const sendImage = createAsyncThunk<IMessage, { formData: FormData}, { rejectValue: string }>(
+    "message/sendImage",
+    async ( { formData }, { rejectWithValue } ) => {
+       try {
+          const { data } = await messageService.sendImage(formData);
+          return data;
+       }
+       catch (e) {
+          const axiosError = e as AxiosError;
+          return rejectWithValue(axiosError.message);
+       }
+    }
+);
+
 
 const messageSlice = createSlice({
    name: "message",
@@ -73,21 +87,31 @@ const messageSlice = createSlice({
           state.isLoading = false;
        })
 
-       .addCase(sendMessage.pending, ( state ) => {
-          state.isLoading = true;
-       })
+       // *************** //
 
        .addCase(sendMessage.fulfilled, ( state, { payload } ) => {
           state.messages.push(payload);
+          state.isLoading = false;
        })
 
-       .addCase(sendMessage.rejected, ( state, { payload } ) => {
+       // *************** //
+
+       .addCase(sendImage.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(sendImage.fulfilled, ( state, { payload } ) => {
+          state.messages.push(payload);
+          state.isLoading = false;
+       })
+
+       .addCase(sendImage.rejected, ( state, { payload } ) => {
           state.errorMessage = payload;
           state.isLoading = false;
        })
 
 });
 
-export const messageAsyncActions = { getMessages, sendMessage };
+export const messageAsyncActions = { getMessages, sendMessage, sendImage };
 export const messageActions = messageSlice.actions;
 export const messageReducer = messageSlice.reducer;

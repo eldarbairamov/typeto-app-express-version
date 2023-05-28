@@ -11,6 +11,7 @@ interface IInitialState {
    isLoading: boolean;
    errorMessage: string | undefined;
    actionMessage: string | undefined;
+   searchKey: string | undefined;
 }
 
 const initialState: IInitialState = {
@@ -20,12 +21,15 @@ const initialState: IInitialState = {
    isLoading: false,
    errorMessage: undefined,
    actionMessage: undefined,
+   searchKey: undefined
 };
+
 
 const createConversation = createAsyncThunk<IConversation, { userIds: number[], conversationName?: string, username?: string }, {
    rejectValue: string
 }>(
     "conversation/createConversation",
+    // @ts-ignore
     async ( { userIds, conversationName, username }, { rejectWithValue } ) => {
        try {
           const { data } = await conversationService.createConversation(userIds, conversationName);
@@ -39,11 +43,11 @@ const createConversation = createAsyncThunk<IConversation, { userIds: number[], 
     }
 );
 
-const getConversations = createAsyncThunk<IConversation[], {}, { rejectValue: string }>(
+const getConversations = createAsyncThunk<IConversation[], { searchKey?: string }, { rejectValue: string }>(
     "conversation/getConversations",
-    async ( {}, { rejectWithValue } ) => {
+    async ( { searchKey }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.getConversations();
+          const { data } = await conversationService.getConversations(searchKey);
           return data;
 
        }
@@ -107,6 +111,10 @@ const conversationSlice = createSlice({
    initialState,
    reducers: {
 
+      setSearchKey: ( state, { payload }: PayloadAction<string | undefined> ) => {
+         state.searchKey = payload;
+      },
+
       addContactToGroup: ( state, { payload }: PayloadAction<IUser> ) => {
          state.groupMembers.push(payload);
       },
@@ -138,9 +146,7 @@ const conversationSlice = createSlice({
 
       updateConversations: ( state, { payload }: PayloadAction<IConversation> ) => {
          state.conversations = state.conversations.map(c => {
-            if (c.id === payload.id) {
-               return payload;
-            }
+            if (c.id === payload.id) c.lastMessage = payload.lastMessage;
             return c;
          });
 
@@ -157,8 +163,8 @@ const conversationSlice = createSlice({
 
       deleteConversation: ( state, { payload }: PayloadAction<number> ) => {
          state.conversations = state.conversations.filter(c => c.id !== payload);
-         state.activeConversation = state.conversations[0]
-      }
+         state.activeConversation = state.conversations[0];
+      },
 
    },
 

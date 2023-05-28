@@ -6,6 +6,7 @@ import { useAppDispatch } from "../../hook/redux.hook.ts";
 import { conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
 import { useState } from "react";
 import { userAsyncActions } from "../../store/slice/user.slice.ts";
+import { getImageUrl } from "../../helper/get-image-url.helper.ts";
 
 interface IUserItemProps {
    user: IUserBySearch,
@@ -39,6 +40,8 @@ export function UserItem( { user, onModalClose }: IUserItemProps ) {
 
           <HStack spacing={ 5 }>
              <Avatar name={ user.username }
+                     src={ getImageUrl(user.image, user.email) }
+                     ignoreFallback={ true }
                      size={ "md" }/>
              <Heading size={ "md" }> { user.username } </Heading>
           </HStack>
@@ -55,7 +58,7 @@ export function UserItem( { user, onModalClose }: IUserItemProps ) {
              </Button>
 
              <Button variant={ "unstyled" }
-                     cursor={ isAdded ? 'default' : 'pointer' }
+                     cursor={ isAdded ? "default" : "pointer" }
                      display={ "flex" }
                      onClick={ isAdded ? undefined : addContact }
                      alignItems={ "center" }>

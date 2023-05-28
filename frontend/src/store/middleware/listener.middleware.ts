@@ -3,7 +3,7 @@ import { RootState } from "../store.ts";
 import { conversationActions, conversationAsyncActions } from "../slice/conversation.slice.ts";
 import { messageActions, messageAsyncActions } from "../slice/message.slice.ts";
 import { io, Socket } from "socket.io-client";
-import { userActions } from "../slice/user.slice.ts";
+import { userActions, userAsyncActions } from "../slice/user.slice.ts";
 import { IMessage } from "../../interface/message.interface.ts";
 import { IConversation } from "../../interface/conversation.interface.ts";
 import { socketActions } from "../slice/socket.slice.ts";
@@ -22,14 +22,29 @@ listenerMiddleware.startListening({
 });
 
 listenerMiddleware.startListening({
-   actionCreator: authAsyncActions.login.fulfilled,
-   effect: ( _a, api ) => {
+   actionCreator: userAsyncActions.getCurrentUser.fulfilled,
+   effect: ( _, api ) => {
+
+      console.log("get current user");
+
+      const { userReducer } = api.getState() as RootState;
+
+      socket.emit("add_user", userReducer.currentUserInfo.id);
+
+   }
+});
+
+listenerMiddleware.startListening({
+   actionCreator: socketActions.connect,
+   effect: async ( _, api ) => {
+
+      console.log("socket connection");
 
       const dispatch = api.dispatch;
 
-      const { authReducer } = api.getState() as RootState;
+      socket = io("ws://localhost:3200");
 
-      socket.emit("add_user", authReducer.currentUserId);
+      socket.connect();
 
       socket.on("who_is_online", ( userIds: number[] ) => {
          console.log("socket: who_is_online");
@@ -49,48 +64,13 @@ listenerMiddleware.startListening({
    }
 });
 
-
-listenerMiddleware.startListening({
-   actionCreator: socketActions.connect,
-   effect: async ( _, api ) => {
-
-      console.log("socket connection");
-
-      const dispatch = api.dispatch;
-
-      const { authReducer } = api.getState() as RootState;
-
-      socket = io("ws://localhost:3200");
-
-      socket.connect();
-
-      if (await api.condition(( _, currentState ) => {
-         const state = currentState as RootState;
-         return Boolean(state.authReducer.currentUserId);
-      })) {
-         socket.emit("add_user", authReducer.currentUserId);
-      }
-
-      socket.on("who_is_online", ( userIds: number[] ) => {
-         console.log("socket: who_is_online");
-         dispatch(userActions.setOnlineContacts(userIds));
-      });
-
-      socket.on("refresh_online_users", ( userIds: number[] ) => {
-         console.log("socket: refresh_online_users");
-         dispatch(userActions.setOnlineContacts(userIds));
-      });
-
-   }
-});
-
 listenerMiddleware.startListening({
    actionCreator: conversationActions.setActiveConversation,
    effect: async ( action, api ) => {
 
       console.log("set active conversation");
 
-      const { authReducer } = api.getState() as RootState;
+      const { userReducer, conversationReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
@@ -102,19 +82,19 @@ listenerMiddleware.startListening({
          console.log("socket: get_message");
 
          const senderId = message.senderId;
-         const currentUserId = authReducer.currentUserId;
+         const currentUserId = userReducer.currentUserInfo.id;
          const conversationId = message.conversationId;
+         const activeConversation = conversationReducer.activeConversation.id
 
-         if (senderId === currentUserId && conversationId === action.payload.id) {
+         if (senderId === currentUserId && activeConversation === action.payload.id) {
             conversationForSender.isNewMessagesExist = false;
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
-         if (senderId !== currentUserId && conversationId === action.payload.id) {
+         if (senderId !== currentUserId && activeConversation === action.payload.id) {
             conversationForReceiver.isNewMessagesExist = false;
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
-
 
          if (senderId === currentUserId && conversationId !== action.payload.id) {
             dispatch(conversationActions.updateConversations(conversationForSender));
@@ -123,6 +103,7 @@ listenerMiddleware.startListening({
          if (senderId !== currentUserId && conversationId !== action.payload.id) {
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
+
       });
 
    },
@@ -213,14 +194,14 @@ listenerMiddleware.startListening({
 
       console.log("create conversation");
 
-      const { authReducer } = api.getState() as RootState;
+      const { userReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
       const userIds = action.meta.arg.userIds;
       const conversationWith = userIds.length ? userIds : userIds[0];
 
-      socket.emit("create_conversation", action.payload.id, authReducer.currentUserId, conversationWith);
+      socket.emit("create_conversation", action.payload.id, userReducer.currentUserInfo.id, conversationWith);
 
       dispatch(conversationActions.setActiveConversation(action.payload));
 
@@ -251,7 +232,7 @@ listenerMiddleware.startListening({
 
       console.log("delete conversation");
 
-      const { authReducer } = api.getState() as RootState;
+      const { userReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
@@ -259,7 +240,7 @@ listenerMiddleware.startListening({
 
       const conversationWith = action.meta.arg.conversation.conversationWith[0].id;
       const conversationId = action.meta.arg.conversation.id;
-      socket.emit("delete_conversation", conversationId, conversationWith, { id: authReducer.currentUserId, username: authReducer.currentUsername });
+      socket.emit("delete_conversation", conversationId, conversationWith, { id: userReducer.currentUserInfo.id, username: userReducer.currentUserInfo.username });
    }
 });
 
@@ -269,38 +250,38 @@ listenerMiddleware.startListening({
 
       console.log("delete group conversation");
 
-      const { authReducer } = api.getState() as RootState;
+      const { userReducer } = api.getState() as RootState;
 
       const conversationWith = action.meta.arg.conversation.users
           .map(( u: IUserFromConversation ) => {
-             if (u.id !== authReducer.currentUserId) return u.id;
+             if (u.id !== userReducer.currentUserInfo.id) return u.id;
              return null;
           })
           .filter(id => id !== null);
 
       const conversationId = action.meta.arg.conversation.id;
 
-      socket.emit("delete_group_conversation", conversationWith, conversationId, authReducer.currentUsername);
+      socket.emit("delete_group_conversation", conversationWith, conversationId, userReducer.currentUserInfo.username);
    }
 });
 
 listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.leaveGroupConversation.fulfilled,
    effect: ( action, api ) => {
-      const { authReducer } = api.getState() as RootState;
+      const { userReducer } = api.getState() as RootState;
 
       console.log("leave group conversation");
 
       const conversationWith = action.meta.arg.conversation.users
           .map(( u: IUserFromConversation ) => {
-             if (u.id !== authReducer.currentUserId) return u.id;
+             if (u.id !== userReducer.currentUserInfo.id) return u.id;
              return null;
           })
           .filter(( id ) => id !== null);
 
       const conversationId = action.meta.arg.conversation.id;
 
-      socket.emit("leave_group_conversation", conversationId, conversationWith, authReducer.currentUsername);
+      socket.emit("leave_group_conversation", conversationId, conversationWith, userReducer.currentUserInfo.username);
    }
 });
 
@@ -325,7 +306,6 @@ listenerMiddleware.startListening({
    }
 });
 
-
 listenerMiddleware.startListening({
    actionCreator: messageAsyncActions.sendMessage.fulfilled,
    effect: ( action ) => {
@@ -335,4 +315,3 @@ listenerMiddleware.startListening({
       socket.emit("send_message", action.payload);
    }
 });
-

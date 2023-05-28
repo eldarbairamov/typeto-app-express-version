@@ -1,45 +1,36 @@
-import { Conversation, ConversationUser, Message, User } from "../../model";
-import { Op } from "sequelize";
+import { Conversation, Message, User } from "../../model";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 
 export const getConversationsService = async ( currentUserId: number ) => {
 
-   const conversationsIds = await ConversationUser.findAll({
-      where: { userId: currentUserId }
-   })
-       .then(res => res.map(item => item.conversationId));
-
-   return await Conversation.findAll({
-      where: { id: { [Op.in]: conversationsIds } },
-      include: [
-         {
-            model: User,
-            as: "users",
-            attributes: [ "id", "username", "email", "image" ],
-            through: {
-               attributes: [ "isNewMessagesExist" ]
+   return await User.findByPk(currentUserId, {
+      include: {
+         model: Conversation,
+         as: "conversations",
+         through: {
+            attributes: []
+         },
+         include: [
+            {
+               model: User,
+               as: "users",
+            },
+            {
+               model: Message,
+               as: "messages"
             }
-         },
-         {
-            model: User,
-            as: "admin",
-            attributes: [ "id", "username", "email", "image" ],
-         },
-         {
-            model: Message,
-            as: "messages",
-         }
-      ],
-      order: [
-         [ "lastModified", "DESC" ]
-      ]
+         ],
+      }
    })
        .then(res => {
-          if (res) return res.map(item => {
+          const conversations = res?.conversations || undefined;
+
+          if (conversations) return conversations.map(item => {
              if (item.isGroupConversation) return groupConversationPresenter(item.toJSON(), currentUserId);
              if (!item.isGroupConversation) return privateConversationPresenter(item.toJSON(), currentUserId);
-          });
-          return res;
+          }).sort(( a, b ) => b.lastModified - a.lastModified);
+
+          return conversations;
        });
 
 };

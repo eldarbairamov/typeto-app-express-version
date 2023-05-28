@@ -8,12 +8,14 @@ interface MessageAttr {
    conversationId: number;
    content: string;
    lastModified: number;
+   isImage: boolean;
 }
 
 interface MessageCreationAttr {
    senderId: number;
    conversationId: number;
    content: string;
+   isImage?: boolean;
 }
 
 @Table({ tableName: "message", timestamps: false })
