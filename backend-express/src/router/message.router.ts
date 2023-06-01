@@ -7,4 +7,6 @@ export const messageRouter = Router();
 messageRouter
     .post("/", authMiddleware.isAccessExists, messageController.sendMessage)
     .post("/image", authMiddleware.isAccessExists, messageController.sendImage)
-    .get("/:conversationId", authMiddleware.isAccessExists, messageController.getMessages);
+    .get("/:conversationId", authMiddleware.isAccessExists, messageController.getMessages)
+    .delete("/:conversationId", authMiddleware.isAccessExists, messageController.deleteMessage)
+

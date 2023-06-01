@@ -16,6 +16,15 @@ export const conversationService = {
       });
    },
 
+   kickUserFromGroupConversation: async ( conversationId: number, userId: number ): Promise<AxiosResponse<void>> => {
+      return await axiosInstance.delete("/conversations/admin/kick", {
+         params: {
+            conversationId: conversationId,
+            userId: userId
+         }
+      });
+   },
+
    deleteConversation: async ( conversationId: number ): Promise<AxiosResponse<IConversation[]>> => {
       return await axiosInstance.delete<IConversation[]>("/conversations", { params: { conversationId } });
    },

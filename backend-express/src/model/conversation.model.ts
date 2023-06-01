@@ -1,4 +1,4 @@
-import { BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { BeforeCreate, BeforeUpdate, BelongsTo, BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table } from "sequelize-typescript";
 import { User } from "./user.model";
 import { ConversationUser } from "./conversation-user.model";
 import { Message } from "./message.model";
@@ -17,6 +17,7 @@ export interface ConversationAttr {
 interface ConversationCreationAttr {
    conversationName?: string;
    isGroupConversation?: boolean;
+   lastMessage?: Message;
    adminId?: number;
 }
 
@@ -41,7 +42,10 @@ export class Conversation extends Model<ConversationAttr, ConversationCreationAt
    @BelongsTo(() => User, "adminId")
    admin: User;
 
-   @HasMany(() => Message, { foreignKey: 'conversationId' })
+   @HasOne(() => Message, "conversationId")
+   lastMessage: Message;
+
+   @HasMany(() => Message, { foreignKey: "conversationId" })
    messages: Message[];
 
    @BeforeCreate

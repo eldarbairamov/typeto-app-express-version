@@ -1,4 +1,4 @@
-import { createListenerMiddleware } from "@reduxjs/toolkit";
+import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import { RootState } from "../store.ts";
 import { conversationActions, conversationAsyncActions } from "../slice/conversation.slice.ts";
 import { messageActions, messageAsyncActions } from "../slice/message.slice.ts";
@@ -84,26 +84,32 @@ listenerMiddleware.startListening({
          const senderId = message.senderId;
          const currentUserId = userReducer.currentUserInfo.id;
          const conversationId = message.conversationId;
-         const activeConversation = conversationReducer.activeConversation.id
+         const activeConversationId = conversationReducer.activeConversation.id;
 
-         if (senderId === currentUserId && activeConversation === action.payload.id) {
+         if (senderId === currentUserId && activeConversationId === conversationId) {
             conversationForSender.isNewMessagesExist = false;
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
-         if (senderId !== currentUserId && activeConversation === action.payload.id) {
+         if (senderId !== currentUserId && activeConversationId === conversationId) {
             conversationForReceiver.isNewMessagesExist = false;
+            dispatch(messageActions.addMessage(message));
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
-         if (senderId === currentUserId && conversationId !== action.payload.id) {
+         if (senderId === currentUserId && activeConversationId !== conversationId) {
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
-         if (senderId !== currentUserId && conversationId !== action.payload.id) {
+         if (senderId !== currentUserId && activeConversationId !== conversationId) {
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
+      });
+
+      socket.on("delete_message_result", ( messageId: number, updatedLastMessage: IMessage ) => {
+         dispatch(messageActions.deleteMessage(messageId));
+         dispatch(conversationActions.updateConversationAfterDeleteMessage(updatedLastMessage));
       });
 
    },
@@ -123,32 +129,34 @@ listenerMiddleware.startListening({
          dispatch(conversationActions.setActiveConversation(conversationReducer.conversations[0]));
       }
 
-      socket.on("get_conversation", ( conversation: IConversation ) => {
-         console.log("socket: get_conversation");
-         dispatch(conversationActions.addConversation(conversation));
+      socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
+         console.log("socket: get_leave_result");
+         dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
+         dispatch(conversationActions.updateConversations(conversation));
       });
 
-      if (await api.condition(() => Boolean(conversationReducer.conversations.length))) {
+      socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
+         console.log("socket: get_delete_result");
+         dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
+         dispatch(conversationActions.deleteConversation(conversationId));
+      });
 
-         socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-            console.log("socket: get_leave_result");
-            dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
-            dispatch(conversationActions.updateConversations(conversation));
-         });
+      socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
+         console.log("socket: get_delete_group_result");
+         dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
+         dispatch(conversationActions.deleteConversation(conversationId));
+      });
 
-         socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
-            console.log("socket: get_delete_result");
-            dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
-            dispatch(conversationActions.deleteConversation(conversationId));
-         });
+      socket.on("kick_user_result", ( whoWasKickedId: number, conversationId: number ) => {
+         console.log("socket: kick_user_result");
+         dispatch(conversationActions.updateConversationAfterKickUser({ whoWasKickedId, conversationId }));
+      });
 
-         socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-            console.log("socket: get_delete_group_result");
-            dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
-            dispatch(conversationActions.deleteConversation(conversationId));
-         });
-
-      }
+      socket.on("i_was_kicked", ( message: string, conversationId: number ) => {
+         console.log("socket: i_was_kicked");
+         dispatch(conversationActions.setActionMessage(message));
+         dispatch(conversationActions.deleteConversation(conversationId));
+      });
 
    }
 });
@@ -307,11 +315,49 @@ listenerMiddleware.startListening({
 });
 
 listenerMiddleware.startListening({
-   actionCreator: messageAsyncActions.sendMessage.fulfilled,
+   matcher: isAnyOf(messageAsyncActions.sendImage.fulfilled, messageAsyncActions.sendMessage.fulfilled),
    effect: ( action ) => {
 
-      console.log("send message");
+      console.log("send message / send image");
 
       socket.emit("send_message", action.payload);
+   }
+});
+
+listenerMiddleware.startListening({
+   actionCreator: messageAsyncActions.deleteMessage.fulfilled,
+   effect: ( action, api ) => {
+
+      console.log("delete message");
+
+      const dispatch = api.dispatch;
+
+      const { userReducer } = api.getState() as RootState;
+
+      const { messageId, conversationId } = action.meta.arg;
+
+      const currentUserId = userReducer.currentUserInfo.id;
+
+      dispatch(conversationActions.updateConversationAfterDeleteMessage(action.payload));
+
+      socket.emit("delete_message", messageId, conversationId, currentUserId);
+   }
+});
+
+listenerMiddleware.startListening({
+   actionCreator: conversationAsyncActions.kickUserFromGroupConversation.fulfilled,
+   effect: ( action, api ) => {
+
+      console.log("kick user from conversation");
+
+      const { userReducer } = api.getState() as RootState;
+
+      const dispatch = api.dispatch;
+
+      const { conversationId, userId } = action.meta.arg;
+
+      dispatch(conversationActions.updateConversationAfterKickUser({ whoWasKickedId: userId, conversationId }));
+
+      socket.emit("kick_user_from_group_conversation", conversationId, userId, userReducer.currentUserInfo.id);
    }
 });

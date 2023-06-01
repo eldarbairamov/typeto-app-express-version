@@ -33,7 +33,7 @@ export const deleteConversationService = async ( conversationWith: number ) => {
          },
          {
             model: Message,
-            as: "messages",
+            as: "lastMessage",
          }
       ],
       order: [

@@ -2,6 +2,7 @@ import expressAsyncHandler from "express-async-handler";
 import { Response } from "express";
 import { IRequest } from "../interface";
 import { createConversationService, deleteConversationService, deleteGroupConversationService, getConversationsBySearchService, getConversationsService, leaveGroupConversationService } from "../service";
+import { ConversationUser } from "../model";
 
 export const conversationController = {
 
@@ -37,6 +38,12 @@ export const conversationController = {
       const conversationId = req.query.conversationId;
       const conversationList = await deleteConversationService(conversationId, req.userId!);
       res.json(conversationList);
+   }),
+
+   kickUserFromGroupConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: number, userId: number }>, res: Response ) => {
+      const { conversationId, userId } = req.query;
+      await ConversationUser.destroy({ where: { conversationId, userId } });
+      res.json({ message: "Success" });
    })
 
 };

@@ -19,17 +19,19 @@ export function ChatBoxHeader() {
 
              { activeConversation.conversationName
                  ?
-                 <AvatarGroup size="sm" max={ 2 }>
-                    { activeConversation.users.map(user => <Avatar key={ v4() }
-                                                                   name={ user.username }
-                                                                   ignoreFallback={true}
-                                                                   src={ getImageUrl(user.image, user.email) }
-                                                                   size={ "lg" }> { onlineContactsIds.includes(user.id) &&
-                        <AvatarBadge boxSize={ 3 } bg={ "green.500" }/> } </Avatar>) }
+                 <AvatarGroup size={ "sm" }>
+                    { activeConversation.users.map(user =>
+                        <Avatar key={ v4() }
+                                name={ user.username }
+                                ignoreFallback={ true }
+                                src={ getImageUrl(user.image, user.email) }
+                                size={ "lg" }>
+                           { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 3 } bg={ "green.500" }/> }
+                        </Avatar>) }
                  </AvatarGroup>
                  :
                  <Avatar name={ activeConversation.conversationWith[0].username }
-                         ignoreFallback={true}
+                         ignoreFallback={ true }
                          src={ getImageUrl(activeConversation.conversationWith[0].image, activeConversation.conversationWith[0].email) }
                          size={ "sm" }/>
              }

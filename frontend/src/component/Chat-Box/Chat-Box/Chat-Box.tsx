@@ -14,10 +14,10 @@ export function ChatBox() {
 
    const dispatch = useAppDispatch();
 
-   const getMessages = async () => await dispatch(messageAsyncActions.getMessages({ conversationId: activeConversation.id }));
+   const getMessages = async ( conversationId: number ) => await dispatch(messageAsyncActions.getMessages({ conversationId }));
 
    useEffect(() => {
-      if (activeConversation?.id) getMessages();
+      if (activeConversation?.id) getMessages(activeConversation.id);
    }, [ activeConversation?.id ]);
 
    return (

@@ -4,9 +4,10 @@ interface IModalProps {
    isOpen: boolean;
    onClose: () => void;
    content: JSX.Element | undefined;
+   p?: number | string;
 }
 
-export function AppModal( { onClose, isOpen, content }: IModalProps ) {
+export function AppModal( { onClose, isOpen, content, p = 2 }: IModalProps ) {
    return (
        <Modal isOpen={ isOpen }
               onClose={ onClose }
@@ -18,7 +19,7 @@ export function AppModal( { onClose, isOpen, content }: IModalProps ) {
                         backdropBlur={ "5px" }/>
 
           <ModalContent w={ 400 }
-                        p={ 2 }
+                        p={ p }
                         boxShadow={ "xl" }
                         rounded={ 20 }>
              { content }

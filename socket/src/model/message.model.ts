@@ -8,6 +8,7 @@ interface MessageAttr {
    conversationId: number;
    content: string;
    lastModified: number;
+   isImage: boolean;
 }
 
 @Table({ tableName: "message", timestamps: false })
@@ -24,6 +25,9 @@ export class Message extends Model<MessageAttr> {
 
    @Column({ type: DataType.BIGINT, allowNull: true })
    lastModified: number;
+
+   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
+   isImage: boolean;
 
    @BelongsTo(() => User, "senderId")
    sender: User;

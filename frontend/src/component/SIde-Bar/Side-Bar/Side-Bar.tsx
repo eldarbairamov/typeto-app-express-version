@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Box, calc, Center, useDisclosure, VStack } from "@chakra-ui/react";
 import { SearchBar } from "../Search-Bar/Search-Bar.tsx";
 import { ConversationItem } from "../../Conversations/Conversation-Item/Conversation-Item.tsx";
-import { GroupConversationMenu } from "../../Chat-Box/Group-Conversation-Menu/Group-Conversation-Menu.tsx";
+import { GroupConversationMenu } from "../../Group-Conversation-Menu/Group-Conversation-Menu.tsx";
 import { ConversationList } from "../../Conversations/Conversation-List/Conversation-List.tsx";
 import { CreateConversationButton } from "../../UI/Create-Conversation-Button/Create-Conversation-Button.tsx";
 import { AppModal } from "../../UI/App-Modal/App-Modal.tsx";

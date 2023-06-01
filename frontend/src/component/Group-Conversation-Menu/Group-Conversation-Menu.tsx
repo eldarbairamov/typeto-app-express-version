@@ -4,13 +4,13 @@ import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, HSta
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
 import { v4 } from "uuid";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { userActions, userAsyncActions } from "../../../store/slice/user.slice.ts";
-import { ContactItem } from "../../Contacts/Contact-Item/Contact-Item.tsx";
-import { conversationActions, conversationAsyncActions } from "../../../store/slice/conversation.slice.ts";
-import { IUser } from "../../../interface/user.interface.ts";
-import { TypedOnChange } from "../../../interface/common.interface.ts";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../../constant/color.constant.ts";
+import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
+import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
+import { ContactItem } from "../Contacts/Contact-Item/Contact-Item.tsx";
+import { conversationActions, conversationAsyncActions } from "../../store/slice/conversation.slice.ts";
+import { IUser } from "../../interface/user.interface.ts";
+import { TypedOnChange } from "../../interface/common.interface.ts";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant/color.constant.ts";
 
 export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const [ values, setValues ] = useState<{ searchValue: string, groupName: string }>({

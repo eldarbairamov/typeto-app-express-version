@@ -79,8 +79,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
               </Center>
           }
-
-
+          
        </VStack>
    );
 }

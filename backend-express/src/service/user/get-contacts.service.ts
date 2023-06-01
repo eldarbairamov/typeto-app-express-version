@@ -10,7 +10,7 @@ export const getContactsService = async ( searchKey: string, currentUserId: numb
    })
        .then(user => {
           const contacts = user?.contacts;
-          return searchKey ? contacts?.filter(contact => contact.username.match(searchKey)) : contacts;
+          return searchKey ? contacts?.filter(c => c.username.match(searchKey)) : contacts;
        });
 
 };

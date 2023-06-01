@@ -16,11 +16,28 @@ interface IUserItemProps {
 
 export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }: IUserItemProps ) {
    const { onlineContactsIds } = useAppSelector(state => state.userReducer);
+   const { conversations } = useAppSelector(state => state.conversationReducer);
 
    const dispatch = useAppDispatch();
 
    const createConversation = async () => {
-      const result = await dispatch(conversationAsyncActions.createConversation({ userIds: [ user.id ], username: user.username }));
+      const isConversationExists = conversations.find(c => {
+         if (!c.isGroupConversation) {
+            const targetId = c.conversationWith[0]?.id;
+            if (user.id === targetId) return c;
+         }
+      });
+
+      if (isConversationExists) {
+         dispatch(conversationActions.setActiveConversation(isConversationExists));
+         onModalClose && onModalClose();
+      }
+
+      const result = await dispatch(conversationAsyncActions.createConversation({
+         userIds: [ user.id ],
+         username: user.username
+      }));
+
       if (conversationAsyncActions.createConversation.fulfilled.match(result)) {
          onModalClose && onModalClose();
       }

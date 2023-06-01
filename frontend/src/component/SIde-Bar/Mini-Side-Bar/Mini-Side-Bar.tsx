@@ -4,7 +4,7 @@ import { Box, calc, Center, useDisclosure, VStack } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import { MiniConversation } from "../../Conversations/Mini-Conversation/Mini-Conversation.tsx";
 import { FiUsers } from "react-icons/all";
-import { GroupConversationMenu } from "../../Chat-Box/Group-Conversation-Menu/Group-Conversation-Menu.tsx";
+import { GroupConversationMenu } from "../../Group-Conversation-Menu/Group-Conversation-Menu.tsx";
 import { AppModal } from "../../UI/App-Modal/App-Modal.tsx";
 import { ConversationList } from "../../Conversations/Conversation-List/Conversation-List.tsx";
 import { ButtonIcon } from "../../UI/Button-Icon/Button-Icon.tsx";

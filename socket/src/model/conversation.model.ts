@@ -1,4 +1,4 @@
-import { BelongsTo, BelongsToMany, Column, DataType, HasMany, Model, Table } from "sequelize-typescript";
+import { BelongsTo, BelongsToMany, Column, DataType, HasMany, HasOne, Model, Table } from "sequelize-typescript";
 import { Message } from "./message.model";
 import { User } from "./user.model";
 import { ConversationUser } from "./conversation-user.model";
@@ -28,6 +28,9 @@ export class Conversation extends Model<ConversationAttr> {
 
    @Column({ type: DataType.BIGINT, allowNull: true })
    lastModified: number;
+
+   @HasOne(() => Message, "conversationId")
+   lastMessage: Message;
 
    @BelongsToMany(() => User, () => ConversationUser, "conversationId")
    users: User[];

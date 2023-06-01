@@ -1,9 +1,10 @@
+import { v4 } from "uuid";
+
 import { Divider, IconButton, Menu, MenuButton, MenuItem, MenuList, Text, VStack } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { MAIN_COLOR } from "../../../constant/color.constant.ts";
 import { conversationAsyncActions } from "../../../store/slice/conversation.slice.ts";
 import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { v4 } from "uuid";
 import { ConversationUserItem } from "../../Conversations/Conversation-User-Item/Conversation-User-Item.tsx";
 
 export function ChatBoxOptions() {
@@ -13,25 +14,20 @@ export function ChatBoxOptions() {
    const dispatch = useAppDispatch();
 
    const deleteConversation = async () => {
-      const result = await dispatch(conversationAsyncActions.deleteConversation({ conversation: activeConversation }));
-      if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
-      }
+      dispatch(conversationAsyncActions.deleteConversation({ conversation: activeConversation }));
    };
 
    const leaveGroupConversation = async () => {
-      const result = await dispatch(conversationAsyncActions.leaveGroupConversation({ conversation: activeConversation }));
-      if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
-      }
+      dispatch(conversationAsyncActions.leaveGroupConversation({ conversation: activeConversation }));
    };
 
    const deleteGroupConversation = async () => {
-      const result = await dispatch(conversationAsyncActions.deleteGroupConversation({ conversation: activeConversation }));
-      if (conversationAsyncActions.deleteConversation.rejected.match(result)) {
-      }
+      dispatch(conversationAsyncActions.deleteGroupConversation({ conversation: activeConversation }));
    };
 
    return (
        <Menu autoSelect={ false }>
+
           <MenuButton style={ { position: "absolute", right: 30 } }
                       as={ IconButton }
                       _active={ { bg: "#eff0f3" } }
@@ -48,11 +44,14 @@ export function ChatBoxOptions() {
 
                 { activeConversation.isGroupConversation &&
                     <>
-                      <VStack p={ 5 } spacing={ 5 }>
+                      <VStack p={ 5 }
+                              spacing={ 5 }>
+
                          { activeConversation.users && activeConversation?.users.map(item =>
                              <ConversationUserItem key={ v4() }
                                                    user={ item }/>
                          ) }
+
                       </VStack>
 
                       <Divider/>
@@ -65,6 +64,7 @@ export function ChatBoxOptions() {
                              activeConversation.adminId === currentUserInfo.id ? deleteGroupConversation :
                                  activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation }
                           p={ 2 }>
+
                    <Text w={ "100%" }
                          textAlign={ "center" }
                          fontWeight={ "bold" }
@@ -72,13 +72,17 @@ export function ChatBoxOptions() {
                          onClick={
                             activeConversation.adminId === currentUserInfo.id ? deleteGroupConversation :
                                 activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation }>
+
                       { (activeConversation.adminId === currentUserInfo.id || !activeConversation.isGroupConversation) ? "Завершити бесіду" : "Покинути бесіду" }
+
                    </Text>
+
                 </MenuItem>
 
              </VStack>
 
           </MenuList>
+
        </Menu>
    );
 }

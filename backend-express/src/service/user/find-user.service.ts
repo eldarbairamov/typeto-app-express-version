@@ -14,7 +14,7 @@ export const findUserService = async ( userEmail: string, currentUserId: number 
       User.findByPk(currentUserId, {
          include: "contacts"
       })
-          .then(res => res?.contacts.find(contact => contact.email === userEmail))
+          .then(user => user?.contacts.find(c => c.email === userEmail))
    ]);
 
    if (!user) throw new ApiException("User is not found", 404);

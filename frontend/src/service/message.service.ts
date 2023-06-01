@@ -14,5 +14,14 @@ export const messageService = {
 
    sendImage: async ( formData: FormData ): Promise<AxiosPromise<IMessage>> => {
       return await axiosInstance.post<IMessage>("/messages/image", formData);
-   }
+   },
+
+   deleteMessage: async ( messageId: number, conversationId: number ): Promise<AxiosPromise<IMessage>> => {
+      return await axiosInstance.delete<IMessage>(`/messages/${ conversationId }`, {
+         params: {
+            messageId: messageId
+         }
+      });
+   },
+
 };

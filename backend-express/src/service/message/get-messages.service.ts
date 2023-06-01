@@ -3,6 +3,7 @@ import { ConversationUser, Message, User } from "../../model";
 export const getMessagesService = async ( conversationId: number, currentUserId: number ) => {
 
    const [ messages ] = await Promise.all([
+
       Message.findAll({
          where: { conversationId },
          attributes: [ "id", "content", "conversationId", "lastModified", "isImage" ],
@@ -12,6 +13,7 @@ export const getMessagesService = async ( conversationId: number, currentUserId:
             attributes: [ "id", "username", "email", "image" ]
          }
       }),
+
       ConversationUser.update({
          isNewMessagesExist: false
       }, {
@@ -20,6 +22,7 @@ export const getMessagesService = async ( conversationId: number, currentUserId:
             userId: currentUserId
          }
       })
+
    ]);
 
    return messages;

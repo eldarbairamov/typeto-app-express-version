@@ -1,12 +1,14 @@
-import { Avatar, AvatarBadge, AvatarGroup, Badge, Divider, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, AvatarGroup, Divider, Heading, HStack, Text, VStack } from "@chakra-ui/react";
 import { IUserFromConversation } from "../../../interface/user.interface.ts";
 import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
 import { conversationActions } from "../../../store/slice/conversation.slice.ts";
 import { IConversation } from "../../../interface/conversation.interface.ts";
 import moment from "moment";
 import { v4 } from "uuid";
-import { CONVERSATION_ACTIVE_COLOR } from "../../../constant/color.constant.ts";
+import { CONVERSATION_ACTIVE_COLOR, MAIN_COLOR } from "../../../constant/color.constant.ts";
 import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
+import { Icon } from "@chakra-ui/icons";
+import { AiTwotoneMessage } from "react-icons/all";
 
 interface IConversationProps {
    conversation: IConversation;
@@ -15,6 +17,7 @@ interface IConversationProps {
 
 export function ConversationItem( { user, conversation }: IConversationProps ) {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+
    const { onlineContactsIds } = useAppSelector(state => state.userReducer);
 
    const dispatch = useAppDispatch();
@@ -81,7 +84,10 @@ export function ConversationItem( { user, conversation }: IConversationProps ) {
                       </Heading>
 
                       <Text color={ conversation.id === activeConversation.id ? "gray.200" : "gray.500" } noOfLines={ 1 }>
-                         { conversation.lastMessage?.content ? conversation.lastMessage.content : "" }
+                         {
+                            (conversation.lastMessage?.content && !conversation.lastMessage.isImage) ?
+                                conversation.lastMessage.content : conversation.lastMessage?.isImage ? "зображення" : ""
+                         }
                       </Text>
 
                    </VStack>
@@ -94,13 +100,8 @@ export function ConversationItem( { user, conversation }: IConversationProps ) {
                    </Text>
 
                    { conversation.isNewMessagesExist &&
-                       <Badge bg={ "cyan.100" }
-                              fontSize={ 13 }
-                              w={ 1 }
-                              h={ 4 }
-                              px={ 2 }
-                              rounded={ 20 }>
-                       </Badge>
+
+                       <Icon as={ AiTwotoneMessage } boxSize={ 4 } color={ MAIN_COLOR }/>
                    }
                 </VStack>
 

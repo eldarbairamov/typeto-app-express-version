@@ -3,15 +3,16 @@ import { Op } from "sequelize";
 
 export const sendMessageService = async ( content: string, senderId: number, conversationId: number ) => {
 
+   // Create new message
    const newMessage = await Message.create({
       content,
       senderId,
       conversationId
    });
 
-   const target = await Conversation.findByPk(conversationId);
-
+   // Define new message with sender, update current conversation, update ConversationUser record
    const [ messageWithSender ] = await Promise.all([
+
       Message.findByPk(newMessage.id, {
          include: {
             model: User,
@@ -19,9 +20,16 @@ export const sendMessageService = async ( content: string, senderId: number, con
             attributes: [ "id", "username", "email", "image" ]
          }
       }),
-      target?.update({
-         lastModified: Date.now()
-      }),
+
+      Conversation.update({
+             lastModified: Date.now()
+          },
+          {
+             where: {
+                id: conversationId
+             }
+          }),
+
       ConversationUser.update({
          isNewMessagesExist: true
       }, {
@@ -32,7 +40,10 @@ export const sendMessageService = async ( content: string, senderId: number, con
             }
          }
       })
+
    ]);
+
+   // Return message with sender to client
 
    return messageWithSender;
 };

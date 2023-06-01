@@ -23,7 +23,7 @@ export function CreateConversationButton( { createGroupConversation, openFriendL
                onClick={ isGroup ? createGroupConversation : openFriendList }>
 
           <Text color={ isNoBg ? "gray.600" : "white" }
-                fontSize={ 17 }>
+                fontSize={ 15 }>
              { isGroup ? "створити групову бесіду?" : "створити бесіду?" }
           </Text>
 

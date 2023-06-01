@@ -9,6 +9,7 @@ import { socketActions } from "../store/slice/socket.slice.ts";
 
 export function MainLayout() {
    const { searchKey } = useAppSelector(state => state.conversationReducer);
+   const { currentUserInfo } = useAppSelector(state => state.userReducer);
 
    const dispatch = useAppDispatch();
 
@@ -21,8 +22,8 @@ export function MainLayout() {
    }, []);
 
    useEffect(() => {
-      getConversations();
-   }, [ searchKey ]);
+      if (Object.keys(currentUserInfo).length) getConversations();
+   }, [ searchKey, currentUserInfo ]);
 
    return (
        <Center w={ [ "800px", "100%", "100%", "100%", "100%" ] }>

@@ -10,10 +10,15 @@ export const createConversationService = async ( conversationId: number, whoCrea
          as: "users",
          attributes: [ "id", "username", "email", "image" ],
       },
+      order: [
+         [ { model: User, as: "users" }, "id", "ASC" ]
+      ]
    })
        .then(res => {
+
           if (res && !res.isGroupConversation) return conversationPresenter(res?.toJSON(), whoCreatedId);
           return res;
+
        }) as IConversation;
 
 };

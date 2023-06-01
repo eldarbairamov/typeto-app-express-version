@@ -4,6 +4,7 @@ import { Op } from "sequelize";
 
 export const getConversationsBySearchService = async ( currentUserId: number, searchKey: string ) => {
 
+   // Find group and private conversations by search key
    const [ groupConversations, privateConversation ] = await Promise.all([
 
       User.findByPk(currentUserId, {
@@ -27,8 +28,8 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
             ]
          }
       })
-          .then(res => {
-             const conversations = res?.conversations.map(c => groupConversationPresenter(c.toJSON(), currentUserId));
+          .then(user => {
+             const conversations = user?.conversations.map(c => groupConversationPresenter(c.toJSON(), currentUserId));
              if (conversations) return conversations;
              else return [];
           }),
@@ -51,16 +52,15 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
             ]
          }
       })
-          .then(res => {
-             const target = res?.conversations.find(c => c.users.find(u => u.username.match(searchKey)));
+          .then(user => {
+             const target = user?.conversations.find(c => c.users.find(u => u.username.match(searchKey)));
              if (target) return [ privateConversationPresenter(target.toJSON(), currentUserId) ];
              else return [];
           })
 
-
    ]);
 
+   // Return presented data for client by condition
    return groupConversations.length ? groupConversations : privateConversation;
-
 
 };

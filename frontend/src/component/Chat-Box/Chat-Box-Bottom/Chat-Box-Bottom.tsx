@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
 import { MAIN_COLOR } from "../../../constant/color.constant.ts";
 import { AiOutlineMessage, RxImage } from "react-icons/all";
 import { ButtonIcon } from "../../UI/Button-Icon/Button-Icon.tsx";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { TypedOnChange2 } from "../../../interface/common.interface.ts";
 
 export function ChatBoxBottom() {
@@ -22,6 +22,17 @@ export function ChatBoxBottom() {
       }
 
       setValue("");
+   };
+
+   const onEnterDown = async ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
+      if (e.key === "Enter") {
+         e.preventDefault();
+         setValue("");
+         const result = await dispatch(messageAsyncActions.sendMessage({ conversationId: activeConversation.id, content: value }));
+         if (messageAsyncActions.sendMessage.rejected.match(result)) {
+            console.log(result.payload);
+         }
+      }
    };
 
    const ref = useRef<HTMLInputElement>(null);
@@ -57,6 +68,7 @@ export function ChatBoxBottom() {
                        bg={ "#eff0f3" }
                        wordBreak={ "break-word" }
                        border={ "none" }
+                       onKeyDown={ onEnterDown }
                        value={ value }
                        onChange={ handleChange }
                        focusBorderColor={ "transparent" }
@@ -72,7 +84,6 @@ export function ChatBoxBottom() {
                  onChange={ sendImage }
                  type={ "file" }
                  ref={ ref }/>
-
 
        </HStack>
 

@@ -24,8 +24,6 @@ export const sendImageService = async ( userId: number, files: FileArray, conver
       await sharp(avatar.data).jpeg({ quality: 70 }).toFile(path.join(folderPath, imageName))
    ]);
 
-   const conversation = await Conversation.findByPk(conversationId);
-
    const [ messageWithSender ] = await Promise.all([
       Message.findByPk(newMessage.id, {
          include: {
@@ -34,9 +32,16 @@ export const sendImageService = async ( userId: number, files: FileArray, conver
             attributes: [ "id", "username", "email", "image" ]
          }
       }),
-      conversation?.update({
-         lastModified: Date.now()
-      }),
+
+      Conversation.update({
+             lastModified: Date.now()
+          },
+          {
+             where: {
+                id: conversationId
+             }
+          }),
+
       ConversationUser.update({
          isNewMessagesExist: true
       }, {

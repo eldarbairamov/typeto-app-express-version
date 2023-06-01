@@ -1,16 +1,15 @@
 import { ConversationAttr, ConversationUserAttr, User } from "../model";
 
 export const privateConversationPresenter = ( conversation: ConversationAttr, userId: number ) => {
-   const { messages, ...conv } = conversation;
 
    const { users, ...presentedConversation } = Object.assign(
        {},
-       { ...conv },
+       { ...conversation },
        {
-          conversationWith: conv.users.filter(user => user.id !== userId)
+          conversationWith: conversation.users.filter(user => user.id !== userId)
        },
        {
-          isNewMessagesExist: conv.users
+          isNewMessagesExist: conversation.users
               .map(( user ) => {
                  const userWithAssociation = user as User & { ConversationUser: ConversationUserAttr };
 
@@ -23,8 +22,7 @@ export const privateConversationPresenter = ( conversation: ConversationAttr, us
               .filter(res => res !== null)[0]
        },
        {
-          lastMessage:
-              messages ? conversation.messages.sort(( a, b ) => b.lastModified - a.lastModified)[0] : undefined
+          lastMessage: conversation.lastMessage
        }
    );
 

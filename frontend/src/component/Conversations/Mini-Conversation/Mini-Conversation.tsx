@@ -5,6 +5,7 @@ import { conversationActions } from "../../../store/slice/conversation.slice.ts"
 import { IConversation } from "../../../interface/conversation.interface.ts";
 import { v4 } from "uuid";
 import { CONVERSATION_ACTIVE_COLOR } from "../../../constant/color.constant.ts";
+import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
 
 interface IConversationProps {
    conversation: IConversation;
@@ -40,6 +41,8 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
 
                     { conversation.users.map(user =>
                         <Avatar key={ v4() }
+                                src={ getImageUrl(user.image, user.email) }
+                                ignoreFallback={ true }
                                 name={ user.username }
                                 size={ "md" }>
 
@@ -55,10 +58,12 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
 
              { user &&
                  <Avatar name={ user?.username }
+                         src={ getImageUrl(user.image, user.email) }
+                         ignoreFallback={ true }
                          size={ "md" }>
 
                     { onlineContactsIds.includes(user.id)
-                        && <AvatarBadge boxSize={ 5 }
+                        && <AvatarBadge boxSize={ 4 }
                                         bg={ "green.500" }/>
                     }
 

@@ -3,6 +3,7 @@ import { Response } from "express";
 import { IRequest } from "../interface";
 import { getMessagesService, sendMessageService } from "../service";
 import { sendImageService } from "../service/message/send-image.service";
+import { Conversation, Message } from "../model";
 
 export const messageController = {
 
@@ -23,6 +24,26 @@ export const messageController = {
       const conversationId = req.body.conversationId;
       const messageWithSender = await sendImageService(req.userId!, req.files!, conversationId);
       res.json(messageWithSender);
+   }),
+
+   deleteMessage: expressAsyncHandler(async ( req: IRequest<any, { conversationId: number }, { messageId: number }>, res: Response ) => {
+      const conversationId = req.params.conversationId;
+      const messageId = req.query.messageId;
+
+      await Message.destroy({ where: { id: messageId } });
+
+      const updatedLastMessage = await Conversation.findByPk(conversationId, {
+         include: {
+            model: Message,
+            as: "lastMessage"
+         },
+         order: [
+            [ { model: Message, as: "lastMessage" }, "id", "DESC" ]
+         ]
+      })
+          .then(conversation => conversation?.lastMessage);
+
+      res.json(updatedLastMessage);
    })
 
 };

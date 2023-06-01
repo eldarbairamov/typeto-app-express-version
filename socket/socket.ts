@@ -2,8 +2,9 @@ import { Server } from "socket.io";
 import { config } from "./src/config/config";
 import { createConversationService, leaveGroupConversationService, sendMessageService } from "./src/service";
 import { IMessage, ISocketUser } from "./src/interface";
-import { Conversation, User } from "./src/model";
+import { Conversation, ConversationUser, Message, User } from "./src/model";
 import { CYAN_COLOR, GREEN_COLOR, RED_COLOR } from "./src/constant/colors.constant";
+import { Op } from "sequelize";
 
 const io = new Server(3200, { cors: { origin: config.CLIENT_URL } });
 
@@ -70,23 +71,70 @@ export const startSocket = () => {
          if (to.length) io.to(to).emit("get_delete_group_result", conversationId, adminName);
       });
 
+      socket.on("delete_message", async ( messageId: number, conversationId: number, currentUserId: number ) => {
+         const conversationWith = await ConversationUser.findAll({
+            where: {
+               conversationId,
+               userId: {
+                  [Op.ne]: currentUserId
+               }
+            },
+         }).then(res => res.map(c => c.userId));
+
+         const updatedLastMessage = await Conversation.findByPk(conversationId, {
+            include: {
+               model: Message,
+               as: "lastMessage"
+            },
+            order: [
+               [ { model: Message, as: "lastMessage" }, "id", "DESC" ]
+            ]
+         })
+             .then(res => res?.lastMessage);
+
+         const to = getUsers(conversationWith) as string[];
+         if (to.length) io.to(to).emit("delete_message_result", messageId, updatedLastMessage);
+      });
+
       socket.on("send_message", async ( message: IMessage ) => {
-         const [ conversationForSender, conversationForReceiver, users ] = await Promise.all([
-            sendMessageService(message.conversationId, message.senderId, "sender"),
-            sendMessageService(message.conversationId, message.senderId, "receiver"),
-            Conversation
-                .findByPk(message.conversationId, {
-                   include: {
-                      model: User,
-                      as: "users",
-                      attributes: [ "id", "username", "email", "image" ],
-                   }
-                }).then(res => res?.users.map(u => u.id))
-         ]);
-
+         const { conversationForSender, conversationForReceiver, users } = await sendMessageService(message);
          const to = getUsers(users!) as string[];
-
          io.to(to).emit("get_message", message, conversationForSender, conversationForReceiver);
+      });
+
+      socket.on("kick_user_from_group_conversation", async ( conversationId: number, whoWasKickedId: number, adminId: number ) => {
+         const conversation = await Conversation.findByPk(conversationId);
+
+         const whoWillSeeChanges = await ConversationUser.findAll({
+            where: {
+               conversationId,
+               [Op.and]: [
+                  {
+                     userId: {
+                        [Op.ne]: adminId
+                     }
+                  },
+                  {
+                     userId: {
+                        [Op.ne]: whoWasKickedId
+                     }
+                  }
+               ],
+
+            },
+         })
+             .then(res => res.map(c => c.userId));
+
+         const whoIsAdmin = await User.findByPk(adminId, {
+            attributes: [ "id", "username", "email", "image" ]
+         });
+
+         const toUsers = getUsers(whoWillSeeChanges!) as string[];
+         const toKickedUser = getUser(whoWasKickedId);
+
+         toUsers.length && io.to(toUsers).emit("kick_user_result", whoWasKickedId, conversationId);
+         toKickedUser && io.to(toKickedUser).emit("i_was_kicked", `Адмін ${ whoIsAdmin?.username } видалив вас із бесіди "${ conversation?.conversationName }"`, conversationId);
+
       });
 
       socket.on("disconnect", () => {

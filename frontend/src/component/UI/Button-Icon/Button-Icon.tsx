@@ -5,7 +5,7 @@ import { CSSProperties } from "react";
 interface IIconProps {
    size: number;
    as: ComponentWithAs<"svg", IconProps>;
-   fn?: () => void;
+   fn?: ( prop?: any ) => void;
    bg?: string;
    color?: string;
    rounded?: number;
@@ -16,21 +16,25 @@ interface IIconProps {
 
 export function ButtonIcon( { size, as, fn, bg, color, rounded, p, style, cursor = "pointer" }: IIconProps ) {
    return (
-       <Button variant={ "ghost" }
-               style={ style }
-               rounded={ rounded ? rounded : 20 }
-               gap={ 5 }
-               p={ p }
-               cursor={ cursor }
-               bg={ bg }
-               _hover={ { bg: "transparent" } }
-               onClick={ fn }>
+       <>
+          { as &&
+              <Button variant={ "ghost" }
+                      style={ style }
+                      rounded={ rounded ? rounded : 20 }
+                      gap={ 5 }
+                      p={ p }
+                      cursor={ cursor }
+                      bg={ bg }
+                      _hover={ { bg: "transparent" } }
+                      onClick={ fn }>
 
-          <Icon as={ as }
-                boxSize={ size }
-                cursor={ cursor }
-                color={ color }/>
+                <Icon as={ as }
+                      boxSize={ size }
+                      cursor={ cursor }
+                      color={ color }/>
 
-       </Button>
+              </Button>
+          }
+       </>
    );
 }

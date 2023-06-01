@@ -1,49 +1,26 @@
-import { Conversation, Message, User } from "../model";
-import { IConversation } from "../interface";
-import { groupConversationPresenter } from "../presenter/group-conversation.presenter";
-import { privateConversationPresenter } from "../presenter/private-conversation.presenter";
+import { Conversation, User } from "../model";
+import { IMessage } from "../interface";
+import { getConversationService } from "./get-conversation.service";
 
-export const sendMessageService = async ( conversationId: number, senderId: number, whoWillReceive: "sender" | "receiver" ) => {
+export const sendMessageService = async ( message: IMessage ) => {
 
-   const receiverId = await Conversation.findByPk(conversationId, {
-      include:
-          {
-             model: User,
-             as: "users",
-             attributes: [ "id", "username", "email", "image" ],
-          }
-   })
-       .then(res => res?.users.find(u => u.id !== senderId)?.id) as number;
+   const [ conversationForSender, conversationForReceiver, users ] = await Promise.all([
 
-   return await Conversation.findByPk(conversationId, {
-      include: [
-         {
-            model: User,
-            as: "users",
-            attributes: [ "id", "username", "email", "image" ],
-            through: {
-               attributes: [ "isNewMessagesExist" ]
-            }
-         },
-         {
-            model: User,
-            as: "admin",
-            attributes: [ "id", "username", "email", "image" ],
-         },
-         {
-            model: Message,
-            as: "messages",
-         }
-      ],
-      order: [
-         [ "lastModified", "DESC" ]
-      ]
-   })
-       .then(res => {
+      getConversationService(message.conversationId, message.senderId, "sender"),
 
-          if (res && res.isGroupConversation) return groupConversationPresenter(res.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
-          if (res && !res.isGroupConversation) return privateConversationPresenter(res.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
+      getConversationService(message.conversationId, message.senderId, "receiver"),
 
-          return res;
-       }) as IConversation;
+      Conversation
+          .findByPk(message.conversationId, {
+             include: {
+                model: User,
+                as: "users",
+                attributes: [ "id" ],
+             }
+          }).then(res => res?.users.map(u => u.id))
+
+   ]);
+
+   return { conversationForSender, conversationForReceiver, users };
+
 };

@@ -3,6 +3,7 @@ import { groupConversationPresenter, privateConversationPresenter } from "../../
 
 export const getConversationsService = async ( currentUserId: number ) => {
 
+   // Find conversations by User record and return presented data to client
    return await User.findByPk(currentUserId, {
       include: {
          model: Conversation,
@@ -14,21 +15,29 @@ export const getConversationsService = async ( currentUserId: number ) => {
             {
                model: User,
                as: "users",
+               attributes: [ "id", "username", "email", "image" ],
+               through: {
+                  attributes: [ "isNewMessagesExist" ],
+               },
             },
             {
                model: Message,
-               as: "messages"
+               as: "lastMessage"
             }
          ],
-      }
+      },
+      order: [
+         [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
+         [ "conversations", "lastMessage", "id", "ASC" ]
+      ]
    })
-       .then(res => {
-          const conversations = res?.conversations || undefined;
+       .then(user => {
+          const conversations = user?.conversations || undefined;
 
-          if (conversations) return conversations.map(item => {
-             if (item.isGroupConversation) return groupConversationPresenter(item.toJSON(), currentUserId);
-             if (!item.isGroupConversation) return privateConversationPresenter(item.toJSON(), currentUserId);
-          }).sort(( a, b ) => b.lastModified - a.lastModified);
+          if (conversations) return conversations.map(c => {
+             if (c.isGroupConversation) return groupConversationPresenter(c.toJSON(), currentUserId);
+             if (!c.isGroupConversation) return privateConversationPresenter(c.toJSON(), currentUserId);
+          });
 
           return conversations;
        });

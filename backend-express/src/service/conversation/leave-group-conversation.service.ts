@@ -4,6 +4,7 @@ import { groupConversationPresenter, privateConversationPresenter } from "../../
 
 export const leaveGroupConversationService = async ( conversationId: string, currentUserId: number ) => {
 
+   // Define special variables for checking
    const [ isUserAdmin, isGroupConversation ] = await Conversation
        .findByPk(conversationId)
        .then(res => [
@@ -11,10 +12,11 @@ export const leaveGroupConversationService = async ( conversationId: string, cur
           Boolean(res?.isGroupConversation === true)
        ]);
 
+   // Check results and throw errors if it's need
    if (!isGroupConversation) throw new ApiException("It is not group conversation", 400);
-
    if (isUserAdmin) throw new ApiException("Admin can not leave own conversation", 400);
 
+   // Delete ConversationUser record
    await ConversationUser.destroy({
       where: {
          conversationId,
@@ -22,6 +24,7 @@ export const leaveGroupConversationService = async ( conversationId: string, cur
       }
    });
 
+   // Return presented data to client
    return await User.findByPk(currentUserId, {
       include: {
          model: Conversation,
@@ -33,21 +36,29 @@ export const leaveGroupConversationService = async ( conversationId: string, cur
             {
                model: User,
                as: "users",
+               attributes: [ "id", "username", "email", "image" ],
+               through: {
+                  attributes: [ "isNewMessagesExist" ],
+               },
             },
             {
                model: Message,
-               as: "messages"
+               as: "lastMessage"
             }
          ],
-      }
+      },
+      order: [
+         [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
+         [ "conversations", "lastMessage", "id", "ASC" ]
+      ]
    })
-       .then(res => {
-          const conversations = res?.conversations || undefined;
+       .then(user => {
+          const conversations = user?.conversations || undefined;
 
-          if (conversations) return conversations.map(item => {
-             if (item.isGroupConversation) return groupConversationPresenter(item.toJSON(), currentUserId);
-             if (!item.isGroupConversation) return privateConversationPresenter(item.toJSON(), currentUserId);
-          }).sort(( a, b ) => b.lastModified - a.lastModified);
+          if (conversations) return conversations.map(c => {
+             if (c.isGroupConversation) return groupConversationPresenter(c.toJSON(), currentUserId);
+             if (!c.isGroupConversation) return privateConversationPresenter(c.toJSON(), currentUserId);
+          })
 
           return conversations;
        });

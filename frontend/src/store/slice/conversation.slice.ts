@@ -3,6 +3,7 @@ import { IActiveConversation, IConversation } from "../../interface/conversation
 import { IUser } from "../../interface/user.interface.ts";
 import { AxiosError } from "axios";
 import { conversationService } from "../../service/conversation.service.ts";
+import { IMessage } from "../../interface/message.interface.ts";
 
 interface IInitialState {
    conversations: IConversation[];
@@ -12,6 +13,7 @@ interface IInitialState {
    errorMessage: string | undefined;
    actionMessage: string | undefined;
    searchKey: string | undefined;
+   isNewMessageIncome: boolean;
 }
 
 const initialState: IInitialState = {
@@ -21,7 +23,8 @@ const initialState: IInitialState = {
    isLoading: false,
    errorMessage: undefined,
    actionMessage: undefined,
-   searchKey: undefined
+   searchKey: undefined,
+   isNewMessageIncome: false,
 };
 
 
@@ -71,6 +74,19 @@ const deleteConversation = createAsyncThunk<IConversation[], { conversation: ICo
           return rejectWithValue(axiosError.message);
        }
 
+    }
+);
+
+const kickUserFromGroupConversation = createAsyncThunk<void, { conversationId: number, userId: number }, { rejectValue: string }>(
+    "conversation/kickUserFromGroupConversation",
+    async ( { conversationId, userId }, { rejectWithValue } ) => {
+       try {
+          await conversationService.kickUserFromGroupConversation(conversationId, userId);
+       }
+       catch (e) {
+          const axiosError = e as AxiosError;
+          return rejectWithValue(axiosError.message);
+       }
     }
 );
 
@@ -129,6 +145,17 @@ const conversationSlice = createSlice({
 
       setActiveConversation: ( state, { payload }: PayloadAction<IActiveConversation> ) => {
          state.activeConversation = payload;
+         state.conversations = state.conversations.map(c => {
+            if (c.id === payload.id) {
+               c.isNewMessagesExist = false;
+               return c;
+            }
+            return c;
+         });
+      },
+
+      liftConversation: ( state ) => {
+         state.conversations.sort(( a, b ) => a.lastMessage.lastModified - b.lastMessage.lastModified);
       },
 
       addConversation: ( state, { payload }: PayloadAction<IConversation> ) => {
@@ -146,7 +173,9 @@ const conversationSlice = createSlice({
 
       updateConversations: ( state, { payload }: PayloadAction<IConversation> ) => {
          state.conversations = state.conversations.map(c => {
-            if (c.id === payload.id) c.lastMessage = payload.lastMessage;
+            if (c.id === payload.id) {
+               return payload;
+            }
             return c;
          });
 
@@ -157,6 +186,15 @@ const conversationSlice = createSlice({
          state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
       },
 
+      updateConversationAfterKickUser: ( state, { payload }: PayloadAction<{ whoWasKickedId: number, conversationId: number }> ) => {
+         const { whoWasKickedId, conversationId } = payload;
+         const target = state.conversations.find(c => c.id === conversationId);
+         if (target) {
+            target.users = target.users.filter(u => u.id !== whoWasKickedId);
+            state.activeConversation.users = state.activeConversation.users.filter(u => u.id !== whoWasKickedId);
+         }
+      },
+
       setActionMessage: ( state, { payload }: PayloadAction<string | undefined> ) => {
          state.actionMessage = payload;
       },
@@ -165,6 +203,11 @@ const conversationSlice = createSlice({
          state.conversations = state.conversations.filter(c => c.id !== payload);
          state.activeConversation = state.conversations[0];
       },
+
+      updateConversationAfterDeleteMessage: ( state, { payload }: PayloadAction<IMessage> ) => {
+         const target = state.conversations.find(c => c.id === payload.conversationId);
+         if (target) target.lastMessage = payload;
+      }
 
    },
 
@@ -255,6 +298,22 @@ const conversationSlice = createSlice({
           state.errorMessage = payload;
        })
 
+       // *************** //
+
+       .addCase(kickUserFromGroupConversation.pending, ( state ) => {
+          state.isLoading = true;
+       })
+
+       .addCase(kickUserFromGroupConversation.fulfilled, ( state, { meta } ) => {
+          state.isLoading = false;
+          state.activeConversation.users = state.activeConversation.users.filter(u => u.id !== meta.arg.userId);
+       })
+
+       .addCase(kickUserFromGroupConversation.rejected, ( state, { payload } ) => {
+          state.isLoading = false;
+          state.errorMessage = payload;
+       })
+
 });
 
 export const conversationActions = conversationSlice.actions;
@@ -263,6 +322,7 @@ export const conversationAsyncActions = {
    createConversation,
    deleteConversation,
    deleteGroupConversation,
-   leaveGroupConversation
+   leaveGroupConversation,
+   kickUserFromGroupConversation
 };
 export const conversationReducer = conversationSlice.reducer;

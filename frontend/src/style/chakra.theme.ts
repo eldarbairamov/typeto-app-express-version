@@ -14,7 +14,8 @@ export const chakraTheme = extendTheme({
             backgroundColor: "#eff0f3",
             margin: 0,
             padding: 0,
-            boxSizing: "border-box"
+            boxSizing: "border-box",
+            letterSpacing: -0.5,
          },
          "&::-webkit-scrollbar": {
             height: 0,
@@ -28,9 +29,6 @@ export const chakraTheme = extendTheme({
             background: "transparent",
             borderRadius: "20px",
          },
-         "*": {
-            letterSpacing: -0.5,
-         }
       }
    },
    components: {
