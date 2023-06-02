@@ -36,6 +36,7 @@ export const getConversationService = async ( conversationId: number, senderId: 
       ],
       order: [
          [ "lastModified", "DESC" ],
+         [ { model: Message, as: "lastMessage" }, "id", "ASC" ],
          [ { model: User, as: "users" }, "id", "ASC" ]
       ]
    })
