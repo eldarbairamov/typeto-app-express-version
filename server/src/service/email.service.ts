@@ -1,9 +1,9 @@
-import { EMAIL_TEMPLATES_PATH } from "../constant/email-templates-path.constant";
+import { EMAIL_TEMPLATES_PATH } from "../constant";
 import path from "node:path";
-import { ApiException } from "../exception/api.exception";
+import { ApiException } from "../exception";
 import nodemailer from "nodemailer";
 import { emailTemplate } from "../email-template/email-template";
-import { config } from "../config/config";
+import { config } from "../config";
 import { EmailActionType } from "../type/email-action.type";
 import hbs from "nodemailer-express-handlebars";
 

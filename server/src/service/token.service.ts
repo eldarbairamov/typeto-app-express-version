@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import { config } from "../config/config";
-import { ApiException } from "../exception/api.exception";
-import { IAccessTokenPair } from "../interface/auth.interface";
 import { Secret } from "jsonwebtoken";
-import { ACCESS_TOKEN_TYPE, FORGOT_PASSWORD_TOKEN_TYPE, REFRESH_TOKEN_TYPE } from "../constant/token-type.constant";
+import { IAccessTokenPair } from "../interface";
+import { config } from "../config";
+import { ApiException } from "../exception";
+import { ACCESS_TOKEN_TYPE, FORGOT_PASSWORD_TOKEN_TYPE, REFRESH_TOKEN_TYPE } from "../constant";
 
 export const tokenService = {
 

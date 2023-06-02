@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import { ApiException } from "../exception/api.exception";
+import { ApiException } from "../exception";
 
 export const passwordService = {
 

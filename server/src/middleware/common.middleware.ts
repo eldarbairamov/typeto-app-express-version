@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
-import { ApiException } from "../exception/api.exception";
+import { ApiException } from "../exception";
 
 export const commonMiddleware = {
 

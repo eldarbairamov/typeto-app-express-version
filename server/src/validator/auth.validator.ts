@@ -1,6 +1,6 @@
 import Joi from "joi";
-import { ILogin, IRegistration, IResetPassword } from "../interface/auth.interface";
-import { EMAIL_REGEXP } from "../constant/regexp.constant";
+import { ILogin, IRegistration, IResetPassword } from "../interface";
+import { EMAIL_REGEXP } from "../constant";
 
 export const registrationValidator = Joi.object<IRegistration>({
 
