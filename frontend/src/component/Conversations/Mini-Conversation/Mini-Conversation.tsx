@@ -1,11 +1,10 @@
 import { Avatar, AvatarBadge, AvatarGroup, Center, Divider, VStack } from "@chakra-ui/react";
-import { IUserFromConversation } from "../../../interface/user.interface.ts";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { conversationActions } from "../../../store/slice/conversation.slice.ts";
-import { IConversation } from "../../../interface/conversation.interface.ts";
+import { conversationActions } from "../../../store/slice";
+import { IConversation, IUserFromConversation } from "../../../interface";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { CONVERSATION_ACTIVE_COLOR } from "../../../constant";
 import { v4 } from "uuid";
-import { CONVERSATION_ACTIVE_COLOR } from "../../../constant/color.constant.ts";
-import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
+import { getImageUrl } from "../../../helper";
 
 interface IConversationProps {
    conversation: IConversation;

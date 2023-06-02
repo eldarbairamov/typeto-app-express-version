@@ -1,5 +1,5 @@
 import { User } from "../../model";
-import { ApiException } from "../../exception/api.exception";
+import { ApiException } from "../../exception";
 
 export const findUserService = async ( userEmail: string, currentUserId: number ) => {
 

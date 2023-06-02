@@ -1,24 +1,12 @@
-import { useEffect } from "react";
-
+import { useAppSelector } from "../../../hook";
+import { getMessageService } from "../../../service";
 import { calc, HStack, VStack } from "@chakra-ui/react";
-import { ChatBoxHeader } from "../Chat-Box-Header/Chat-Box-Header.tsx";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { messageAsyncActions } from "../../../store/slice/message.slice.ts";
-import { MiniSideBar } from "../../SIde-Bar/Mini-Side-Bar/Mini-Side-Bar.tsx";
-import { ChatBoxBottom } from "../Chat-Box-Bottom/Chat-Box-Bottom.tsx";
-import { MessageList } from "../../Messages/Message-List/Message-List.tsx";
-import { EmptyBox } from "../../Empty-Box/Empty-Box.tsx";
+import { EmptyBox, MessageList, MiniSideBar, ChatBoxBottom, ChatBoxHeader } from "../../../component";
 
 export function ChatBox() {
    const { activeConversation, conversations } = useAppSelector(state => state.conversationReducer);
 
-   const dispatch = useAppDispatch();
-
-   const getMessages = async ( conversationId: number ) => await dispatch(messageAsyncActions.getMessages({ conversationId }));
-
-   useEffect(() => {
-      if (activeConversation?.id) getMessages(activeConversation.id);
-   }, [ activeConversation?.id ]);
+   getMessageService(activeConversation);
 
    return (
        <HStack w={ [ "100%", "100%", "100%", "100%", calc("100%").subtract("400px").toString() ] }

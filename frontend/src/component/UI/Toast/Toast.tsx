@@ -1,17 +1,18 @@
 import { useEffect, useRef } from "react";
 
 import { Alert, Button, HStack, Text, useToast } from "@chakra-ui/react";
-import { useAppDispatch } from "../../../hook/redux.hook.ts";
-import { conversationActions } from "../../../store/slice/conversation.slice.ts";
-import { MAIN_COLOR } from "../../../constant/color.constant.ts";
+import { useAppDispatch } from "../../../hook";
+import { ALERT_COLOR, MAIN_COLOR } from "../../../constant";
 import { Icon } from "@chakra-ui/icons";
 import { BiBell } from "react-icons/all";
+import { appActions } from "../../../store/slice";
 
 interface IToastProps {
    actionMessage: string | undefined;
+   actionType: "info" | "error";
 }
 
-export function Toast( { actionMessage }: IToastProps ) {
+export function Toast( { actionMessage, actionType }: IToastProps ) {
    const toast = useToast();
 
    const buttonRef = useRef<HTMLButtonElement>(null);
@@ -27,8 +28,8 @@ export function Toast( { actionMessage }: IToastProps ) {
                style={ { display: "none" } }
                onClick={ () => toast({
                   render: () => (
-                      <Alert style={ { position: "fixed" } } w={ "fit-content" } bg={ "transparent" }>
-                         <HStack bg={ MAIN_COLOR } w={ "100%" } p={ 3 } rounded={ 10 }>
+                      <Alert bg={ "transparent" } justifyContent={ "center" }>
+                         <HStack bg={ actionType === "info" ? MAIN_COLOR : ALERT_COLOR } w={ "fit-content" } p={ 3 } rounded={ 10 }>
                             <Icon as={ BiBell } color={ "white" } boxSize={ 5 }/>
                             <Text fontWeight={ "bold" } color={ "white" }> { actionMessage } </Text>
                          </HStack>
@@ -36,7 +37,7 @@ export function Toast( { actionMessage }: IToastProps ) {
                   ),
                   duration: 2000,
                   position: "top",
-                  onCloseComplete: () => dispatch(conversationActions.setActionMessage(undefined))
+                  onCloseComplete: () => dispatch(appActions.setActionMessage({ message: undefined }))
                }) }>
        </Button>
    );

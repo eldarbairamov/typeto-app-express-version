@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IUser, IUserBySearch } from "../../interface/user.interface.ts";
-import { userService } from "../../service/user.service.ts";
 import { AxiosError } from "axios";
+import { IUser, IUserBySearch } from "../../interface";
+import { userApi } from "../../api";
 
 interface IInitialState {
    contacts: IUser[];
@@ -25,7 +25,7 @@ const getContacts = createAsyncThunk<IUser[], { searchKey?: string }, { rejectVa
     "user/getContacts",
     async ( { searchKey }, { rejectWithValue } ) => {
        try {
-          const { data } = await userService.getContacts(searchKey);
+          const { data } = await userApi.getContacts(searchKey);
           return data;
 
        }
@@ -40,7 +40,7 @@ const addContact = createAsyncThunk<void, { contactId: number }, { rejectValue: 
     "user/addContact",
     async ( { contactId }, { rejectWithValue } ) => {
        try {
-          await userService.addContact(contactId);
+          await userApi.addContact(contactId);
 
        }
        catch (e) {
@@ -54,7 +54,7 @@ const findUser = createAsyncThunk<IUserBySearch, { userEmail: string }, { reject
     "user/findUser",
     async ( { userEmail }, { rejectWithValue } ) => {
        try {
-          const { data } = await userService.findUser(userEmail);
+          const { data } = await userApi.findUser(userEmail);
           return data;
 
        }
@@ -70,7 +70,7 @@ const uploadAvatar = createAsyncThunk<{ imageName: string }, FormData, { rejectV
     "user/uploadAvatar",
     async ( formData, { rejectWithValue } ) => {
        try {
-          const { data } = await userService.uploadAvatar(formData);
+          const { data } = await userApi.uploadAvatar(formData);
           return data;
        }
        catch (e) {
@@ -84,7 +84,7 @@ const deleteAvatar = createAsyncThunk<void, void, { rejectValue: string }>(
     "user/deleteAvatar",
     async ( _, { rejectWithValue } ) => {
        try {
-          await userService.deleteAvatar();
+          await userApi.deleteAvatar();
        }
        catch (e) {
           const axiosError = e as AxiosError;
@@ -98,7 +98,7 @@ const deleteContact = createAsyncThunk<IUser[], { contactId: number }, { rejectV
     "user/deleteContact",
     async ( { contactId }, { rejectWithValue } ) => {
        try {
-          const { data } = await userService.deleteContact(contactId);
+          const { data } = await userApi.deleteContact(contactId);
           return data;
 
        }
@@ -113,7 +113,7 @@ const getCurrentUser = createAsyncThunk<IUser, void, { rejectValue: string }>(
     "user/getCurrentUser",
     async ( _, { rejectWithValue } ) => {
        try {
-          const { data } = await userService.getCurrentUser();
+          const { data } = await userApi.getCurrentUser();
           return data;
 
        }

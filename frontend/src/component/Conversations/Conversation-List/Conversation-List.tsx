@@ -1,10 +1,9 @@
 import React from "react";
 
-import { IConversation } from "../../../interface/conversation.interface.ts";
-import { IUserFromConversation } from "../../../interface/user.interface.ts";
 import { VStack } from "@chakra-ui/react";
 import { v4 } from "uuid";
-import { useAppSelector } from "../../../hook/redux.hook.ts";
+import { IConversation, IUserFromConversation } from "../../../interface";
+import { useAppSelector } from "../../../hook";
 
 interface IConversationProps {
    conversation: IConversation;

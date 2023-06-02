@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IMessage } from "../../interface/message.interface.ts";
-import { messageService } from "../../service/message.service.ts";
 import { AxiosError } from "axios";
+import { IMessage } from "../../interface";
+import { messageApi } from "../../api";
 
 interface IInitialState {
    messages: IMessage[];
-   isLoading: boolean;
+   isMessagesLoading: boolean;
+   isMessageSending: boolean;
+   isImageSending: boolean;
    errorMessage: string | undefined;
    isNewMessageAdded: boolean;
    isBlindZone: boolean;
@@ -13,7 +15,9 @@ interface IInitialState {
 
 const initialState: IInitialState = {
    messages: [] as IMessage[],
-   isLoading: false,
+   isMessagesLoading: false,
+   isMessageSending: false,
+   isImageSending: false,
    errorMessage: undefined,
    isNewMessageAdded: false,
    isBlindZone: false
@@ -23,7 +27,7 @@ const getMessages = createAsyncThunk<IMessage[], { conversationId: number }, { r
     "message/getMessages",
     async ( { conversationId }, { rejectWithValue } ) => {
        try {
-          const { data } = await messageService.getMessages(conversationId);
+          const { data } = await messageApi.getMessages(conversationId);
           return data;
 
        }
@@ -38,7 +42,7 @@ const sendMessage = createAsyncThunk<IMessage, { content: string, conversationId
     "message/sendMessage",
     async ( { content, conversationId }, { rejectWithValue } ) => {
        try {
-          const { data } = await messageService.sendMessage(conversationId, content);
+          const { data } = await messageApi.sendMessage(conversationId, content);
           return data;
 
        }
@@ -53,7 +57,7 @@ const deleteMessage = createAsyncThunk<IMessage, { messageId: number, conversati
     "message/deleteMessage",
     async ( { messageId, conversationId }, { rejectWithValue } ) => {
        try {
-          const { data } = await messageService.deleteMessage(messageId, conversationId);
+          const { data } = await messageApi.deleteMessage(messageId, conversationId);
           return data;
 
        }
@@ -68,7 +72,7 @@ const sendImage = createAsyncThunk<IMessage, { formData: FormData }, { rejectVal
     "message/sendImage",
     async ( { formData }, { rejectWithValue } ) => {
        try {
-          const { data } = await messageService.sendImage(formData);
+          const { data } = await messageApi.sendImage(formData);
           return data;
        }
        catch (e) {
@@ -96,7 +100,7 @@ const messageSlice = createSlice({
          state.isBlindZone = payload;
       },
 
-      deleteMessage: (state, { payload }: PayloadAction<number>) => {
+      deleteMessage: ( state, { payload }: PayloadAction<number> ) => {
          const target = state.messages.find(m => m.id === payload);
          const targetIndex = state.messages.indexOf(target!);
          state.messages.splice(targetIndex, 1);
@@ -106,45 +110,54 @@ const messageSlice = createSlice({
    extraReducers: ( builder ) => builder
 
        .addCase(getMessages.pending, ( state ) => {
-          state.isLoading = true;
+          state.isMessagesLoading = true;
        })
        .addCase(getMessages.fulfilled, ( state, { payload } ) => {
           state.messages = payload;
-          state.isLoading = false;
+          state.isMessagesLoading = false;
        })
        .addCase(getMessages.rejected, ( state, { payload } ) => {
           state.errorMessage = payload;
-          state.isLoading = false;
+          state.isMessagesLoading = false;
        })
 
        // *************** //
 
+       .addCase(sendMessage.pending, ( state ) => {
+          state.isMessageSending = true;
+       })
+
        .addCase(sendMessage.fulfilled, ( state, { payload } ) => {
-          state.messages.push(payload);
           state.isNewMessageAdded = true;
-          state.isLoading = false;
+          state.isMessageSending = false;
+          state.messages.push(payload);
+       })
+
+       .addCase(sendMessage.rejected, ( state, { payload } ) => {
+          state.errorMessage = payload;
+          state.isMessageSending = false;
        })
 
        // *************** //
 
        .addCase(sendImage.pending, ( state ) => {
-          state.isLoading = true;
+          state.isImageSending = true;
        })
 
        .addCase(sendImage.fulfilled, ( state, { payload } ) => {
+          state.isImageSending = false;
           state.messages.push(payload);
-          state.isLoading = false;
        })
 
        .addCase(sendImage.rejected, ( state, { payload } ) => {
+          state.isImageSending = false;
           state.errorMessage = payload;
-          state.isLoading = false;
        })
 
        // *************** //
 
-       .addCase(deleteMessage.pending, (state) => {
-          state.isNewMessageAdded = false
+       .addCase(deleteMessage.pending, ( state ) => {
+          state.isNewMessageAdded = false;
        })
 
        .addCase(deleteMessage.fulfilled, ( state, { meta } ) => {

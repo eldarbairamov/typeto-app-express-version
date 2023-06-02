@@ -1,12 +1,11 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
 import fileUpload, { FileArray } from "express-fileupload";
-import { fileNameMaker } from "../../helper/file-name-maker.helper";
 import path from "node:path";
 import process from "process";
-import { exists } from "../../helper/exists.helper";
 import { mkdir } from "fs/promises";
 import sharp from "sharp";
 import { Op } from "sequelize";
+import { exists, fileNameMaker } from "../../helper";
 
 export const sendImageService = async ( userId: number, files: FileArray, conversationId: number ) => {
    const user = await User.findByPk(userId);

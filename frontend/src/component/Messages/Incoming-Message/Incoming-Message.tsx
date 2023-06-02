@@ -1,8 +1,8 @@
 import { Avatar, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
 import moment from "moment";
-import { IMessage } from "../../../interface/message.interface.ts";
-import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
-import { MAIN_COLOR, MESSAGE_INCOMING_COLOR_ } from "../../../constant/color.constant.ts";
+import { IMessage } from "../../../interface";
+import { getImageUrl } from "../../../helper";
+import { MAIN_COLOR, MESSAGE_INCOMING_COLOR_ } from "../../../constant";
 
 interface IIncomingMessage {
    message: IMessage;
@@ -41,13 +41,12 @@ export function IncomingMessage( { message }: IIncomingMessage ) {
                 </Heading>
 
                 { message.isImage
-                    ?
-                    <Image src={ getImageUrl(message.content, message.sender.email) }
-                           borderRadius={ 20 }
-                           cursor={ "pointer" }
-                           h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
-                    :
-                    <Text color={ "gray.700" }> { message.content } </Text>
+                    ? <Image src={ getImageUrl(message.content, message.sender.email) }
+                             borderRadius={ 20 }
+                             cursor={ "pointer" }
+                             h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
+
+                    : <Text color={ "gray.700" }> { message.content } </Text>
                 }
 
              </VStack>

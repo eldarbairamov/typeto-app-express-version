@@ -1,9 +1,9 @@
-import { IRegistration } from "../../interface/auth.interface";
+import { IRegistration } from "../../interface";
+import { registrationValidator } from "../../validator";
+import { ApiException } from "../../exception";
 import { User } from "../../model";
-import { ApiException } from "../../exception/api.exception";
-import { registrationValidator } from "../../validator/auth.validator";
 import { emailSender } from "../email.service";
-import { REGISTRATION } from "../../constant/email-action.constant";
+import { REGISTRATION } from "../../constant";
 
 export const registrationService = async ( body: IRegistration ): Promise<void> => {
    const { username, password, email } = body;

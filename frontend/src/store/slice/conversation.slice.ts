@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IActiveConversation, IConversation } from "../../interface/conversation.interface.ts";
-import { IUser } from "../../interface/user.interface.ts";
 import { AxiosError } from "axios";
-import { conversationService } from "../../service/conversation.service.ts";
-import { IMessage } from "../../interface/message.interface.ts";
+import { IActiveConversation, IConversation, IMessage, IUser } from "../../interface";
+import { conversationApi } from "../../api";
 
 interface IInitialState {
    conversations: IConversation[];
@@ -11,7 +9,6 @@ interface IInitialState {
    groupMembers: IUser[];
    isLoading: boolean;
    errorMessage: string | undefined;
-   actionMessage: string | undefined;
    searchKey: string | undefined;
    isNewMessageIncome: boolean;
 }
@@ -22,7 +19,6 @@ const initialState: IInitialState = {
    groupMembers: [] as IUser[],
    isLoading: false,
    errorMessage: undefined,
-   actionMessage: undefined,
    searchKey: undefined,
    isNewMessageIncome: false,
 };
@@ -35,7 +31,7 @@ const createConversation = createAsyncThunk<IConversation, { userIds: number[], 
     // @ts-ignore
     async ( { userIds, conversationName, username }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.createConversation(userIds, conversationName);
+          const { data } = await conversationApi.createConversation(userIds, conversationName);
           return data;
 
        }
@@ -50,7 +46,7 @@ const getConversations = createAsyncThunk<IConversation[], { searchKey?: string 
     "conversation/getConversations",
     async ( { searchKey }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.getConversations(searchKey);
+          const { data } = await conversationApi.getConversations(searchKey);
           return data;
 
        }
@@ -65,7 +61,7 @@ const deleteConversation = createAsyncThunk<IConversation[], { conversation: ICo
     "conversation/deleteConversation",
     async ( { conversation }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.deleteConversation(conversation.id);
+          const { data } = await conversationApi.deleteConversation(conversation.id);
           return data;
 
        }
@@ -81,7 +77,7 @@ const kickUserFromGroupConversation = createAsyncThunk<void, { conversationId: n
     "conversation/kickUserFromGroupConversation",
     async ( { conversationId, userId }, { rejectWithValue } ) => {
        try {
-          await conversationService.kickUserFromGroupConversation(conversationId, userId);
+          await conversationApi.kickUserFromGroupConversation(conversationId, userId);
        }
        catch (e) {
           const axiosError = e as AxiosError;
@@ -94,7 +90,7 @@ const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation
     "conversation/deleteGroupConversation",
     async ( { conversation }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.deleteGroupConversation(conversation.id);
+          const { data } = await conversationApi.deleteGroupConversation(conversation.id);
           return data;
 
        }
@@ -110,7 +106,7 @@ const leaveGroupConversation = createAsyncThunk<IConversation[], { conversation:
     "conversation/leaveGroupConversation",
     async ( { conversation }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationService.leaveGroupConversation(conversation.id);
+          const { data } = await conversationApi.leaveGroupConversation(conversation.id);
           return data;
 
        }
@@ -195,19 +191,15 @@ const conversationSlice = createSlice({
          }
       },
 
-      setActionMessage: ( state, { payload }: PayloadAction<string | undefined> ) => {
-         state.actionMessage = payload;
-      },
-
       deleteConversation: ( state, { payload }: PayloadAction<number> ) => {
          state.conversations = state.conversations.filter(c => c.id !== payload);
          state.activeConversation = state.conversations[0];
       },
 
-      updateConversationAfterDeleteMessage: ( state, { payload }: PayloadAction<IMessage> ) => {
+      updateConversationAfterDeleteMessage: ( state, { payload }: PayloadAction<{ message: IMessage, conversationId: number }> ) => {
          const target = state.conversations.find(c => c.id === payload.conversationId);
-         if (target) target.lastMessage = payload;
-      }
+         if (target) target.lastMessage = payload.message;
+      },
 
    },
 

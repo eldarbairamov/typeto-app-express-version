@@ -1,14 +1,9 @@
 import { createListenerMiddleware, isAnyOf } from "@reduxjs/toolkit";
 import { RootState } from "../store.ts";
-import { conversationActions, conversationAsyncActions } from "../slice/conversation.slice.ts";
-import { messageActions, messageAsyncActions } from "../slice/message.slice.ts";
+import { appActions, authAsyncActions, conversationActions, conversationAsyncActions, messageActions, messageAsyncActions, socketActions, userActions, userAsyncActions } from "../slice";
 import { io, Socket } from "socket.io-client";
-import { userActions, userAsyncActions } from "../slice/user.slice.ts";
-import { IMessage } from "../../interface/message.interface.ts";
-import { IConversation } from "../../interface/conversation.interface.ts";
-import { socketActions } from "../slice/socket.slice.ts";
-import { authAsyncActions } from "../slice/auth.slice.ts";
-import { IUserFromConversation } from "../../interface/user.interface.ts";
+import { IConversation, IMessage, IUserFromConversation } from "../../interface";
+import { GREEN_COLOR, MAGENTA } from "../../constant";
 
 let socket: Socket;
 
@@ -25,7 +20,7 @@ listenerMiddleware.startListening({
    actionCreator: userAsyncActions.getCurrentUser.fulfilled,
    effect: ( _, api ) => {
 
-      console.log("get current user");
+      console.log(GREEN_COLOR, "get current user");
 
       const { userReducer } = api.getState() as RootState;
 
@@ -38,7 +33,7 @@ listenerMiddleware.startListening({
    actionCreator: socketActions.connect,
    effect: async ( _, api ) => {
 
-      console.log("socket connection");
+      console.log(GREEN_COLOR, "socket connection");
 
       const dispatch = api.dispatch;
 
@@ -47,17 +42,17 @@ listenerMiddleware.startListening({
       socket.connect();
 
       socket.on("who_is_online", ( userIds: number[] ) => {
-         console.log("socket: who_is_online");
+         console.log(MAGENTA, "socket: who_is_online");
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
       socket.on("refresh_online_users", ( userIds: number[] ) => {
-         console.log("socket: refresh_online_users");
+         console.log(MAGENTA, "socket: refresh_online_users");
          dispatch(userActions.setOnlineContacts(userIds));
       });
 
       socket.on("get_conversation", ( conversation: IConversation ) => {
-         console.log("socket: get_conversation");
+         console.log(MAGENTA, "socket: get_conversation");
          dispatch(conversationActions.addConversation(conversation));
       });
 
@@ -68,18 +63,18 @@ listenerMiddleware.startListening({
    actionCreator: conversationActions.setActiveConversation,
    effect: async ( action, api ) => {
 
-      console.log("set active conversation");
+      console.log(GREEN_COLOR, "set active conversation");
 
       const { userReducer, conversationReducer } = api.getState() as RootState;
 
       const dispatch = api.dispatch;
 
-      socket.emit("conversation", action.payload.id);
+      socket.emit("join_to_conversation", action.payload.id);
 
       socket.off("get_message");
 
       socket.on("get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
-         console.log("socket: get_message");
+         console.log(MAGENTA, "socket: get_message");
 
          const senderId = message.senderId;
          const currentUserId = userReducer.currentUserInfo.id;
@@ -87,29 +82,29 @@ listenerMiddleware.startListening({
          const activeConversationId = conversationReducer.activeConversation.id;
 
          if (senderId === currentUserId && activeConversationId === conversationId) {
+            console.log('1');
+            console.log(conversationForSender);
             conversationForSender.isNewMessagesExist = false;
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
          if (senderId !== currentUserId && activeConversationId === conversationId) {
+            console.log('2');
             conversationForReceiver.isNewMessagesExist = false;
             dispatch(messageActions.addMessage(message));
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
          if (senderId === currentUserId && activeConversationId !== conversationId) {
+            console.log('3');
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
          if (senderId !== currentUserId && activeConversationId !== conversationId) {
+            console.log('4');
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
-      });
-
-      socket.on("delete_message_result", ( messageId: number, updatedLastMessage: IMessage ) => {
-         dispatch(messageActions.deleteMessage(messageId));
-         dispatch(conversationActions.updateConversationAfterDeleteMessage(updatedLastMessage));
       });
 
    },
@@ -119,7 +114,7 @@ listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.getConversations.fulfilled,
    effect: async ( _, api ) => {
 
-      console.log("get conversations");
+      console.log(GREEN_COLOR, "get conversations");
 
       const { conversationReducer } = api.getState() as RootState;
 
@@ -130,31 +125,46 @@ listenerMiddleware.startListening({
       }
 
       socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-         console.log("socket: get_leave_result");
-         dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
+         console.log(MAGENTA, "socket: get_leave_result");
+         dispatch(appActions.setActionMessage({
+            message: `${ whoLeft } покинув(ла) бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.updateConversations(conversation));
       });
 
       socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
          console.log("socket: get_delete_result");
-         dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
+         dispatch(appActions.setActionMessage({
+            message: `${ whoLeave } закінчив(ла) бесіду `,
+            type: "info"
+         }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
       socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-         console.log("socket: get_delete_group_result");
-         dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
+         console.log(MAGENTA, "socket: get_delete_group_result");
+         dispatch(appActions.setActionMessage({
+            message: `Адмін ${ adminName } закрив бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
+      socket.on("delete_message_result", ( messageId: number, conversationId: number, updatedLastMessage: IMessage ) => {
+         console.log(MAGENTA, "socket: delete_message_result");
+         dispatch(messageActions.deleteMessage(messageId));
+         dispatch(conversationActions.updateConversationAfterDeleteMessage({ message: updatedLastMessage, conversationId }));
+      });
+
       socket.on("kick_user_result", ( whoWasKickedId: number, conversationId: number ) => {
-         console.log("socket: kick_user_result");
+         console.log(MAGENTA, "socket: kick_user_result");
          dispatch(conversationActions.updateConversationAfterKickUser({ whoWasKickedId, conversationId }));
       });
 
       socket.on("i_was_kicked", ( message: string, conversationId: number ) => {
-         console.log("socket: i_was_kicked");
-         dispatch(conversationActions.setActionMessage(message));
+         console.log(MAGENTA, "socket: i_was_kicked");
+         dispatch(appActions.setActionMessage({ message, type: "info" }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
@@ -165,7 +175,7 @@ listenerMiddleware.startListening({
    actionCreator: conversationActions.addConversation,
    effect: ( action, api ) => {
 
-      console.log("add conversation");
+      console.log(GREEN_COLOR, "add conversation");
 
       const { conversationReducer } = api.getState() as RootState;
 
@@ -176,20 +186,29 @@ listenerMiddleware.startListening({
       }
 
       socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-         console.log("socket: get_leave_result");
-         dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
+         console.log(MAGENTA, "socket: get_leave_result");
+         dispatch(appActions.setActionMessage({
+            message: `${ whoLeft } покинув(ла) бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.updateConversations(conversation));
       });
 
       socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
-         console.log("socket: get_delete_result");
-         dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
+         console.log(MAGENTA, "socket: get_delete_result");
+         dispatch(appActions.setActionMessage({
+            message: `${ whoLeave } закінчив(ла) бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
       socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-         console.log("socket: get_delete_group_result");
-         dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
+         console.log(MAGENTA, "socket: get_delete_group_result");
+         dispatch(appActions.setActionMessage({
+            message: `Адмін ${ adminName } закрив бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
@@ -200,7 +219,7 @@ listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.createConversation.fulfilled,
    effect: ( action, api ) => {
 
-      console.log("create conversation");
+      console.log(GREEN_COLOR, "create conversation");
 
       const { userReducer } = api.getState() as RootState;
 
@@ -214,20 +233,29 @@ listenerMiddleware.startListening({
       dispatch(conversationActions.setActiveConversation(action.payload));
 
       socket.on("get_leave_result", ( conversation: IConversation, whoLeft: string ) => {
-         console.log("socket: get_leave_result");
-         dispatch(conversationActions.setActionMessage(`${ whoLeft } покинув(ла) бесіду`));
+         console.log(MAGENTA, "socket: get_leave_result");
+         dispatch(appActions.setActionMessage({
+            message: `${ whoLeft } покинув(ла) бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.updateConversations(conversation));
       });
 
       socket.on("get_delete_result", ( conversationId: number, whoLeave: string ) => {
-         console.log("socket: get_delete_result");
-         dispatch(conversationActions.setActionMessage(`${ whoLeave } закінчив(ла) бесіду `));
+         console.log(MAGENTA, "socket: get_delete_result");
+         dispatch(appActions.setActionMessage({
+            message: `${ whoLeave } закінчив(ла) бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
       socket.on("get_delete_group_result", ( conversationId: number, adminName: string ) => {
-         console.log("socket: get_delete_group_result");
-         dispatch(conversationActions.setActionMessage(`Адмін ${ adminName } закрив бесіду`));
+         console.log(MAGENTA, "socket: get_delete_group_result");
+         dispatch(appActions.setActionMessage({
+            message: `Адмін ${ adminName } закрив бесіду`,
+            type: "info"
+         }));
          dispatch(conversationActions.deleteConversation(conversationId));
       });
 
@@ -238,7 +266,7 @@ listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.deleteConversation.fulfilled,
    effect: ( action, api ) => {
 
-      console.log("delete conversation");
+      console.log(GREEN_COLOR, "delete conversation");
 
       const { userReducer } = api.getState() as RootState;
 
@@ -249,14 +277,14 @@ listenerMiddleware.startListening({
       const conversationWith = action.meta.arg.conversation.conversationWith[0].id;
       const conversationId = action.meta.arg.conversation.id;
       socket.emit("delete_conversation", conversationId, conversationWith, { id: userReducer.currentUserInfo.id, username: userReducer.currentUserInfo.username });
-   }
+   },
 });
 
 listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.deleteGroupConversation.fulfilled,
    effect: ( action, api ) => {
 
-      console.log("delete group conversation");
+      console.log(GREEN_COLOR, "delete group conversation");
 
       const { userReducer } = api.getState() as RootState;
 
@@ -278,7 +306,7 @@ listenerMiddleware.startListening({
    effect: ( action, api ) => {
       const { userReducer } = api.getState() as RootState;
 
-      console.log("leave group conversation");
+      console.log(GREEN_COLOR, "leave group conversation");
 
       const conversationWith = action.meta.arg.conversation.users
           .map(( u: IUserFromConversation ) => {
@@ -297,7 +325,7 @@ listenerMiddleware.startListening({
    actionCreator: messageAsyncActions.getMessages.fulfilled,
    effect: ( action, api ) => {
 
-      console.log("get messages");
+      console.log(GREEN_COLOR, "get messages");
 
       const { conversationReducer } = api.getState() as RootState;
 
@@ -318,7 +346,7 @@ listenerMiddleware.startListening({
    matcher: isAnyOf(messageAsyncActions.sendImage.fulfilled, messageAsyncActions.sendMessage.fulfilled),
    effect: ( action ) => {
 
-      console.log("send message / send image");
+      console.log(GREEN_COLOR, "send message / send image");
 
       socket.emit("send_message", action.payload);
    }
@@ -328,7 +356,7 @@ listenerMiddleware.startListening({
    actionCreator: messageAsyncActions.deleteMessage.fulfilled,
    effect: ( action, api ) => {
 
-      console.log("delete message");
+      console.log(GREEN_COLOR, "delete message");
 
       const dispatch = api.dispatch;
 
@@ -338,7 +366,7 @@ listenerMiddleware.startListening({
 
       const currentUserId = userReducer.currentUserInfo.id;
 
-      dispatch(conversationActions.updateConversationAfterDeleteMessage(action.payload));
+      dispatch(conversationActions.updateConversationAfterDeleteMessage({ message: action.payload, conversationId }));
 
       socket.emit("delete_message", messageId, conversationId, currentUserId);
    }
@@ -348,7 +376,7 @@ listenerMiddleware.startListening({
    actionCreator: conversationAsyncActions.kickUserFromGroupConversation.fulfilled,
    effect: ( action, api ) => {
 
-      console.log("kick user from conversation");
+      console.log(GREEN_COLOR, "kick user from conversation");
 
       const { userReducer } = api.getState() as RootState;
 

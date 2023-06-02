@@ -1,5 +1,5 @@
 import { Conversation, User } from "../model";
-import { conversationPresenter } from "../presenter/conversation.presenter";
+import { conversationPresenter } from "../presenter";
 import { IConversation } from "../interface";
 
 export const createConversationService = async ( conversationId: number, whoCreatedId: number ) => {
@@ -14,10 +14,10 @@ export const createConversationService = async ( conversationId: number, whoCrea
          [ { model: User, as: "users" }, "id", "ASC" ]
       ]
    })
-       .then(res => {
+       .then(conversation => {
 
-          if (res && !res.isGroupConversation) return conversationPresenter(res?.toJSON(), whoCreatedId);
-          return res;
+          if (conversation && !conversation.isGroupConversation) return conversationPresenter(conversation?.toJSON(), whoCreatedId);
+          return conversation;
 
        }) as IConversation;
 

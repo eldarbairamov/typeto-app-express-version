@@ -1,9 +1,8 @@
 import jwt from "jsonwebtoken";
 import { ActionToken, User } from "../../model";
-import { config } from "../../config/config";
+import { config } from "../../config";
 import { emailSender } from "../email.service";
-import { FORGOT_PASSWORD } from "../../constant/email-action.constant";
-import { FORGOT_PASSWORD_TOKEN_TYPE } from "../../constant/token-type.constant";
+import { FORGOT_PASSWORD, FORGOT_PASSWORD_TOKEN_TYPE } from "../../constant";
 
 export const forgotPasswordService = async ( email: string, user: User, clientUrl: string ) => {
    const resetPasswordToken = jwt.sign({ userId: user.id }, config.SECRET_FORGOT_PASS_KEY, { expiresIn: "1d" });

@@ -1,5 +1,5 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
-import { ApiException } from "../../exception/api.exception";
+import { ApiException } from "../../exception";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 
 export const deleteGroupConversationService = async ( conversationId: string, currentUserId: number ) => {

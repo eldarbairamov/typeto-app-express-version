@@ -1,9 +1,9 @@
-import { IRequest } from "../interface/express.interface";
+import { IRequest } from "../interface";
 import expressAsyncHandler from "express-async-handler";
 import { NextFunction, Response } from "express";
-import { ApiException } from "../exception/api.exception";
+import { ApiException } from "../exception";
 import { OAuth, User } from "../model";
-import { emailValidator } from "../validator/auth.validator";
+import { emailValidator } from "../validator";
 
 export const authMiddleware = {
 

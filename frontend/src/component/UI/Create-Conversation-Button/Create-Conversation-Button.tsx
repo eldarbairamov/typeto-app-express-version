@@ -1,7 +1,7 @@
 import { Button, Divider, Text } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { AiOutlineMessage, FiUsers } from "react-icons/all";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../../constant/color.constant.ts";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../../constant";
 
 interface IGroupConversationButtonProps {
    isGroup?: boolean;

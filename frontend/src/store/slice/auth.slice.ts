@@ -1,9 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { storageService } from "../../service/storage.service.ts";
-import { IAccessTokenPair } from "../../interface/auth.interface.ts";
-import { authService } from "../../service/auth.service.ts";
 import { AxiosError } from "axios";
-import { ILoginForm, IRegistrationForm } from "../../interface/form.interface.ts";
+import { IAccessTokenPair, ILoginForm, IRegistrationForm } from "../../interface";
+import { authApi, storageApi } from "../../api";
 
 interface IInitialState {
    isLogin: boolean;
@@ -12,7 +10,7 @@ interface IInitialState {
 }
 
 const initialState: IInitialState = {
-   isLogin: !!storageService.getAccessToken(),
+   isLogin: !!storageApi.getAccessToken(),
    isLoading: false,
    errorMessage: undefined,
 };
@@ -21,7 +19,7 @@ const login = createAsyncThunk<IAccessTokenPair, { body: ILoginForm }, { rejectV
     "auth/login",
     async ( { body }, { rejectWithValue } ) => {
        try {
-          const { data } = await authService.login(body);
+          const { data } = await authApi.login(body);
           return data;
 
        }
@@ -36,7 +34,7 @@ const registration = createAsyncThunk<void, { data: IRegistrationForm }, { rejec
     "auth/registration",
     async ( { data }, { rejectWithValue } ) => {
        try {
-          await authService.registration(data);
+          await authApi.registration(data);
 
        }
        catch (e) {
@@ -50,7 +48,7 @@ const logout = createAsyncThunk<void, void, { rejectValue: string }>(
     "auth/logout",
     async ( _, { rejectWithValue } ) => {
        try {
-          await authService.logout();
+          await authApi.logout();
        }
        catch (e) {
           const axiosError = e as AxiosError;
@@ -74,13 +72,12 @@ const authSlice = createSlice({
           state.isLoading = false;
           state.isLogin = true;
 
-          storageService.setAuthInfo({
+          storageApi.setTokens({
              accessToken: payload.accessToken,
              refreshToken: payload.refreshToken,
           });
 
        })
-
 
        .addCase(login.rejected, ( state, { payload } ) => {
           state.isLoading = false;
@@ -111,7 +108,7 @@ const authSlice = createSlice({
        .addCase(logout.fulfilled, ( state ) => {
           state.isLogin = false;
           state.isLoading = false;
-          storageService.deleteAuthData();
+          storageApi.deleteAuthData();
 
        })
 

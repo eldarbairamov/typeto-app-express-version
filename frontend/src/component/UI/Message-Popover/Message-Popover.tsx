@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 import { Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react";
-import { MAIN_COLOR } from "../../../constant/color.constant.ts";
+import { MAIN_COLOR } from "../../../constant";
 
 interface IMessagePopover {
    children: ReactNode,

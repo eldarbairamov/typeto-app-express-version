@@ -1,30 +1,20 @@
+import { useRef } from "react";
+
 import { Avatar, Button, Divider, IconButton, Input, Menu, MenuButton, MenuList, Text, VStack } from "@chakra-ui/react";
 import { CgProfile } from "react-icons/all";
-import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { MAIN_COLOR } from "../../constant/color.constant.ts";
-import { useRef } from "react";
-import { TypedOnChange2 } from "../../interface/common.interface.ts";
-import { userAsyncActions } from "../../store/slice/user.slice.ts";
-import { getImageUrl } from "../../helper/get-image-url.helper.ts";
+import { useAppSelector } from "../../hook";
+import { MAIN_COLOR } from "../../constant";
+import { getImageUrl } from "../../helper";
+import { avatarService } from "../../service";
 
 export function ProfileInfo() {
    const { currentUserInfo } = useAppSelector(state => state.userReducer);
 
    const ref = useRef<HTMLInputElement>(null);
 
-   const dispatch = useAppDispatch();
-
    const handlePick = () => ref.current?.click();
 
-   const uploadAvatar = async ( e: TypedOnChange2 ) => {
-      const image = (e.target.files as FileList)[0];
-      const formData = new FormData();
-      formData.append("avatar", image);
-
-      await dispatch(userAsyncActions.uploadAvatar(formData));
-   };
-
-   const deleteAvatar = async () => await dispatch(userAsyncActions.deleteAvatar());
+   const { deleteAvatar, uploadAvatar } = avatarService();
 
    return (
        <Menu>
@@ -44,6 +34,7 @@ export function ProfileInfo() {
                      spacing={ 5 }>
 
                 <VStack spacing={ 5 }>
+
                    <Avatar name={ currentUserInfo.username }
                            src={ getImageUrl(currentUserInfo.image, currentUserInfo.email) }
                            size={ "2xl" }/>
@@ -52,11 +43,13 @@ export function ProfileInfo() {
                          fontSize={ 15 }>
                       { currentUserInfo.username }
                    </Text>
+
                 </VStack>
 
                 <Divider/>
 
                 <VStack w={ "100%" }>
+
                    <Button w={ "100%" }
                            variant={ "ghost" }
                            onClick={ handlePick }
@@ -71,6 +64,7 @@ export function ProfileInfo() {
                            fontWeight={ "normal" }>
                       Видалити
                    </Button>
+
                 </VStack>
 
                 <Input type={ "file" }

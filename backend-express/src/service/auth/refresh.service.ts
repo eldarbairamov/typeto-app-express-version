@@ -1,4 +1,4 @@
-import { ApiException } from "../../exception/api.exception";
+import { ApiException } from "../../exception";
 import { OAuth } from "../../model";
 import { tokenService } from "../token.service";
 import { REFRESH_TOKEN_TYPE } from "../../constant";

@@ -28,6 +28,7 @@ export const getConversationsService = async ( currentUserId: number ) => {
       },
       order: [
          [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
+         [ "conversations", "users", "id", "ASC" ],
          [ "conversations", "lastMessage", "id", "ASC" ]
       ]
    })

@@ -1,52 +1,20 @@
+import { useRef } from "react";
+
+import { useInputHandler } from "../../../hook";
+import { sendMessageService } from "../../../service";
 import { Box, HStack, Input, Textarea } from "@chakra-ui/react";
-import { useInputHandler } from "../../../hook/use-input-handler.ts";
-import { messageAsyncActions } from "../../../store/slice/message.slice.ts";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { MAIN_COLOR } from "../../../constant/color.constant.ts";
+import { ButtonIcon } from "../../UI";
 import { AiOutlineMessage, RxImage } from "react-icons/all";
-import { ButtonIcon } from "../../UI/Button-Icon/Button-Icon.tsx";
-import React, { useRef } from "react";
-import { TypedOnChange2 } from "../../../interface/common.interface.ts";
+import { MAIN_COLOR } from "../../../constant";
 
 export function ChatBoxBottom() {
-   const { activeConversation } = useAppSelector(state => state.conversationReducer);
-
-   const dispatch = useAppDispatch();
-
    const { value, handleChange, setValue } = useInputHandler();
-
-   const sendMessage = async () => {
-      const result = await dispatch(messageAsyncActions.sendMessage({ conversationId: activeConversation.id, content: value }));
-      if (messageAsyncActions.sendMessage.rejected.match(result)) {
-         console.log(result.payload);
-      }
-
-      setValue("");
-   };
-
-   const onEnterDown = async ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
-      if (e.key === "Enter") {
-         e.preventDefault();
-         setValue("");
-         const result = await dispatch(messageAsyncActions.sendMessage({ conversationId: activeConversation.id, content: value }));
-         if (messageAsyncActions.sendMessage.rejected.match(result)) {
-            console.log(result.payload);
-         }
-      }
-   };
 
    const ref = useRef<HTMLInputElement>(null);
 
    const handlePick = () => ref.current?.click();
 
-   const sendImage = async ( e: TypedOnChange2 ) => {
-      const image = (e.target.files as FileList)[0];
-      const formData = new FormData();
-      formData.append("image", image);
-      formData.append("conversationId", String(activeConversation.id));
-
-      await dispatch(messageAsyncActions.sendImage({ formData }));
-   };
+   const { sendImage, sendMessage, onEnterDown } = sendMessageService(setValue, value);
 
    return (
        <HStack h={ "100px" }

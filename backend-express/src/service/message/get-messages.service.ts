@@ -11,7 +11,10 @@ export const getMessagesService = async ( conversationId: number, currentUserId:
             model: User,
             as: "sender",
             attributes: [ "id", "username", "email", "image" ]
-         }
+         },
+         order: [
+             ["id", "ASC"]
+         ]
       }),
 
       ConversationUser.update({

@@ -1,16 +1,13 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 
 import moment from "moment/moment";
 import { Avatar, Heading, HStack, Image, Text, useDisclosure, VStack } from "@chakra-ui/react";
-import { IMessage } from "../../../interface/message.interface.ts";
-import { MAIN_COLOR, MESSAGE_OUTCOMING_COLOR_ } from "../../../constant/color.constant.ts";
-import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
-import { AppModal } from "../../UI/App-Modal/App-Modal.tsx";
-import { ShowImage } from "../Show-Image/Show-Image.tsx";
-import { MessagePopover } from "../../UI/Message-Popover/Message-Popover.tsx";
-import { useContextMenu } from "../../../hook/use-context-menu.hook.ts";
-import { messageAsyncActions } from "../../../store/slice/message.slice.ts";
-import { useAppDispatch } from "../../../hook/redux.hook.ts";
+import { IMessage } from "../../../interface";
+import { useContextMenu } from "../../../hook";
+import { deleteMessageService } from "../../../service";
+import { AppModal, MessagePopover, ShowImage } from "../../../component";
+import { MAIN_COLOR, MESSAGE_OUTCOMING_COLOR_ } from "../../../constant";
+import { getImageUrl } from "../../../helper";
 
 interface IOutcomingMessage {
    message: IMessage;
@@ -25,20 +22,15 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
 
    const conversationTime = moment(+message.lastModified).format("HH:mm");
 
-   const dispatch = useAppDispatch();
-
-   const messageItemRef = useRef<HTMLDivElement>(null);
-
-   const deleteMessage = async () => dispatch(messageAsyncActions.deleteMessage({ messageId: message.id, conversationId: message.conversationId }));
-
    const openImage = () => {
       setContent(<ShowImage image={ message.content } userEmail={ message.sender.email }/>);
       onOpen();
    };
 
+   const { deleteMessage } = deleteMessageService(message);
+
    return (
        <VStack alignItems={ "flex-end" }
-               ref={ messageItemRef }
                w={ "100%" }>
 
           <HStack alignItems={ "flex-start" }
@@ -67,16 +59,13 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
                    </Heading>
 
                    { message.isImage
-                       ?
-                       <Image src={ getImageUrl(message.content, message.sender.email) }
-                              rounded={ 20 }
-                              transition={ ".3s" }
-                              onClick={ openImage }
-                              h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
-                       :
-                       <Text color={ "white" }>
-                          { message.content }
-                       </Text>
+                       ? <Image src={ getImageUrl(message.content, message.sender.email) }
+                                rounded={ 20 }
+                                transition={ ".3s" }
+                                onClick={ openImage }
+                                h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
+
+                       : <Text color={ "white" }> { message.content } </Text>
                    }
 
                 </VStack>

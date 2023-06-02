@@ -1,11 +1,7 @@
 import { calc, HStack } from "@chakra-ui/react";
-import { SideBar } from "../../component/SIde-Bar/Side-Bar/Side-Bar.tsx";
-import { ChatBox } from "../../component/Chat-Box/Chat-Box/Chat-Box.tsx";
-import { useAppSelector } from "../../hook/redux.hook.ts";
-import { Toast } from "../../component/UI/Toast/Toast.tsx";
+import { ChatBox, SideBar } from "../../component";
 
 export function ChatsPage() {
-   const { actionMessage } = useAppSelector(state => state.conversationReducer);
 
    return (
        <HStack spacing={ 0 }
@@ -19,8 +15,6 @@ export function ChatsPage() {
           <SideBar/>
 
           <ChatBox/>
-
-          <Toast actionMessage={ actionMessage }/>
 
        </HStack>
    );

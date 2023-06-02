@@ -1,29 +1,17 @@
 import { v4 } from "uuid";
-
 import { Divider, IconButton, Menu, MenuButton, MenuItem, MenuList, Text, VStack } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { MAIN_COLOR } from "../../../constant/color.constant.ts";
-import { conversationAsyncActions } from "../../../store/slice/conversation.slice.ts";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { ConversationUserItem } from "../../Conversations/Conversation-User-Item/Conversation-User-Item.tsx";
+import { useAppSelector } from "../../../hook";
+import { MAIN_COLOR } from "../../../constant";
+import { ConversationUserItem } from "../../../component";
+import { conversationOptionsService } from "../../../service";
 
 export function ChatBoxOptions() {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+
    const { currentUserInfo } = useAppSelector(state => state.userReducer);
 
-   const dispatch = useAppDispatch();
-
-   const deleteConversation = async () => {
-      dispatch(conversationAsyncActions.deleteConversation({ conversation: activeConversation }));
-   };
-
-   const leaveGroupConversation = async () => {
-      dispatch(conversationAsyncActions.leaveGroupConversation({ conversation: activeConversation }));
-   };
-
-   const deleteGroupConversation = async () => {
-      dispatch(conversationAsyncActions.deleteGroupConversation({ conversation: activeConversation }));
-   };
+   const { deleteConversation, deleteGroupConversation, leaveGroupConversation } = conversationOptionsService(activeConversation);
 
    return (
        <Menu autoSelect={ false }>
@@ -68,10 +56,7 @@ export function ChatBoxOptions() {
                    <Text w={ "100%" }
                          textAlign={ "center" }
                          fontWeight={ "bold" }
-                         color={ MAIN_COLOR }
-                         onClick={
-                            activeConversation.adminId === currentUserInfo.id ? deleteGroupConversation :
-                                activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation }>
+                         color={ MAIN_COLOR }>
 
                       { (activeConversation.adminId === currentUserInfo.id || !activeConversation.isGroupConversation) ? "Завершити бесіду" : "Покинути бесіду" }
 

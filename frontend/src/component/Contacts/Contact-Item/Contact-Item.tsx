@@ -1,11 +1,11 @@
 import { Avatar, AvatarBadge, Button, Heading, HStack } from "@chakra-ui/react";
-import { IUser } from "../../../interface/user.interface.ts";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { IUser } from "../../../interface";
+import { createConversationService } from "../../../service";
+import { conversationActions, userActions, userAsyncActions } from "../../../store/slice";
+import { getImageUrl } from "../../../helper";
 import { Icon } from "@chakra-ui/icons";
-import { AiOutlineMessage, AiOutlineUsergroupAdd, AiOutlineDelete } from "react-icons/all";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { userActions, userAsyncActions } from "../../../store/slice/user.slice.ts";
-import { conversationActions, conversationAsyncActions } from "../../../store/slice/conversation.slice.ts";
-import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
+import { AiOutlineDelete, AiOutlineMessage, AiOutlineUsergroupAdd } from "react-icons/all";
 
 interface IUserItemProps {
    user: IUser,
@@ -16,32 +16,10 @@ interface IUserItemProps {
 
 export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }: IUserItemProps ) {
    const { onlineContactsIds } = useAppSelector(state => state.userReducer);
-   const { conversations } = useAppSelector(state => state.conversationReducer);
 
    const dispatch = useAppDispatch();
 
-   const createConversation = async () => {
-      const isConversationExists = conversations.find(c => {
-         if (!c.isGroupConversation) {
-            const targetId = c.conversationWith[0]?.id;
-            if (user.id === targetId) return c;
-         }
-      });
-
-      if (isConversationExists) {
-         dispatch(conversationActions.setActiveConversation(isConversationExists));
-         onModalClose && onModalClose();
-      }
-
-      const result = await dispatch(conversationAsyncActions.createConversation({
-         userIds: [ user.id ],
-         username: user.username
-      }));
-
-      if (conversationAsyncActions.createConversation.fulfilled.match(result)) {
-         onModalClose && onModalClose();
-      }
-   };
+   const { createConversation } = createConversationService(user, onModalClose);
 
    const addContactToGroup = () => {
       dispatch(conversationActions.addContactToGroup(user));
@@ -60,8 +38,7 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
                      src={ getImageUrl(user.image, user.email) }
                      size={ "md" }>
 
-                { onlineContactsIds.includes(user.id)
-                    &&
+                { onlineContactsIds.includes(user.id) &&
                     <AvatarBadge boxSize={ 5 }
                                  bg={ "green.500" }/>
                 }

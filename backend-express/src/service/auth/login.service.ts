@@ -1,9 +1,9 @@
 import { ILogin, IOAuthResponse } from "../../interface";
 import { passwordService } from "../password.service";
-import { ApiException } from "../../exception/api.exception";
+import { ApiException } from "../../exception";
 import { OAuth, User } from "../../model";
 import { tokenService } from "../token.service";
-import { loginValidator } from "../../validator/auth.validator";
+import { loginValidator } from "../../validator";
 
 export const loginService = async ( body: ILogin, user: User ): Promise<IOAuthResponse> => {
    const { password } = body;

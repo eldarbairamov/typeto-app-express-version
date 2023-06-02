@@ -1,11 +1,10 @@
 import { User } from "../../model";
 import fileUpload, { FileArray } from "express-fileupload";
-import { fileNameMaker } from "../../helper/file-name-maker.helper";
 import path from "node:path";
 import process from "process";
-import { exists } from "../../helper/exists.helper";
 import { mkdir } from "fs/promises";
 import sharp from "sharp";
+import { exists, fileNameMaker } from "../../helper";
 
 export const uploadAvatarService = async ( userId: number, files: FileArray ) => {
    const user = await User.findByPk(userId);
@@ -23,5 +22,5 @@ export const uploadAvatarService = async ( userId: number, files: FileArray ) =>
    await user?.save({ hooks: false });
    await sharp(avatar.data).jpeg({ quality: 70 }).toFile(path.join(folderPath, imageName));
 
-   return imageName
+   return imageName;
 };

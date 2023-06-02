@@ -1,6 +1,6 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
 import { Op } from "sequelize";
-import { ApiException } from "../../exception/api.exception";
+import { ApiException } from "../../exception";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 
 export const createConversationService = async ( userIds: number[], conversationName: string | undefined, currentUserId: number ) => {

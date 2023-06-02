@@ -1,6 +1,7 @@
+import { CSSProperties } from "react";
+
 import { Button, ComponentWithAs } from "@chakra-ui/react";
 import { Icon, IconProps } from "@chakra-ui/icons";
-import { CSSProperties } from "react";
 
 interface IIconProps {
    size: number;

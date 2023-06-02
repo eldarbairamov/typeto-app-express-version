@@ -7,7 +7,7 @@ export function EmptyBox() {
        <VStack h={ "100%" }
                rounded={ 20 }
                bg={ "white" }
-               borderRadius={ "0 20px 20px 0" }
+               borderRadius={ [ "20px", "20px", "20px", "20px", "0 20px 20px 0" ] }
                w={ "100%" }
                spacing={ 0 }>
 

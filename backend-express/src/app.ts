@@ -1,8 +1,8 @@
 import "dotenv/config";
 import cors from "cors";
 import express, { Application } from "express";
-import { config } from "./config/config";
-import { sequelize } from "./db/db-config";
+import { config } from "./config";
+import { sequelize } from "./db";
 import { appRouter } from "./router";
 import { errorMiddleware } from "./middleware";
 import fileUpload from "express-fileupload";

@@ -2,23 +2,13 @@ import { useState } from "react";
 
 import { Highlight, HStack, Text, useDisclosure } from "@chakra-ui/react";
 import { BiSearch, IoMdLogOut, FiUsers } from "react-icons/all";
-import { FindUser } from "../Find-User/Find-User.tsx";
-import { ContactList } from "../Contacts/Contact-List/Contact-List.tsx";
-import { ButtonIcon } from "../UI/Button-Icon/Button-Icon.tsx";
-import { MAIN_COLOR } from "../../constant/color.constant.ts";
-import { AppModal } from "../UI/App-Modal/App-Modal.tsx";
-import { useAppDispatch } from "../../hook/redux.hook.ts";
-import { authAsyncActions } from "../../store/slice/auth.slice.ts";
-import { UnauthorizedRouter } from "../../router/Unuathorized.router.tsx";
-import { UnauthorizedRoutesEnum } from "../../router/unauthorized.type.ts";
-import { socketActions } from "../../store/slice/socket.slice.ts";
-import { ProfileInfo } from "../Profile-Info/Profile-Info.tsx";
+import { logoutService } from "../../service";
+import { MAIN_COLOR } from "../../constant";
+import { AppModal, ButtonIcon, ProfileInfo, FindUser, ContactList } from "../../component";
 
 export function Header() {
    const { isOpen, onOpen, onClose } = useDisclosure();
    const [ content, setContent ] = useState<JSX.Element>();
-
-   const dispatch = useAppDispatch();
 
    const openFindUsers = () => {
       setContent(<FindUser onModalClose={ onClose }/>);
@@ -30,13 +20,7 @@ export function Header() {
       onOpen();
    };
 
-   const logout = async () => {
-      const result = await dispatch(authAsyncActions.logout());
-      if (authAsyncActions.logout.fulfilled.match(result)) {
-         dispatch(socketActions.disconnect());
-         UnauthorizedRouter.navigate(UnauthorizedRoutesEnum.LoginPage);
-      }
-   };
+   const { logout } = logoutService();
 
    return (
        <HStack w={ "95%" }
@@ -64,10 +48,29 @@ export function Header() {
           </Text>
 
           <HStack spacing={ 0 }>
+
              <ProfileInfo/>
-             <ButtonIcon size={ 8 } as={ FiUsers } rounded={ 5 } color={ "gray.600" } p={ 5 } fn={ openFriendList }/>
-             <ButtonIcon size={ 8 } as={ BiSearch } rounded={ 5 } color={ "gray.600" } p={ 5 } fn={ openFindUsers }/>
-             <ButtonIcon size={ 8 } as={ IoMdLogOut } rounded={ 5 } color={ "gray.600" } p={ 5 } fn={ logout }/>
+
+             <ButtonIcon size={ 8 }
+                         as={ FiUsers }
+                         rounded={ 5 }
+                         color={ "gray.600" }
+                         p={ 5 }
+                         fn={ openFriendList }/>
+
+             <ButtonIcon size={ 8 }
+                         as={ BiSearch }
+                         rounded={ 5 }
+                         color={ "gray.600" }
+                         p={ 5 }
+                         fn={ openFindUsers }/>
+
+             <ButtonIcon size={ 8 }
+                         as={ IoMdLogOut }
+                         rounded={ 5 }
+                         color={ "gray.600" }
+                         p={ 5 }
+                         fn={ logout }/>
           </HStack>
 
           <AppModal isOpen={ isOpen }

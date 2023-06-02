@@ -1,4 +1,4 @@
-import { Conversation, User } from "../../model";
+import { Conversation, Message, User } from "../../model";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 import { Op } from "sequelize";
 
@@ -24,9 +24,22 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
                {
                   model: User,
                   as: "users",
+                  attributes: [ "id", "username", "email", "image" ],
+                  through: {
+                     attributes: [ "isNewMessagesExist" ],
+                  },
+               },
+               {
+                  model: Message,
+                  as: "lastMessage"
                }
-            ]
-         }
+            ],
+         },
+         order: [
+            [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
+            [ "conversations", "users", "id", "ASC" ],
+            [ "conversations", "lastMessage", "id", "ASC" ]
+         ]
       })
           .then(user => {
              const conversations = user?.conversations.map(c => groupConversationPresenter(c.toJSON(), currentUserId));
@@ -48,9 +61,22 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
                {
                   model: User,
                   as: "users",
+                  attributes: [ "id", "username", "email", "image" ],
+                  through: {
+                     attributes: [ "isNewMessagesExist" ],
+                  },
+               },
+               {
+                  model: Message,
+                  as: "lastMessage"
                }
-            ]
-         }
+            ],
+         },
+         order: [
+            [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
+            [ "conversations", "users", "id", "ASC" ],
+            [ "conversations", "lastMessage", "id", "ASC" ]
+         ]
       })
           .then(user => {
              const target = user?.conversations.find(c => c.users.find(u => u.username.match(searchKey)));

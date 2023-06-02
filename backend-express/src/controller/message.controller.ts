@@ -1,9 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import { Response } from "express";
 import { IRequest } from "../interface";
-import { getMessagesService, sendMessageService } from "../service";
-import { sendImageService } from "../service/message/send-image.service";
-import { Conversation, Message } from "../model";
+import { deleteMessageService, getMessagesService, sendImageService, sendMessageService } from "../service";
 
 export const messageController = {
 
@@ -29,20 +27,7 @@ export const messageController = {
    deleteMessage: expressAsyncHandler(async ( req: IRequest<any, { conversationId: number }, { messageId: number }>, res: Response ) => {
       const conversationId = req.params.conversationId;
       const messageId = req.query.messageId;
-
-      await Message.destroy({ where: { id: messageId } });
-
-      const updatedLastMessage = await Conversation.findByPk(conversationId, {
-         include: {
-            model: Message,
-            as: "lastMessage"
-         },
-         order: [
-            [ { model: Message, as: "lastMessage" }, "id", "DESC" ]
-         ]
-      })
-          .then(conversation => conversation?.lastMessage);
-
+      const updatedLastMessage = await deleteMessageService(messageId, conversationId);
       res.json(updatedLastMessage);
    })
 

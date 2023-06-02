@@ -1,9 +1,8 @@
 import expressAsyncHandler from "express-async-handler";
-import { IRequest } from "../interface";
+import { IImage, IRequest } from "../interface";
 import { NextFunction, Response } from "express";
-import { ApiException } from "../exception/api.exception";
-import { IImage } from "../interface/file.interface";
-import { IMAGE_MAX_SIZE, IMAGE_MIMETYPES } from "../constant/upload-image.constant";
+import { ApiException } from "../exception";
+import { IMAGE_MAX_SIZE, IMAGE_MIMETYPES } from "../constant";
 
 export const fileMiddleware = {
 

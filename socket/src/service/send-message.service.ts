@@ -10,14 +10,13 @@ export const sendMessageService = async ( message: IMessage ) => {
 
       getConversationService(message.conversationId, message.senderId, "receiver"),
 
-      Conversation
-          .findByPk(message.conversationId, {
-             include: {
-                model: User,
-                as: "users",
-                attributes: [ "id" ],
-             }
-          }).then(res => res?.users.map(u => u.id))
+      Conversation.findByPk(message.conversationId, {
+         include: {
+            model: User,
+            as: "users",
+            attributes: [ "id" ],
+         }
+      }).then(conversation => conversation?.users.map(u => u.id))
 
    ]);
 

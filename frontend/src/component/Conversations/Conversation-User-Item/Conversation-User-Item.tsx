@@ -1,19 +1,25 @@
+import { IUserFromConversation } from "../../../interface";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { appActions, conversationAsyncActions } from "../../../store/slice";
 import { Avatar, Heading, HStack } from "@chakra-ui/react";
-import { ButtonIcon } from "../../UI/Button-Icon/Button-Icon.tsx";
+import { getImageUrl } from "../../../helper";
+import { ButtonIcon } from "../../UI";
 import { FiUserMinus, RiVipCrownLine } from "react-icons/all";
-import { IUserFromConversation } from "../../../interface/user.interface.ts";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import { getImageUrl } from "../../../helper/get-image-url.helper.ts";
-import { conversationAsyncActions } from "../../../store/slice/conversation.slice.ts";
 
 export function ConversationUserItem( { user }: { user: IUserFromConversation } ) {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+
    const { currentUserInfo } = useAppSelector(state => state.userReducer);
 
    const dispatch = useAppDispatch();
 
    const kickUserFromGroupConversation = async ( userId: number ) => {
-      dispatch(conversationAsyncActions.kickUserFromGroupConversation({ userId, conversationId: activeConversation.id }));
+      const result = await dispatch(conversationAsyncActions.kickUserFromGroupConversation({
+         userId, conversationId: activeConversation.id
+      }));
+      if (conversationAsyncActions.kickUserFromGroupConversation.rejected.match(result)) {
+         dispatch(appActions.setActionMessage({ message: result.payload, type: "error" }));
+      }
    };
 
    return (

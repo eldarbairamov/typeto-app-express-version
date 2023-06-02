@@ -1,13 +1,14 @@
+import { useEffect } from "react";
+
+import { useAppDispatch, useAppSelector, useInputHandler } from "../../hook";
+import { findUserService } from "../../service";
+import { userActions } from "../../store/slice";
+import { IUserBySearch } from "../../interface";
 import { Box, Button, Center, Divider, Input, InputGroup, InputLeftElement, InputRightElement, VStack } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
-import { UserItem } from "../User-Item/User-Item.tsx";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant";
+import { UserItem } from "../../component";
 import { RiUserSearchLine } from "react-icons/all";
-import { useInputHandler } from "../../hook/use-input-handler.ts";
-import { useAppDispatch, useAppSelector } from "../../hook/redux.hook.ts";
-import { userActions, userAsyncActions } from "../../store/slice/user.slice.ts";
-import { useEffect } from "react";
-import { IUserBySearch } from "../../interface/user.interface.ts";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant/color.constant.ts";
 
 export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
    const { userBySearch } = useAppSelector(state => state.userReducer);
@@ -16,11 +17,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
    const { value, handleChange } = useInputHandler();
 
-   const findUser = async () => {
-      if (value !== "") {
-         dispatch(userAsyncActions.findUser({ userEmail: value }));
-      }
-   };
+   const { findUser } = findUserService(value);
 
    useEffect(() => {
       dispatch(userActions.setUser({} as IUserBySearch));
@@ -79,7 +76,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
               </Center>
           }
-          
+
        </VStack>
    );
 }

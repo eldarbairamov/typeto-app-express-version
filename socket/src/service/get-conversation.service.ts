@@ -1,7 +1,6 @@
 import { Conversation, Message, User } from "../model";
-import { groupConversationPresenter } from "../presenter/group-conversation.presenter";
-import { privateConversationPresenter } from "../presenter/private-conversation.presenter";
 import { IConversation } from "../interface";
+import { groupConversationPresenter, privateConversationPresenter } from "../presenter";
 
 export const getConversationService = async ( conversationId: number, senderId: number, whoWillReceive: "sender" | "receiver" ) => {
 
@@ -13,7 +12,7 @@ export const getConversationService = async ( conversationId: number, senderId: 
              attributes: [ "id", "username", "email", "image" ],
           }
    })
-       .then(res => res?.users.find(u => u.id !== senderId)?.id) as number;
+       .then(conversation => conversation?.users.find(u => u.id !== senderId)?.id) as number;
 
    return await Conversation.findByPk(conversationId, {
       include: [
@@ -40,12 +39,12 @@ export const getConversationService = async ( conversationId: number, senderId: 
          [ { model: User, as: "users" }, "id", "ASC" ]
       ]
    })
-       .then(res => {
+       .then(conversation => {
 
-          if (res && res.isGroupConversation) return groupConversationPresenter(res.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
-          if (res && !res.isGroupConversation) return privateConversationPresenter(res.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
+          if (conversation && conversation.isGroupConversation) return groupConversationPresenter(conversation.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
+          if (conversation && !conversation.isGroupConversation) return privateConversationPresenter(conversation.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
 
-          return res;
+          return conversation;
 
        }) as IConversation;
 };

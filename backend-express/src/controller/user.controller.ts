@@ -1,9 +1,8 @@
 import expressAsyncHandler from "express-async-handler";
 import { Response } from "express";
 import { IRequest } from "../interface";
-import { addContactService, deleteContactService, findUserService, getContactsService } from "../service";
+import { addContactService, deleteContactService, findUserService, getContactsService, uploadAvatarService } from "../service";
 import { User } from "../model";
-import { uploadAvatarService } from "../service/user/upload-avatar.service";
 
 export const userController = {
 
@@ -44,10 +43,7 @@ export const userController = {
    }),
 
    deleteAvatar: expressAsyncHandler(async ( req: IRequest<any, any, any>, res: Response<{ message: string }> ) => {
-      await User.findByPk(req.userId).then(res => {
-         res?.set({ image: null });
-         res?.save({ hooks: false });
-      });
+      await User.findByPk(req.userId).then(user => user?.update({ image: null }, { hooks: false }));
       res.json({ message: "Success" });
    })
 

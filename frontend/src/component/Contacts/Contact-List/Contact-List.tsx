@@ -1,12 +1,9 @@
-import { useEffect } from "react";
-
 import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
 import { v4 } from "uuid";
-import { useInputHandler } from "../../../hook/use-input-handler.ts";
-import { useAppDispatch, useAppSelector } from "../../../hook/redux.hook.ts";
-import {  userAsyncActions } from "../../../store/slice/user.slice.ts";
+import { useAppSelector, useInputHandler } from "../../../hook";
+import { getContactsService } from "../../../service";
 import { ContactItem } from "../Contact-Item/Contact-Item.tsx";
 
 export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
@@ -14,11 +11,7 @@ export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: 
 
    const { contacts } = useAppSelector(state => state.userReducer);
 
-   const dispatch = useAppDispatch();
-
-   useEffect(() => {
-      dispatch(userAsyncActions.getContacts({ searchKey: value }));
-   }, [ value ]);
+   getContactsService(value);
 
    return (
        <VStack h={ 500 }>
@@ -38,11 +31,10 @@ export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: 
           <Divider/>
 
           { contacts
-              ?
-              <VStack w={ "100%" }
-                      paddingTop={ 5 }
-                      spacing={ 5 }
-                      overflow={ "scroll" }>
+              ? <VStack w={ "100%" }
+                        paddingTop={ 5 }
+                        spacing={ 5 }
+                        overflow={ "scroll" }>
 
                  { contacts.map(user => <ContactItem key={ v4() }
                                                      onModalClose={ onModalClose }
@@ -50,10 +42,9 @@ export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: 
                                                      canDelete={ !isOnlyMessage }/>) }
 
               </VStack>
-              :
 
-              <Center w={ "100%" }
-                      h={ "100%" }>
+              : <Center w={ "100%" }
+                        h={ "100%" }>
 
                  <Icon as={ RiUserSearchLine }
                        boxSize={ "70px" }

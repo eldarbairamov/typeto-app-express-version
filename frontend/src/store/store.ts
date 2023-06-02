@@ -1,10 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { authReducer } from "./slice/auth.slice.ts";
-import { userReducer } from "./slice/user.slice.ts";
-import { conversationReducer } from "./slice/conversation.slice.ts";
-import { messageReducer } from "./slice/message.slice.ts";
-import { socketReducer } from "./slice/socket.slice.ts";
-import { listenerMiddleware } from "./middleware/listener.middleware.ts";
+import { listenerMiddleware, onRejectedMiddleware } from "./middleware";
+import { appReducer, authReducer, conversationReducer, messageReducer, socketReducer, userReducer } from "./slice";
 
 export const store = configureStore({
    reducer: {
@@ -12,9 +8,10 @@ export const store = configureStore({
       userReducer,
       conversationReducer,
       messageReducer,
-      socketReducer
+      socketReducer,
+      appReducer
    },
-   middleware: (getDefaultMiddleware) => getDefaultMiddleware().prepend(listenerMiddleware.middleware)
+   middleware: ( gdm ) => gdm().prepend(listenerMiddleware.middleware).concat(onRejectedMiddleware.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>
