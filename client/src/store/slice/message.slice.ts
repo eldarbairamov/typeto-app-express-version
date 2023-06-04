@@ -10,7 +10,6 @@ interface IInitialState {
    isImageSending: boolean;
    errorMessage: string | undefined;
    isNewMessageAdded: boolean;
-   isBlindZone: boolean;
 }
 
 const initialState: IInitialState = {
@@ -20,7 +19,6 @@ const initialState: IInitialState = {
    isImageSending: false,
    errorMessage: undefined,
    isNewMessageAdded: false,
-   isBlindZone: false
 };
 
 const getMessages = createAsyncThunk<IMessage[], { conversationId: number }, { rejectValue: string }>(
@@ -94,10 +92,6 @@ const messageSlice = createSlice({
 
       resetMessages: ( state ) => {
          state.messages = [];
-      },
-
-      setIsBlindZone: ( state, { payload } ) => {
-         state.isBlindZone = payload;
       },
 
       deleteMessage: ( state, { payload }: PayloadAction<number> ) => {

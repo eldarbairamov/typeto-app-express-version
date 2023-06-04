@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, HStack, Avatar, Heading, Button } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
@@ -9,9 +9,12 @@ import { TypedOnChange } from "../../interface";
 import { groupConvMenuService } from "../../service";
 import { ContactItem } from "../Contacts";
 import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant";
+import { getImageUrl } from "../../helper";
 
 export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const { groupMembers } = useAppSelector(state => state.conversationReducer);
+
+   const { contacts } = useAppSelector(state => state.userReducer);
 
    const [ values, setValues ] = useState<{ searchValue: string, groupName: string }>({
       searchValue: "",
@@ -25,9 +28,16 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
       });
    };
 
-   const { contacts } = useAppSelector(state => state.userReducer);
+   const ref = useRef<HTMLButtonElement>(null);
 
    const { createGroupConversation, deleteContactFromGroup } = groupConvMenuService(onModalClose, values);
+
+   const onEnterDown = async ( e: React.KeyboardEvent<HTMLInputElement> ) => {
+      if (e.key === "Enter") {
+         e.preventDefault();
+         ref.current?.click();
+      }
+   };
 
    return (
        <VStack h={ 650 }>
@@ -37,17 +47,16 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                   w={ "100%" }>
 
              { Boolean(!groupMembers.length)
-                 ?
-                 <Heading size={ "md" }> Оберіть учасників </Heading>
-                 :
+                 ? <Heading size={ "md" }> Оберіть учасників </Heading>
 
-                 <VStack spacing={ 7 }>
+                 : <VStack spacing={ 7 }>
                     <Heading size={ "md" }> Учасники </Heading>
 
                     <HStack>
                        { groupMembers && groupMembers.map(member =>
                            <Avatar cursor={ "pointer" }
                                    key={ v4() }
+                                   src={ getImageUrl(member.image, member.email) }
                                    size={ "sm" }
                                    name={ member.username }
                                    onClick={ () => deleteContactFromGroup(member) }/>
@@ -105,6 +114,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                     h={ 12 }
                     fontSize={ 16 }
                     fontWeight={ 700 }
+                    onKeyDown={ onEnterDown }
                     value={ values.groupName }
                     onChange={ ( e ) => handleChange(e, "groupName") }
                     textAlign={ "center" }
@@ -113,6 +123,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
 
              <Button size={ "lg" }
                      rounded={ 10 }
+                     ref={ ref }
                      bg={ BUTTON_COLOR }
                      color={ "white" }
                      _hover={ { bg: BUTTON_HOVER_COLOR } }

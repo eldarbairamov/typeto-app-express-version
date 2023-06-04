@@ -3,6 +3,8 @@ import { config } from "./config";
 import { createConversationService, deleteMessageService, kickUserService, leaveGroupConversationService, sendMessageService } from "./service";
 import { IMessage, ISocketUser } from "./interface";
 import { CYAN_COLOR, GREEN_COLOR, MAGENTA, RED_COLOR } from "./constant";
+import { ConversationUser, User } from "./model";
+import { Op } from "sequelize";
 
 const io = new Server(3200, { cors: { origin: config.CLIENT_URL } });
 
@@ -98,6 +100,44 @@ export const startSocket = () => {
          const toKickedUser = getUser(whoWasKickedId);
          toUsers.length && io.to(toUsers).emit("kick_user_result", whoWasKickedId, conversationId);
          toKickedUser && io.to(toKickedUser).emit("i_was_kicked", `Адмін ${ whoIsAdmin?.username } видалив вас із бесіди "${ conversation?.conversationName }"`, conversationId);
+      });
+
+      socket.on("typing", async ( conversationId: number, whoTypingId: number ) => {
+         console.log(MAGENTA, "socket: typing");
+
+         const conversationWith = await ConversationUser.findAll({
+            where: {
+               conversationId,
+               userId: {
+                  [Op.ne]: whoTypingId
+               }
+            },
+         })
+             .then(conversationUser => conversationUser.map(c => c.userId));
+
+         const whoTyping = await User.findByPk(whoTypingId);
+
+         const to = getUsers(conversationWith) as string[];
+         to.length && io.to(to).emit("someone_is_typing", conversationId, whoTyping?.username);
+      });
+
+      socket.on("stop_typing", async ( conversationId: number, whoTypingId: number ) => {
+         console.log(MAGENTA, "socket: typing");
+
+         const conversationWith = await ConversationUser.findAll({
+            where: {
+               conversationId,
+               userId: {
+                  [Op.ne]: whoTypingId
+               }
+            },
+         })
+             .then(conversationUser => conversationUser.map(c => c.userId));
+
+         const whoTyping = await User.findByPk(whoTypingId);
+
+         const to = getUsers(conversationWith) as string[];
+         to.length && io.to(to).emit("someone_is_stop_typing", conversationId, whoTyping?.username);
       });
 
       socket.on("disconnect", () => {

@@ -1,6 +1,8 @@
 export const MAIN_COLOR = "#15B097";
-export const MAIN_COLOR_LIGHTER = "rgba(21,176,151,0.25)";
+export const MAIN_COLOR_LIGHTER = "rgb(163,211,200)";
 export const MAIN_COLOR_DARKER = "rgb(14,86,73)";
+
+export const LOADER_COLOR = "rgba(21,176,151,0.15)";
 
 export const BUTTON_COLOR = "#15B097";
 export const BUTTON_HOVER_COLOR = "#0d917b";

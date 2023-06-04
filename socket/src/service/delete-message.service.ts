@@ -10,7 +10,8 @@ export const deleteMessageService = async ( conversationId: number, currentUserI
             [Op.ne]: currentUserId
          }
       },
-   }).then(conversationUser => conversationUser.map(c => c.userId));
+   })
+       .then(conversationUser => conversationUser.map(c => c.userId));
 
    const updatedLastMessage = await Conversation.findByPk(conversationId, {
       include: {

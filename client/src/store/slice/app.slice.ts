@@ -3,11 +3,15 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface IInitialState {
    actionMessage: string | undefined;
    actionType: "info" | "error";
+   isImTyping: boolean;
+   isUserTyping: boolean;
 }
 
 const initialState: IInitialState = {
    actionMessage: undefined,
-   actionType: "info"
+   actionType: "info",
+   isImTyping: false,
+   isUserTyping: false,
 };
 
 export const appSlice = createSlice({
@@ -17,9 +21,16 @@ export const appSlice = createSlice({
 
       setActionMessage: ( state, { payload }: PayloadAction<{ message: string | undefined, type?: "info" | "error" }> ) => {
          state.actionMessage = payload.message;
-
          if (payload.type) state.actionType = payload.type;
       },
+
+      setIsImTyping: ( state, { payload }: PayloadAction<boolean> ) => {
+         state.isImTyping = payload;
+      },
+
+      setIsUserTyping: ( state, { payload } ) => {
+         state.isUserTyping = payload;
+      }
 
    }
 });

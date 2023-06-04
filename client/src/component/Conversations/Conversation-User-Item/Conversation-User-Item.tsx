@@ -4,7 +4,7 @@ import { appActions, conversationAsyncActions } from "../../../store/slice";
 import { Avatar, Heading, HStack } from "@chakra-ui/react";
 import { getImageUrl } from "../../../helper";
 import { ButtonIcon } from "../../UI";
-import { FiUserMinus, RiVipCrownLine } from "react-icons/all";
+import { BiCrown, FiUserMinus } from "react-icons/all";
 
 export function ConversationUserItem( { user }: { user: IUserFromConversation } ) {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
@@ -42,11 +42,11 @@ export function ConversationUserItem( { user }: { user: IUserFromConversation } 
                  ? <ButtonIcon size={ 6 }
                                cursor={ activeConversation.adminId === user.id ? "default" : "pointer" }
                                fn={ activeConversation.adminId !== user.id ? () => kickUserFromGroupConversation(user.id) : undefined }
-                               as={ activeConversation.adminId === user.id ? RiVipCrownLine : FiUserMinus }/>
+                               as={ activeConversation.adminId === user.id ? BiCrown : FiUserMinus }/>
 
                  : <ButtonIcon size={ 6 }
                                cursor={ "default" }
-                               as={ activeConversation.adminId === user.id ? RiVipCrownLine : undefined }/>
+                               as={ activeConversation.adminId === user.id ? BiCrown : undefined }/>
           }
 
 

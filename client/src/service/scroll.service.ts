@@ -24,6 +24,14 @@ export const scrollService = ( isNewMessageAdded: boolean, messages: IMessage[],
       }
    };
 
+   const scrollToBottom = () => {
+      const scrollH = messageListRef.current?.scrollHeight as number;
+      const clientH = messageListRef.current?.clientHeight as number;
+
+      messageListRef.current?.scrollTo({ behavior: "smooth", top: scrollH - clientH });
+      onClose();
+   };
+
    useEffect(() => {
       setPrevStateLength(messages.length);
 
@@ -48,6 +56,6 @@ export const scrollService = ( isNewMessageAdded: boolean, messages: IMessage[],
       return () => removeEventListener("scroll", scrollListener!);
    });
 
-   return { messageListRef };
+   return { messageListRef, scrollToBottom };
 
 };

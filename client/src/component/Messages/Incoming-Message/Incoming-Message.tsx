@@ -1,8 +1,11 @@
-import { Avatar, Heading, HStack, Image, Text, VStack } from "@chakra-ui/react";
+import { Avatar, Heading, HStack, Image, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import moment from "moment";
 import { IMessage } from "../../../interface";
 import { getImageUrl } from "../../../helper";
 import { MAIN_COLOR, MESSAGE_INCOMING_COLOR_ } from "../../../constant";
+import { AppModal } from "../../UI";
+import { useState } from "react";
+import { ShowImage } from "../Show-Image/Show-Image.tsx";
 
 interface IIncomingMessage {
    message: IMessage;
@@ -10,6 +13,15 @@ interface IIncomingMessage {
 
 export function IncomingMessage( { message }: IIncomingMessage ) {
    const conversationTime = moment(+message.lastModified).format("HH:mm");
+
+   const { isOpen, onOpen, onClose } = useDisclosure();
+
+   const [ content, setContent ] = useState<JSX.Element>();
+
+   const openImage = () => {
+      setContent(<ShowImage image={ message.content } userEmail={ message.sender.email }/>);
+      onOpen();
+   };
 
    return (
        <VStack alignItems={ "flex-start" }
@@ -44,6 +56,7 @@ export function IncomingMessage( { message }: IIncomingMessage ) {
                     ? <Image src={ getImageUrl(message.content, message.sender.email) }
                              borderRadius={ 20 }
                              cursor={ "pointer" }
+                             onClick={ openImage }
                              h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
 
                     : <Text color={ "gray.700" }> { message.content } </Text>
@@ -52,6 +65,11 @@ export function IncomingMessage( { message }: IIncomingMessage ) {
              </VStack>
 
           </HStack>
+
+          <AppModal isOpen={ isOpen }
+                    onClose={ onClose }
+                    content={ content }
+                    p={ 0 }/>
 
        </VStack>
    );

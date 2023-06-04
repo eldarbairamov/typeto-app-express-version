@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 import { TypedOnChange2, TypedSetState } from "../../interface";
-import { useAppDispatch, useAppSelector } from "../../hook";
-import { messageAsyncActions } from "../../store/slice";
+import { useAppDispatch, useAppSelector, useDebounce } from "../../hook";
+import { appActions, messageAsyncActions } from "../../store/slice";
 
 export const sendMessageService = ( setValue: TypedSetState<string>, value: string ) => {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
+
+   const debounced = useDebounce(value);
 
    const dispatch = useAppDispatch();
 
@@ -14,12 +16,20 @@ export const sendMessageService = ( setValue: TypedSetState<string>, value: stri
       setValue("");
    };
 
+   useEffect(() => {
+      if (debounced) dispatch(appActions.setIsImTyping(false));
+
+   }, [ debounced ]);
+
    const onEnterDown = async ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
+      dispatch(appActions.setIsImTyping(true));
+
       if (e.key === "Enter") {
          e.preventDefault();
-         setValue("");
 
-         await dispatch(messageAsyncActions.sendMessage({ conversationId: activeConversation.id, content: value }));
+         Boolean(value.charAt(0) !== "\n") && await dispatch(messageAsyncActions.sendMessage({ conversationId: activeConversation.id, content: value }));
+
+         setValue("");
       }
    };
 

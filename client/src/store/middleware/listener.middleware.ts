@@ -82,29 +82,30 @@ listenerMiddleware.startListening({
          const activeConversationId = conversationReducer.activeConversation.id;
 
          if (senderId === currentUserId && activeConversationId === conversationId) {
-            console.log('1');
-            console.log(conversationForSender);
             conversationForSender.isNewMessagesExist = false;
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
          if (senderId !== currentUserId && activeConversationId === conversationId) {
-            console.log('2');
             conversationForReceiver.isNewMessagesExist = false;
             dispatch(messageActions.addMessage(message));
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
          if (senderId === currentUserId && activeConversationId !== conversationId) {
-            console.log('3');
             dispatch(conversationActions.updateConversations(conversationForSender));
          }
 
          if (senderId !== currentUserId && activeConversationId !== conversationId) {
-            console.log('4');
             dispatch(conversationActions.updateConversations(conversationForReceiver));
          }
 
+      });
+
+      socket.on("someone_is_typing", ( conversationId: number, whoTyping: string ) => {
+         console.log(MAGENTA, "socket: someone_is_typing");
+
+         console.log(conversationId, whoTyping);
       });
 
    },
@@ -387,5 +388,26 @@ listenerMiddleware.startListening({
       dispatch(conversationActions.updateConversationAfterKickUser({ whoWasKickedId: userId, conversationId }));
 
       socket.emit("kick_user_from_group_conversation", conversationId, userId, userReducer.currentUserInfo.id);
+   }
+});
+
+listenerMiddleware.startListening({
+   actionCreator: appActions.setIsImTyping,
+   effect: ( action, api ) => {
+
+      const { conversationReducer, userReducer } = api.getState() as RootState;
+
+      const activeConversation = conversationReducer.activeConversation;
+      const { currentUserInfo } = userReducer;
+
+      const isImTyping = action.payload;
+
+      if (isImTyping) {
+         socket.emit("typing", activeConversation.id, currentUserInfo.id);
+      }
+
+      if (isImTyping) {
+         socket.emit("stop_typing", activeConversation.id, currentUserInfo.id);
+      }
    }
 });

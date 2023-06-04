@@ -1,4 +1,4 @@
-import { Avatar, AvatarBadge, AvatarGroup, Center, Divider, VStack } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, AvatarGroup, Center, Divider, Tooltip, VStack } from "@chakra-ui/react";
 import { conversationActions } from "../../../store/slice";
 import { IConversation, IUserFromConversation } from "../../../interface";
 import { useAppDispatch, useAppSelector } from "../../../hook";
@@ -25,54 +25,60 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
    };
 
    return (
-       <VStack width={ "100%" }>
+       <Tooltip placement={ "right" }
+                hasArrow={true}
+                p={ '5px 15px' }
+                rounded={ 5 }
+                label={ conversation.conversationName ? conversation.conversationName : conversation.conversationWith[0].username }>
+          <VStack width={ "100%" }>
 
-          <Center p={ 4 }
-                  bg={ conversation.id === activeConversation.id ? CONVERSATION_ACTIVE_COLOR : undefined }
-                  w={ "100%" }
-                  rounded={ 10 }
-                  onClick={ selectConversation }
-                  cursor={ "pointer" }>
+             <Center p={ 4 }
+                     bg={ conversation.id === activeConversation.id ? CONVERSATION_ACTIVE_COLOR : undefined }
+                     w={ "100%" }
+                     rounded={ 10 }
+                     onClick={ selectConversation }
+                     cursor={ "pointer" }>
 
-             { conversation.isGroupConversation &&
-                 <AvatarGroup size={ "sm" }
-                              max={ 1 }>
+                { conversation.isGroupConversation &&
+                    <AvatarGroup size={ "sm" }
+                                 max={ 1 }>
 
-                    { conversation.users.map(user =>
-                        <Avatar key={ v4() }
-                                src={ getImageUrl(user.image, user.email) }
-                                ignoreFallback={ true }
-                                name={ user.username }
-                                size={ "md" }>
+                       { conversation.users.map(user =>
+                           <Avatar key={ v4() }
+                                   src={ getImageUrl(user.image, user.email) }
+                                   ignoreFallback={ true }
+                                   name={ user.username }
+                                   size={ "md" }>
 
-                           { onlineContactsIds.includes(user.id)
-                               && <AvatarBadge boxSize={ 4 }
-                                               bg={ "green.500" }/>
-                           }
+                              { onlineContactsIds.includes(user.id)
+                                  && <AvatarBadge boxSize={ 4 }
+                                                  bg={ "green.500" }/>
+                              }
 
-                        </Avatar>)
-                    }
-                 </AvatarGroup>
-             }
+                           </Avatar>)
+                       }
+                    </AvatarGroup>
+                }
 
-             { user &&
-                 <Avatar name={ user?.username }
-                         src={ getImageUrl(user.image, user.email) }
-                         ignoreFallback={ true }
-                         size={ "md" }>
+                { user &&
+                    <Avatar name={ user?.username }
+                            src={ getImageUrl(user.image, user.email) }
+                            ignoreFallback={ true }
+                            size={ "md" }>
 
-                    { onlineContactsIds.includes(user.id)
-                        && <AvatarBadge boxSize={ 4 }
-                                        bg={ "green.500" }/>
-                    }
+                       { onlineContactsIds.includes(user.id)
+                           && <AvatarBadge boxSize={ 4 }
+                                           bg={ "green.500" }/>
+                       }
 
-                 </Avatar>
-             }
+                    </Avatar>
+                }
 
-          </Center>
+             </Center>
 
-          <Divider width={ 50 }/>
+             <Divider width={ 50 }/>
 
-       </VStack>
+          </VStack>
+       </Tooltip>
    );
 }

@@ -32,11 +32,12 @@ export function ChatBoxBottom() {
                padding={ 3 }>
 
              <Textarea rows={ 1 }
+                       autoFocus={ true }
                        resize={ "none" }
                        bg={ "#eff0f3" }
                        wordBreak={ "break-word" }
                        border={ "none" }
-                       onKeyDown={ onEnterDown }
+                       onKeyDown={ value !== "" ? onEnterDown : undefined }
                        value={ value }
                        onChange={ handleChange }
                        focusBorderColor={ "transparent" }

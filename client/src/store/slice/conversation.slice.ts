@@ -209,11 +209,8 @@ const conversationSlice = createSlice({
           state.isLoading = true;
        })
 
-       .addCase(createConversation.fulfilled, ( state, { payload, meta } ) => {
-          const { username } = meta.arg;
+       .addCase(createConversation.fulfilled, ( state, { payload } ) => {
           state.conversations.push(payload);
-          state.activeConversation =
-              !payload.isGroupConversation ? { ...payload, username: username ? username : undefined } : payload;
           state.conversations = state.conversations.sort(( a, b ) => b.lastModified - a.lastModified);
           state.isLoading = false;
        })
