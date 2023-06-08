@@ -2,7 +2,7 @@ import { Conversation, Message, User } from "../../model";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 import { Op } from "sequelize";
 
-export const getConversationsBySearchService = async ( currentUserId: number, searchKey: string ) => {
+export const getConversationsBySearchService = async ( currentUserId: number, searchKey: string, limit: number ) => {
 
    // Find group and private conversations by search key
    const [ groupConversations, privateConversation ] = await Promise.all([
@@ -87,6 +87,6 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
    ]);
 
    // Return presented data for client by condition
-   return groupConversations.length ? groupConversations : privateConversation;
+   return groupConversations.length ? { data: groupConversations?.splice(0, limit), count: groupConversations.length } : { data: privateConversation?.splice(0, limit), count: privateConversation.length };
 
 };

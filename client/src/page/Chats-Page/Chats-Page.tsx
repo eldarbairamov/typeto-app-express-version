@@ -1,5 +1,5 @@
 import { calc, HStack } from "@chakra-ui/react";
-import { ChatBox, SideBar } from "../../component";
+import { ChatBox, MiniSideBar, SideBar } from "../../component";
 
 export function ChatsPage() {
 
@@ -13,6 +13,8 @@ export function ChatsPage() {
                alignItems={ "flex-start" }>
 
           <SideBar/>
+
+          <MiniSideBar/>
 
           <ChatBox/>
 

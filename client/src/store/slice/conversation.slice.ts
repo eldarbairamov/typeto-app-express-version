@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
-import { IActiveConversation, IConversation, IMessage, IUser } from "../../interface";
+import { IActiveConversation, IConversation, IConversationData, IMessage, IUser } from "../../interface";
 import { conversationApi } from "../../api";
 
 interface IInitialState {
@@ -11,6 +11,9 @@ interface IInitialState {
    errorMessage: string | undefined;
    searchKey: string | undefined;
    isNewMessageIncome: boolean;
+   count: number;
+   limit: number;
+   total: number;
 }
 
 const initialState: IInitialState = {
@@ -21,8 +24,10 @@ const initialState: IInitialState = {
    errorMessage: undefined,
    searchKey: undefined,
    isNewMessageIncome: false,
+   count: 0,
+   limit: 30,
+   total: 30,
 };
-
 
 const createConversation = createAsyncThunk<IConversation, { userIds: number[], conversationName?: string, username?: string }, {
    rejectValue: string
@@ -42,11 +47,11 @@ const createConversation = createAsyncThunk<IConversation, { userIds: number[], 
     }
 );
 
-const getConversations = createAsyncThunk<IConversation[], { searchKey?: string }, { rejectValue: string }>(
+const getConversations = createAsyncThunk<IConversationData, { searchKey?: string, limit: number }, { rejectValue: string }>(
     "conversation/getConversations",
-    async ( { searchKey }, { rejectWithValue } ) => {
+    async ( { searchKey, limit }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationApi.getConversations(searchKey);
+          const { data } = await conversationApi.getConversations(limit, searchKey);
           return data;
 
        }
@@ -57,11 +62,11 @@ const getConversations = createAsyncThunk<IConversation[], { searchKey?: string 
     }
 );
 
-const deleteConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
+const deleteConversation = createAsyncThunk<IConversationData, { conversation: IConversation, limit: number }, { rejectValue: string }>(
     "conversation/deleteConversation",
-    async ( { conversation }, { rejectWithValue } ) => {
+    async ( { conversation, limit }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationApi.deleteConversation(conversation.id);
+          const { data } = await conversationApi.deleteConversation(conversation.id, limit);
           return data;
 
        }
@@ -86,11 +91,11 @@ const kickUserFromGroupConversation = createAsyncThunk<void, { conversationId: n
     }
 );
 
-const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
+const deleteGroupConversation = createAsyncThunk<IConversationData, { conversation: IConversation, limit: number }, { rejectValue: string }>(
     "conversation/deleteGroupConversation",
-    async ( { conversation }, { rejectWithValue } ) => {
+    async ( { conversation, limit }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationApi.deleteGroupConversation(conversation.id);
+          const { data } = await conversationApi.deleteGroupConversation(conversation.id, limit);
           return data;
 
        }
@@ -102,11 +107,11 @@ const deleteGroupConversation = createAsyncThunk<IConversation[], { conversation
     }
 );
 
-const leaveGroupConversation = createAsyncThunk<IConversation[], { conversation: IConversation }, { rejectValue: string }>(
+const leaveGroupConversation = createAsyncThunk<IConversationData, { conversation: IConversation, limit: number }, { rejectValue: string }>(
     "conversation/leaveGroupConversation",
-    async ( { conversation }, { rejectWithValue } ) => {
+    async ( { conversation, limit }, { rejectWithValue } ) => {
        try {
-          const { data } = await conversationApi.leaveGroupConversation(conversation.id);
+          const { data } = await conversationApi.leaveGroupConversation(conversation.id, limit);
           return data;
 
        }
@@ -201,6 +206,12 @@ const conversationSlice = createSlice({
          if (target) target.lastMessage = payload.message;
       },
 
+      limitIncrease: ( state ) => {
+         if (state.limit < state.count) {
+            state.limit *= 2;
+         }
+      }
+
    },
 
    extraReducers: builder => builder
@@ -227,8 +238,9 @@ const conversationSlice = createSlice({
        })
 
        .addCase(getConversations.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload;
+          state.conversations = payload.data;
           state.isLoading = false;
+          state.count = payload.count;
        })
 
        .addCase(getConversations.rejected, ( state, { payload } ) => {
@@ -243,9 +255,10 @@ const conversationSlice = createSlice({
        })
 
        .addCase(deleteConversation.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload;
+          state.conversations = payload.data;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
+          state.count = payload.count;
        })
 
        .addCase(deleteConversation.rejected, ( state, { payload } ) => {
@@ -260,9 +273,10 @@ const conversationSlice = createSlice({
        })
 
        .addCase(deleteGroupConversation.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload;
+          state.conversations = payload.data;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
+          state.count = payload.count;
        })
 
        .addCase(deleteGroupConversation.rejected, ( state, { payload } ) => {
@@ -277,9 +291,10 @@ const conversationSlice = createSlice({
        })
 
        .addCase(leaveGroupConversation.fulfilled, ( state, { payload } ) => {
-          state.conversations = payload;
+          state.conversations = payload.data;
           state.activeConversation = state.conversations[0];
           state.isLoading = false;
+          state.count = payload.count;
        })
 
        .addCase(leaveGroupConversation.rejected, ( state, { payload } ) => {

@@ -69,6 +69,10 @@ listenerMiddleware.startListening({
 
       const dispatch = api.dispatch;
 
+      const currentUserId = userReducer.currentUserInfo.id;
+
+      const activeConversationId = conversationReducer.activeConversation.id;
+
       socket.emit("join_to_conversation", action.payload.id);
 
       socket.off("get_message");
@@ -77,9 +81,7 @@ listenerMiddleware.startListening({
          console.log(MAGENTA, "socket: get_message");
 
          const senderId = message.senderId;
-         const currentUserId = userReducer.currentUserInfo.id;
          const conversationId = message.conversationId;
-         const activeConversationId = conversationReducer.activeConversation.id;
 
          if (senderId === currentUserId && activeConversationId === conversationId) {
             conversationForSender.isNewMessagesExist = false;
@@ -102,10 +104,20 @@ listenerMiddleware.startListening({
 
       });
 
-      socket.on("someone_is_typing", ( conversationId: number, whoTyping: string ) => {
+      socket.on("someone_is_typing", ( conversationId: number, whoIsTyping: string ) => {
          console.log(MAGENTA, "socket: someone_is_typing");
 
-         console.log(conversationId, whoTyping);
+         if (activeConversationId === conversationId) {
+            dispatch(appActions.setWhoIsTyping({ status: true, username: whoIsTyping }));
+         }
+      });
+
+      socket.on("someone_is_stop_typing", ( conversationId: number, whoIsTyping: string ) => {
+         console.log(MAGENTA, "socket: someone_is_stop_typing");
+
+         if (activeConversationId === conversationId) {
+            dispatch(appActions.setWhoIsTyping({ status: false, username: whoIsTyping }));
+         }
       });
 
    },
@@ -406,7 +418,7 @@ listenerMiddleware.startListening({
          socket.emit("typing", activeConversation.id, currentUserInfo.id);
       }
 
-      if (isImTyping) {
+      if (!isImTyping) {
          socket.emit("stop_typing", activeConversation.id, currentUserInfo.id);
       }
    }

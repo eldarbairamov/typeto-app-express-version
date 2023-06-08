@@ -20,10 +20,11 @@ export const sendImageService = async ( userId: number, files: FileArray, conver
 
    const [ newMessage ] = await Promise.all([
       await Message.create({ content: imageName, conversationId, senderId: userId!, isImage: true }),
-      await sharp(avatar.data).jpeg({ quality: 70 }).toFile(path.join(folderPath, imageName))
+      await sharp(avatar.data).jpeg({ quality: 40 }).toFile(path.join(folderPath, imageName))
    ]);
 
    const [ messageWithSender ] = await Promise.all([
+
       Message.findByPk(newMessage.id, {
          include: {
             model: User,
@@ -51,6 +52,7 @@ export const sendImageService = async ( userId: number, files: FileArray, conver
             }
          }
       })
+
    ]);
 
    return messageWithSender;

@@ -121,23 +121,23 @@ export const startSocket = () => {
          to.length && io.to(to).emit("someone_is_typing", conversationId, whoTyping?.username);
       });
 
-      socket.on("stop_typing", async ( conversationId: number, whoTypingId: number ) => {
-         console.log(MAGENTA, "socket: typing");
+      socket.on("stop_typing", async ( conversationId: number, whoIsTypingId: number ) => {
+         console.log(MAGENTA, "socket: stop_typing");
 
          const conversationWith = await ConversationUser.findAll({
             where: {
                conversationId,
                userId: {
-                  [Op.ne]: whoTypingId
+                  [Op.ne]: whoIsTypingId
                }
             },
          })
              .then(conversationUser => conversationUser.map(c => c.userId));
 
-         const whoTyping = await User.findByPk(whoTypingId);
+         const whoIsTyping = await User.findByPk(whoIsTypingId);
 
          const to = getUsers(conversationWith) as string[];
-         to.length && io.to(to).emit("someone_is_stop_typing", conversationId, whoTyping?.username);
+         to.length && io.to(to).emit("someone_is_stop_typing", conversationId, whoIsTyping?.username);
       });
 
       socket.on("disconnect", () => {

@@ -12,31 +12,31 @@ export const conversationController = {
       res.json(conversationWithUsers);
    }),
 
-   getConversations: expressAsyncHandler(async ( req: IRequest<any, any, { searchKey?: string }>, res: Response ) => {
-      const searchKey = req.query.searchKey;
+   getConversations: expressAsyncHandler(async ( req: IRequest<any, any, { searchKey?: string, limit: number }>, res: Response ) => {
+      const { searchKey, limit } = req.query;
       let conversationList;
 
-      if (searchKey) conversationList = await getConversationsBySearchService(req.userId!, searchKey);
-      else conversationList = await getConversationsService(req.userId!);
+      if (searchKey) conversationList = await getConversationsBySearchService(req.userId!, searchKey, limit);
+      else conversationList = await getConversationsService(req.userId!, limit);
 
       res.json(conversationList);
    }),
 
-   deleteGroupConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string }>, res: Response ) => {
-      const conversationId = req.query.conversationId;
-      const conversationList = await deleteGroupConversationService(conversationId, req.userId!);
+   deleteGroupConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string, limit: number }>, res: Response ) => {
+      const { conversationId, limit } = req.query;
+      const conversationList = await deleteGroupConversationService(conversationId, req.userId!, limit);
       res.json(conversationList);
    }),
 
-   leaveGroupConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string }>, res: Response ) => {
-      const conversationId = req.query.conversationId;
-      const conversationList = await leaveGroupConversationService(conversationId, req.userId!);
+   leaveGroupConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string, limit: number }>, res: Response ) => {
+      const { conversationId, limit } = req.query;
+      const conversationList = await leaveGroupConversationService(conversationId, req.userId!, limit);
       res.json(conversationList);
    }),
 
-   deleteConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string }>, res: Response ) => {
-      const conversationId = req.query.conversationId;
-      const conversationList = await deleteConversationService(conversationId, req.userId!);
+   deleteConversation: expressAsyncHandler(async ( req: IRequest<any, any, { conversationId: string, limit: number }>, res: Response ) => {
+      const { conversationId, limit } = req.query;
+      const conversationList = await deleteConversationService(conversationId, req.userId!, limit);
       res.json(conversationList);
    }),
 

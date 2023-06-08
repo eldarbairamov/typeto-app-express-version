@@ -1,15 +1,15 @@
 import { Conversation, Message, User } from "../../model";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 
-export const getConversationsService = async ( currentUserId: number ) => {
+export const getConversationsService = async ( currentUserId: number, limit: number ) => {
 
    // Find conversations by User record and return presented data to client
-   return await User.findByPk(currentUserId, {
+   const conversations = await User.findByPk(currentUserId, {
       include: {
          model: Conversation,
          as: "conversations",
          through: {
-            attributes: []
+            attributes: [],
          },
          include: [
             {
@@ -23,14 +23,16 @@ export const getConversationsService = async ( currentUserId: number ) => {
             {
                model: Message,
                as: "lastMessage"
-            }
+            },
          ],
       },
       order: [
          [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
          [ "conversations", "users", "id", "ASC" ],
          [ "conversations", "lastMessage", "id", "ASC" ]
-      ]
+      ],
+      limit: 2,
+
    })
        .then(user => {
           const conversations = user?.conversations || undefined;
@@ -42,5 +44,7 @@ export const getConversationsService = async ( currentUserId: number ) => {
 
           return conversations;
        });
+
+   return { data: conversations && Array.from(conversations).splice(0, limit), count: conversations?.length };
 
 };

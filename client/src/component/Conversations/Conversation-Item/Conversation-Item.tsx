@@ -8,13 +8,14 @@ import { v4 } from "uuid";
 import { getImageUrl } from "../../../helper";
 import { Icon } from "@chakra-ui/icons";
 import { AiTwotoneMessage } from "react-icons/all";
+import { forwardRef } from "react";
 
 interface IConversationProps {
    conversation: IConversation;
    user?: IUserFromConversation;
 }
 
-export function ConversationItem( { user, conversation }: IConversationProps ) {
+export const ConversationItem = forwardRef(( { user, conversation }: IConversationProps, ref: any ) => {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
    const { onlineContactsIds } = useAppSelector(state => state.userReducer);
@@ -31,7 +32,7 @@ export function ConversationItem( { user, conversation }: IConversationProps ) {
    const conversationTime = moment(+conversation.lastModified).format("HH:mm");
 
    return (
-       <VStack width={ "100%" }>
+       <VStack width={ "100%" } ref={ ref }>
 
           <VStack width={ "100%" }
                   bg={ conversation.id === activeConversation.id ? CONVERSATION_ACTIVE_COLOR : undefined }
@@ -115,8 +116,8 @@ export function ConversationItem( { user, conversation }: IConversationProps ) {
 
           </VStack>
 
-          <Divider width={ 300 }/>
+          <Divider width={ 300 } />
 
        </VStack>
    );
-}
+});

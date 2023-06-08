@@ -25,8 +25,8 @@ export function ChatBoxOptions() {
                       icon={ <HamburgerIcon boxSize={ 5 } color={ MAIN_COLOR }/> }
                       variant={ "outline" }/>
 
-          <MenuList rounded={ 20 }
-                    p={ 3 }>
+          <MenuList rounded={ 10 }
+                    p={ 2 }>
 
              <VStack w={ "100%" }>
 

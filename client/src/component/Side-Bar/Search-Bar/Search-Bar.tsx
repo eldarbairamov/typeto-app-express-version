@@ -5,7 +5,7 @@ import { Search2Icon } from "@chakra-ui/icons";
 import { conversationActions } from "../../../store/slice";
 import { useAppDispatch, useDebounce, useInputHandler } from "../../../hook";
 
-export function SearchBar() {
+export function SearchBar( { height, width }: { height?: string | number, width?: string | number } ) {
    const { value, handleChange } = useInputHandler();
 
    const debounced = useDebounce(value);
@@ -20,8 +20,8 @@ export function SearchBar() {
    return (
        <Center bg={ "white" }
                rounded={ 20 }
-               height={ "60px" }
-               w={ "90%" }>
+               height={ height ? height : "60px" }
+               w={ width ? width : "90%" }>
 
           <InputGroup w={ "90%" }>
              <InputLeftElement pointerEvents={ "none" }

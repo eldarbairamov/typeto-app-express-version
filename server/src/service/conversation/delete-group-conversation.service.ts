@@ -2,7 +2,7 @@ import { Conversation, ConversationUser, Message, User } from "../../model";
 import { ApiException } from "../../exception";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 
-export const deleteGroupConversationService = async ( conversationId: string, currentUserId: number ) => {
+export const deleteGroupConversationService = async ( conversationId: string, currentUserId: number, limit: number ) => {
 
    // Define special variables for checking
    const [ isUserAdmin, isGroupConversation ] = await Conversation
@@ -31,7 +31,7 @@ export const deleteGroupConversationService = async ( conversationId: string, cu
    ]);
 
    // Return presented data to client
-   return await User.findByPk(currentUserId, {
+   const conversations = await User.findByPk(currentUserId, {
       include: {
          model: Conversation,
          as: "conversations",
@@ -55,6 +55,7 @@ export const deleteGroupConversationService = async ( conversationId: string, cu
       },
       order: [
          [ { model: Conversation, as: "conversations", isSelfAssociation: true }, "lastModified", "DESC" ],
+         [ "conversations", "users", "id", "ASC" ],
          [ "conversations", "lastMessage", "id", "ASC" ]
       ]
    })
@@ -64,9 +65,11 @@ export const deleteGroupConversationService = async ( conversationId: string, cu
           if (conversations) return conversations.map(c => {
              if (c.isGroupConversation) return groupConversationPresenter(c.toJSON(), currentUserId);
              if (!c.isGroupConversation) return privateConversationPresenter(c.toJSON(), currentUserId);
-          })
+          });
 
           return conversations;
        });
+
+   return { data: conversations?.splice(0, limit), count: conversations?.length };
 
 };

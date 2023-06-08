@@ -8,6 +8,7 @@ export interface IMessage {
    lastModified: number;
    sender: IUser;
    isImage: boolean;
+   imageBlurHash: string;
 }
 
 export interface INewMessageReceived {

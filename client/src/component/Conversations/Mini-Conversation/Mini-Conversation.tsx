@@ -51,7 +51,7 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
                                    size={ "md" }>
 
                               { onlineContactsIds.includes(user.id)
-                                  && <AvatarBadge boxSize={ 4 }
+                                  && <AvatarBadge boxSize={ 3 }
                                                   bg={ "green.500" }/>
                               }
 
@@ -67,7 +67,7 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
                             size={ "md" }>
 
                        { onlineContactsIds.includes(user.id)
-                           && <AvatarBadge boxSize={ 4 }
+                           && <AvatarBadge boxSize={ 3 }
                                            bg={ "green.500" }/>
                        }
 

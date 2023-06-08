@@ -26,8 +26,9 @@ export const chakraTheme = extendTheme({
             width: 0,
          },
          "&::-webkit-scrollbar-thumb": {
-            background: "transparent",
+            background: "gray.50",
             borderRadius: "20px",
+
          },
       }
    },

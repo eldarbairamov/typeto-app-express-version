@@ -1,17 +1,22 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+interface IWhoIsTyping {
+   username: string,
+   status: boolean
+}
+
 interface IInitialState {
    actionMessage: string | undefined;
    actionType: "info" | "error";
    isImTyping: boolean;
-   isUserTyping: boolean;
+   whoIsTyping: IWhoIsTyping;
 }
 
 const initialState: IInitialState = {
    actionMessage: undefined,
    actionType: "info",
    isImTyping: false,
-   isUserTyping: false,
+   whoIsTyping: {} as IWhoIsTyping,
 };
 
 export const appSlice = createSlice({
@@ -28,8 +33,8 @@ export const appSlice = createSlice({
          state.isImTyping = payload;
       },
 
-      setIsUserTyping: ( state, { payload } ) => {
-         state.isUserTyping = payload;
+      setWhoIsTyping: ( state, { payload }: PayloadAction<IWhoIsTyping> ) => {
+         state.whoIsTyping = payload;
       }
 
    }

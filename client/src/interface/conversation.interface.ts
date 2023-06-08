@@ -17,3 +17,8 @@ export interface IConversation {
 export interface IActiveConversation extends IConversation {
    username?: string;
 }
+
+export interface IConversationData {
+   data: IConversation[];
+   count: number;
+}

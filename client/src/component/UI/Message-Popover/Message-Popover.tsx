@@ -23,7 +23,7 @@ export function MessagePopover( { children, isOpen, onClose, deleteMessage }: IM
 
           <PopoverContent _focusVisible={ { outline: "none" } }
                           p={ 1 }
-                          rounded={ 20 }
+                          rounded={ 10 }
                           w={ "fit-content" }>
 
              <PopoverArrow/>

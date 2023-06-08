@@ -3,6 +3,8 @@ import { useState } from "react";
 import { Box, calc, Center, useDisclosure, VStack } from "@chakra-ui/react";
 import { SearchBar } from "../Search-Bar/Search-Bar.tsx";
 import { ConversationItem, ConversationList, AppModal, CreateConversationButton, GroupConversationMenu } from "../../../component";
+import { useAppDispatch, useObserver } from "../../../hook";
+import { conversationActions } from "../../../store/slice";
 
 export function SideBar() {
    const [ content, setContent ] = useState<JSX.Element>();
@@ -13,6 +15,12 @@ export function SideBar() {
       setContent(<GroupConversationMenu isOnlyMessage={ true } onModalClose={ onClose }/>);
       onOpen();
    };
+
+   const dispatch = useAppDispatch();
+
+   const { lastElemRef } = useObserver(() => {
+      dispatch(conversationActions.limitIncrease())
+   });
 
    return (
        <VStack bg={ "white" }
@@ -26,12 +34,12 @@ export function SideBar() {
 
           <SearchBar/>
 
-          <Box p={ "20px 20px 0 20px" }
+          <Box p={ "0 20px 0 20px" }
                alignItems={ "flex-start" }
                w={ "100%" }
                h={ calc("100%").subtract("160px").toString() }>
 
-             <ConversationList Conversation={ ConversationItem }/>
+             <ConversationList Conversation={ ConversationItem } ref={ lastElemRef }/>
           </Box>
 
 

@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector, useDebounce } from "../../hook";
 import { appActions, messageAsyncActions } from "../../store/slice";
 
 export const sendMessageService = ( setValue: TypedSetState<string>, value: string ) => {
+
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
    const debounced = useDebounce(value);
@@ -17,17 +18,23 @@ export const sendMessageService = ( setValue: TypedSetState<string>, value: stri
    };
 
    useEffect(() => {
-      if (debounced) dispatch(appActions.setIsImTyping(false));
-
+      if (debounced.length >= 0) dispatch(appActions.setIsImTyping(false));
    }, [ debounced ]);
 
-   const onEnterDown = async ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
-      dispatch(appActions.setIsImTyping(true));
+   useEffect(() => {
+      if (value.length) dispatch(appActions.setIsImTyping(true));
+   }, [ value ]);
 
+   const onEnterDown = async ( e: React.KeyboardEvent<HTMLTextAreaElement> ) => {
       if (e.key === "Enter") {
          e.preventDefault();
 
-         Boolean(value.charAt(0) !== "\n") && await dispatch(messageAsyncActions.sendMessage({ conversationId: activeConversation.id, content: value }));
+         Boolean(value.charAt(0) !== "\n") && await dispatch(messageAsyncActions.sendMessage({
+            conversationId: activeConversation.id,
+            content: value
+         }));
+
+         dispatch(appActions.setIsImTyping(false));
 
          setValue("");
       }

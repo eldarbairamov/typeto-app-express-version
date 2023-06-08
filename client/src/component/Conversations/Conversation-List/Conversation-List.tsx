@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ForwardedRef, forwardRef } from "react";
 
 import { VStack } from "@chakra-ui/react";
 import { v4 } from "uuid";
@@ -8,13 +8,15 @@ import { useAppSelector } from "../../../hook";
 interface IConversationProps {
    conversation: IConversation;
    user?: IUserFromConversation;
+   ref?: ForwardedRef<any>;
 }
 
 interface IConversationListProps {
-   Conversation: React.ComponentType<IConversationProps>;
+   Conversation: React.FunctionComponent<IConversationProps>;
+   ref?: ForwardedRef<any>
 }
 
-export function ConversationList( { Conversation }: IConversationListProps ) {
+export const ConversationList = forwardRef(( { Conversation }: IConversationListProps, ref: any ) => {
    const { conversations } = useAppSelector(state => state.conversationReducer);
 
    return (
@@ -22,7 +24,19 @@ export function ConversationList( { Conversation }: IConversationListProps ) {
                h={ "100%" }
                spacing={ 2 }>
 
-          { Boolean(conversations.length) && conversations.map(conversation => {
+          { Boolean(conversations.length) && conversations.map(( conversation, index ) => {
+             if (conversations.length === index + 1) {
+                if (conversation.isGroupConversation) {
+                   return <Conversation key={ v4() }
+                                        ref={ ref }
+                                        conversation={ conversation }/>;
+                }
+                return conversation.conversationWith.map(user => <Conversation key={ v4() }
+                                                                               user={ user }
+                                                                               ref={ ref }
+                                                                               conversation={ conversation }/>);
+             }
+
              if (conversation.isGroupConversation) {
                 return <Conversation key={ v4() }
                                      conversation={ conversation }/>;
@@ -34,4 +48,4 @@ export function ConversationList( { Conversation }: IConversationListProps ) {
 
        </VStack>
    );
-}
+});

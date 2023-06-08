@@ -78,15 +78,16 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
                         size={ "md" }/>
 
                 <Text> { conversationTime } </Text>
-             </VStack>
+             </VStack>;
 
           </HStack>
 
           <AppModal isOpen={ isOpen }
                     onClose={ onClose }
                     content={ content }
-                    p={ 0 }/>
+                    p={ 0 }/>;
 
        </VStack>
-   );
+   )
+       ;
 }

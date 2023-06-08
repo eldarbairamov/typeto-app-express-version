@@ -1,10 +1,12 @@
 import { useState } from "react";
 
-import { Box, calc, Center, useDisclosure, VStack } from "@chakra-ui/react";
+import { Box, calc, Center, IconButton, Menu, MenuButton, MenuList, useDisclosure, VStack } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import { FiUsers } from "react-icons/all";
 import { MAIN_COLOR } from "../../../constant";
-import { ConversationList, MiniConversation, AppModal, ButtonIcon, GroupConversationMenu } from "../../../component";
+import { ConversationList, MiniConversation, AppModal, ButtonIcon, GroupConversationMenu, SearchBar } from "../../../component";
+import { useAppDispatch, useObserver } from "../../../hook";
+import { conversationActions } from "../../../store/slice";
 
 export function MiniSideBar() {
    const { isOpen, onOpen, onClose } = useDisclosure();
@@ -16,6 +18,12 @@ export function MiniSideBar() {
       onOpen();
    };
 
+   const dispatch = useAppDispatch();
+
+   const { lastElemRef } = useObserver(() => {
+      dispatch(conversationActions.limitIncrease());
+   });
+
    return (
        <VStack display={ [ "initial", "initial", "initial", "initial", "none" ] }
                borderRadius={ "20px 0 0 20px" }
@@ -23,19 +31,32 @@ export function MiniSideBar() {
                borderColor={ "gray.100" }
                spacing={ 0 }
                bg={ "white" }
-               w={ "100px" }
+               w={ "130px" }
                h={ "100%" }>
 
           <Center h={ "60px" }>
-             <ButtonIcon size={ 5 } as={ Search2Icon } color={ MAIN_COLOR }/>
+             <Menu autoSelect={ false }>
+                <MenuButton as={ IconButton }
+                            _active={ { bg: "transparent" } }
+                            _hover={ { bg: "transparent" } }
+                            p={ 1 }
+                            border={ "none" }
+                            icon={ <Search2Icon boxSize={ 5 } color={ MAIN_COLOR }/> }
+                            variant={ "outline" }/>
+
+                <MenuList rounded={ 10 }
+                          p={ 0 }>
+                   <SearchBar height={ "45px" } width={ "100%" }/>
+                </MenuList>
+             </Menu>
           </Center>
 
-          <Box p={ "20px 20px 0 20px" }
+          <Box p={ "0 20px 0 20px" }
                h={ calc("100%").subtract("160px").toString() }
                alignItems={ "flex-start" }
                w={ "100%" }>
 
-             <ConversationList Conversation={ MiniConversation }/>
+             <ConversationList Conversation={ MiniConversation } ref={ lastElemRef }/>
 
           </Box>
 

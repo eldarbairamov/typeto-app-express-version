@@ -9,6 +9,7 @@ interface MessageAttr {
    content: string;
    lastModified: number;
    isImage: boolean;
+   imageBlurHash?: string;
 }
 
 interface MessageCreationAttr {
@@ -16,6 +17,7 @@ interface MessageCreationAttr {
    conversationId: number;
    content: string;
    isImage?: boolean;
+   imageBlurHash?: string;
 }
 
 @Table({ tableName: "message", timestamps: false })

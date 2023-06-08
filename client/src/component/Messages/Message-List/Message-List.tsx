@@ -4,8 +4,7 @@ import { useAppSelector } from "../../../hook";
 import { scrollService } from "../../../service";
 import { MAIN_COLOR } from "../../../constant";
 import { OutcomingMessage, IncomingMessage } from "../../Messages";
-import { NewMessageAlert } from "../../UI/New-Message-Alert/New-Message-Alert.tsx";
-import { ImageLoader } from "../../UI/Image-Loader/Image-Loader.tsx";
+import { ImageLoader, NewMessageAlert } from "../../UI";
 
 export function MessageList() {
    const { currentUserInfo } = useAppSelector(state => state.userReducer);
@@ -29,7 +28,7 @@ export function MessageList() {
        <VStack h={ calc("100%").subtract("100px").toString() }
                spacing={ -5 }
                ref={ messageListRef }
-               p={ "20px 40px 0 40px" }
+               p={ "0 40px 0 40px" }
                overflow={ "scroll" }
                w={ "100%" }>
 
