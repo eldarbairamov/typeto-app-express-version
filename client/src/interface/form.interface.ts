@@ -8,3 +8,8 @@ export interface IRegistrationForm {
    username: string;
    password: string;
 }
+
+export interface IResetPasswordForm {
+   newPassword: string;
+   repeatPassword: string;
+}

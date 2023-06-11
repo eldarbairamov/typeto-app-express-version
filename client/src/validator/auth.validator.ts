@@ -1,4 +1,4 @@
-import { ILoginForm, IRegistrationForm } from "../interface";
+import { ILoginForm, IRegistrationForm, IResetPasswordForm } from "../interface";
 import * as Joi from "joi";
 import { emailRegex } from "../constant";
 
@@ -24,6 +24,21 @@ export const registrationValidator = Joi.object<IRegistrationForm>({
       "any.required": "Поле обов'язкове для заповнення",
    }),
 
+});
+
+export const resetPasswordValidator = Joi.object<IResetPasswordForm>({
+   newPassword: Joi.string().min(6).max(20).required().trim().messages({
+      "string.max": "Не більше 20-и символів",
+      "string.min": "Не менше 6-и символів",
+      "string.empty": "Поле неповинно залишитись пустим",
+      "any.required": "Поле обов'язкове для заповнення",
+   }),
+   repeatPassword: Joi.string().min(6).max(20).required().trim().messages({
+      "string.max": "Не більше 20-и символів",
+      "string.min": "Не менше 6-и символів",
+      "string.empty": "Поле неповинно залишитись пустим",
+      "any.required": "Поле обов'язкове для заповнення",
+   }),
 });
 
 export const loginValidator = Joi.object<ILoginForm>({
