@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
 import { IActiveConversation, IConversation, IConversationData, IMessage, IUser } from "../../interface";
 import { conversationApi } from "../../api";
+import { errorCatcherFn } from "../../helper";
 
 interface IInitialState {
    conversations: IConversation[];
@@ -41,8 +41,7 @@ const createConversation = createAsyncThunk<IConversation, { userIds: number[], 
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -56,8 +55,7 @@ const getConversations = createAsyncThunk<IConversationData, { searchKey?: strin
 
        }
        catch (e) {
-          const axiosError = e as Error;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -71,8 +69,7 @@ const deleteConversation = createAsyncThunk<IConversationData, { conversation: I
 
        }
        catch (e) {
-          const axiosError = e as Error;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
 
     }
@@ -85,8 +82,7 @@ const kickUserFromGroupConversation = createAsyncThunk<void, { conversationId: n
           await conversationApi.kickUserFromGroupConversation(conversationId, userId);
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -100,8 +96,7 @@ const deleteGroupConversation = createAsyncThunk<IConversationData, { conversati
 
        }
        catch (e) {
-          const axiosError = e as Error;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
 
     }
@@ -116,8 +111,7 @@ const leaveGroupConversation = createAsyncThunk<IConversationData, { conversatio
 
        }
        catch (e) {
-          const axiosError = e as Error;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
 
     }

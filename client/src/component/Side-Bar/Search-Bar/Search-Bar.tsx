@@ -4,6 +4,7 @@ import { Center, Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import { conversationActions } from "../../../store/slice";
 import { useAppDispatch, useDebounce, useInputHandler } from "../../../hook";
+import { MAIN_COLOR } from "../../../constant";
 
 export function SearchBar( { height, width }: { height?: string | number, width?: string | number } ) {
    const { value, handleChange } = useInputHandler();
@@ -25,7 +26,7 @@ export function SearchBar( { height, width }: { height?: string | number, width?
 
           <InputGroup w={ "90%" }>
              <InputLeftElement pointerEvents={ "none" }
-                               children={ <Search2Icon color={ "gray.500" }/> }/>
+                               children={ <Search2Icon color={ MAIN_COLOR }/> }/>
 
              <Input border={ "none" }
                     focusBorderColor={ "white" }

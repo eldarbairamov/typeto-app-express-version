@@ -14,6 +14,14 @@ export const authApi = {
 
    logout: async (): Promise<void> => {
       await axiosInstance.get("/auth/logout");
+   },
+
+   forgotPassword: async ( email: string ): Promise<void> => {
+      await axiosInstance.post("/auth/forgot_password", { email });
+   },
+
+   resetPassword: async ( resetPasswordToken: string, password: string ): Promise<void> => {
+      await axiosInstance.patch("/auth/reset_password", { resetPasswordToken, password });
    }
 
 };

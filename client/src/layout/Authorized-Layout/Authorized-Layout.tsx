@@ -1,10 +1,10 @@
 import { Center, VStack } from "@chakra-ui/react";
 import { Outlet } from "react-router-dom";
-import { firstTouchService } from "../service";
-import { useAppSelector } from "../hook";
-import { Header, Toast } from "../component";
+import { firstTouchService } from "../../service";
+import { Header, Toast } from "../../component";
+import { useAppSelector } from "../../hook";
 
-export function MainLayout() {
+export function AuthorizedLayout() {
    const { actionMessage, actionType } = useAppSelector(state => state.appReducer);
 
    firstTouchService();

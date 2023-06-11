@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
 import { IMessage } from "../../interface";
 import { messageApi } from "../../api";
+import { errorCatcherFn } from "../../helper";
 
 interface IInitialState {
    messages: IMessage[];
@@ -30,8 +30,7 @@ const getMessages = createAsyncThunk<IMessage[], { conversationId: number }, { r
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
 
     });
@@ -45,8 +44,7 @@ const sendMessage = createAsyncThunk<IMessage, { content: string, conversationId
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -60,8 +58,7 @@ const deleteMessage = createAsyncThunk<IMessage, { messageId: number, conversati
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -74,8 +71,7 @@ const sendImage = createAsyncThunk<IMessage, { formData: FormData }, { rejectVal
           return data;
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );

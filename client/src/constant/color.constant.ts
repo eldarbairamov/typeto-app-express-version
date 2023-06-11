@@ -14,16 +14,17 @@
 //
 // export const ALERT_COLOR = "rgba(176,21,21,0.65)";
 
+export const MAIN_COLOR = "#8d86c9";
+export const MAIN_COLOR_LIGHTER = "#afaad9";
 
-export const MAIN_COLOR = "#7189FF";
-export const MAIN_COLOR_LIGHTER = "#a7b5ff";
+export const FONT_SECOND = "blackAlpha.600";
 
-export const BUTTON_COLOR = "#7189FF";
-export const BUTTON_HOVER_COLOR = "#5471ff";
+export const BUTTON_COLOR = "#8d86c9";
+export const BUTTON_HOVER_COLOR = "#555079";
 
-export const CONVERSATION_ACTIVE_COLOR = "#7189FF";
+export const CONVERSATION_ACTIVE_COLOR = "#555079";
 
-export const MESSAGE_OUTCOMING_COLOR_ = "#7189FF";
-export const MESSAGE_INCOMING_COLOR_ = "#e3e8ff";
+export const MESSAGE_OUTCOMING_COLOR_ = "#8d86c9";
+export const MESSAGE_INCOMING_COLOR_ = "#d1cfe9";
 
-export const ALERT_COLOR = "rgba(176,21,21,0.65)";
+export const ALERT_COLOR = "rgb(197,87,87)";

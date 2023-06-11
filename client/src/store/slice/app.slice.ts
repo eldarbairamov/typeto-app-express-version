@@ -7,9 +7,10 @@ interface IWhoIsTyping {
 
 interface IInitialState {
    actionMessage: string | undefined;
-   actionType: "info" | "error";
+   actionType: "info" | "error" | "loading";
    isImTyping: boolean;
    whoIsTyping: IWhoIsTyping;
+   isToastIsClosed: boolean;
 }
 
 const initialState: IInitialState = {
@@ -17,6 +18,7 @@ const initialState: IInitialState = {
    actionType: "info",
    isImTyping: false,
    whoIsTyping: {} as IWhoIsTyping,
+   isToastIsClosed: false
 };
 
 export const appSlice = createSlice({
@@ -24,7 +26,7 @@ export const appSlice = createSlice({
    initialState,
    reducers: {
 
-      setActionMessage: ( state, { payload }: PayloadAction<{ message: string | undefined, type?: "info" | "error" }> ) => {
+      setActionMessage: ( state, { payload }: PayloadAction<{ message: string | undefined, type?: "info" | "error" | "loading" }> ) => {
          state.actionMessage = payload.message;
          if (payload.type) state.actionType = payload.type;
       },
@@ -35,6 +37,10 @@ export const appSlice = createSlice({
 
       setWhoIsTyping: ( state, { payload }: PayloadAction<IWhoIsTyping> ) => {
          state.whoIsTyping = payload;
+      },
+
+      closeToast: ( state ) => {
+         state.isToastIsClosed = true;
       }
 
    }

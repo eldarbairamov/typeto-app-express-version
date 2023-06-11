@@ -20,7 +20,7 @@ authRouter
         commonMiddleware.isRequestEmpty,
         authMiddleware.isUserExists,
         authController.forgotPassword)
-    .post(
+    .patch(
         "/reset_password",
         commonMiddleware.isRequestEmpty,
         authController.resetPassword)

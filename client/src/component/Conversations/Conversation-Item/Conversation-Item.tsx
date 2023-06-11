@@ -8,14 +8,14 @@ import { v4 } from "uuid";
 import { getImageUrl } from "../../../helper";
 import { Icon } from "@chakra-ui/icons";
 import { AiTwotoneMessage } from "react-icons/all";
-import { forwardRef } from "react";
+import { ForwardedRef, forwardRef } from "react";
 
 interface IConversationProps {
    conversation: IConversation;
    user?: IUserFromConversation;
 }
 
-export const ConversationItem = forwardRef(( { user, conversation }: IConversationProps, ref: any ) => {
+export const ConversationItem = forwardRef(( { user, conversation }: IConversationProps, ref: ForwardedRef<any> ) => {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
 
    const { onlineContactsIds } = useAppSelector(state => state.userReducer);

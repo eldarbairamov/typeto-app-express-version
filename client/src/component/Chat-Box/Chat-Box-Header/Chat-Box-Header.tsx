@@ -1,4 +1,4 @@
-import { Avatar, AvatarBadge, AvatarGroup, Heading, HStack } from "@chakra-ui/react";
+import { Avatar, AvatarGroup, Heading, HStack } from "@chakra-ui/react";
 import { v4 } from "uuid";
 import { useAppSelector } from "../../../hook";
 import { getImageUrl } from "../../../helper";
@@ -6,7 +6,6 @@ import { ChatBoxOptions } from "../../../component";
 
 export function ChatBoxHeader() {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
-   const { onlineContactsIds } = useAppSelector(state => state.userReducer);
 
    return (
        <HStack width={ "100%" }
@@ -25,9 +24,8 @@ export function ChatBoxHeader() {
                                 name={ user.username }
                                 ignoreFallback={ true }
                                 src={ getImageUrl(user.image, user.email) }
-                                size={ "lg" }>
-                           { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 3 } bg={ "green.500" }/> }
-                        </Avatar>) }
+                                size={ "lg" }/>
+                    ) }
                  </AvatarGroup>
 
                  : <Avatar name={ activeConversation.conversationWith[0].username }

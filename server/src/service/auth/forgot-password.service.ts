@@ -6,7 +6,7 @@ import { FORGOT_PASSWORD, FORGOT_PASSWORD_TOKEN_TYPE } from "../../constant";
 
 export const forgotPasswordService = async ( email: string, user: User, clientUrl: string ) => {
    const resetPasswordToken = jwt.sign({ userId: user.id }, config.SECRET_FORGOT_PASS_KEY, { expiresIn: "1d" });
-   const resetPasswordLink = `${ clientUrl }/password_reset/new?token=${ resetPasswordToken }`;
+   const resetPasswordLink = `${ clientUrl }/reset_password/new?token=${ resetPasswordToken }`;
 
    await ActionToken.create({
       token: resetPasswordToken,
@@ -15,5 +15,4 @@ export const forgotPasswordService = async ( email: string, user: User, clientUr
    });
 
    await emailSender(email, FORGOT_PASSWORD, { resetPasswordLink, username: user.username });
-
 };

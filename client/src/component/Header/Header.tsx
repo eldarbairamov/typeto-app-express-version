@@ -39,6 +39,7 @@ export function Header() {
                         styles={ {
                            color: "white",
                            p: "5px 10px",
+                           marginLeft: 1,
                            borderRadius: "10px 0 10px 10px",
                            bg: MAIN_COLOR
                         } }>

@@ -5,13 +5,14 @@ import { useAppDispatch, useAppSelector } from "../../../hook";
 import { CONVERSATION_ACTIVE_COLOR } from "../../../constant";
 import { v4 } from "uuid";
 import { getImageUrl } from "../../../helper";
+import { ForwardedRef, forwardRef } from "react";
 
 interface IConversationProps {
    conversation: IConversation;
    user?: IUserFromConversation;
 }
 
-export function MiniConversation( { user, conversation }: IConversationProps ) {
+export const MiniConversation = forwardRef(( { user, conversation }: IConversationProps, ref: ForwardedRef<any> ) => {
    const { activeConversation } = useAppSelector(state => state.conversationReducer);
    const { onlineContactsIds } = useAppSelector(state => state.userReducer);
 
@@ -26,10 +27,12 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
 
    return (
        <Tooltip placement={ "right" }
-                hasArrow={true}
-                p={ '5px 15px' }
+                hasArrow={ true }
+                p={ "5px 15px" }
                 rounded={ 5 }
+                ref={ ref }
                 label={ conversation.conversationName ? conversation.conversationName : conversation.conversationWith[0].username }>
+
           <VStack width={ "100%" }>
 
              <Center p={ 4 }
@@ -81,4 +84,4 @@ export function MiniConversation( { user, conversation }: IConversationProps ) {
           </VStack>
        </Tooltip>
    );
-}
+});

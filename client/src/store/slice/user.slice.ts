@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AxiosError } from "axios";
 import { IUser, IUserBySearch } from "../../interface";
 import { userApi } from "../../api";
+import { errorCatcherFn } from "../../helper";
 
 interface IInitialState {
    contacts: IUser[];
@@ -30,8 +30,7 @@ const getContacts = createAsyncThunk<IUser[], { searchKey?: string }, { rejectVa
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -44,8 +43,7 @@ const addContact = createAsyncThunk<void, { contactId: number }, { rejectValue: 
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -59,8 +57,7 @@ const findUser = createAsyncThunk<IUserBySearch, { userEmail: string }, { reject
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
 
     }
@@ -74,8 +71,7 @@ const uploadAvatar = createAsyncThunk<{ imageName: string }, FormData, { rejectV
           return data;
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -87,8 +83,7 @@ const deleteAvatar = createAsyncThunk<void, void, { rejectValue: string }>(
           await userApi.deleteAvatar();
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -103,8 +98,7 @@ const deleteContact = createAsyncThunk<IUser[], { contactId: number }, { rejectV
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );
@@ -118,8 +112,7 @@ const getCurrentUser = createAsyncThunk<IUser, void, { rejectValue: string }>(
 
        }
        catch (e) {
-          const axiosError = e as AxiosError;
-          return rejectWithValue(axiosError.message);
+          return rejectWithValue(errorCatcherFn(e));
        }
     }
 );

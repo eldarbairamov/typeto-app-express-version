@@ -1,17 +1,26 @@
-import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box } from "@chakra-ui/react";
+import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, Spinner } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
 import { v4 } from "uuid";
 import { useAppSelector, useInputHandler } from "../../../hook";
 import { getContactsService } from "../../../service";
 import { ContactItem } from "../Contact-Item/Contact-Item.tsx";
+import { MAIN_COLOR } from "../../../constant";
 
 export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const { value, handleChange } = useInputHandler();
 
-   const { contacts } = useAppSelector(state => state.userReducer);
+   const { contacts, isLoading } = useAppSelector(state => state.userReducer);
 
    getContactsService(value);
+
+   if (isLoading) {
+      return (
+          <Center h={ 500 }>
+             <Spinner size={ "lg" } thickness={ "3px" } color={ MAIN_COLOR }/>
+          </Center>
+      );
+   }
 
    return (
        <VStack h={ 500 }>

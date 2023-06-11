@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 
-import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, HStack, Avatar, Heading, Button } from "@chakra-ui/react";
+import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, HStack, Avatar, Heading, Button, Spinner } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
 import { v4 } from "uuid";
@@ -8,13 +8,13 @@ import { useAppSelector } from "../../hook";
 import { TypedOnChange } from "../../interface";
 import { groupConvMenuService } from "../../service";
 import { ContactItem } from "../Contacts";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant";
+import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../constant";
 import { getImageUrl } from "../../helper";
 
 export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const { groupMembers } = useAppSelector(state => state.conversationReducer);
 
-   const { contacts } = useAppSelector(state => state.userReducer);
+   const { contacts, isLoading } = useAppSelector(state => state.userReducer);
 
    const [ values, setValues ] = useState<{ searchValue: string, groupName: string }>({
       searchValue: "",
@@ -38,6 +38,14 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
          ref.current?.click();
       }
    };
+
+   if (isLoading) {
+      return (
+          <Center h={ 650 }>
+             <Spinner size={ "lg" } thickness={ "3px" } color={ MAIN_COLOR }/>
+          </Center>
+      );
+   }
 
    return (
        <VStack h={ 650 }>
@@ -79,7 +87,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
              </InputGroup>
           </Box>
 
-          <Divider/>
+          <Divider w={ "80%" }/>
 
           { contacts
               ? <VStack w={ "100%" }
@@ -113,7 +121,6 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                     variant={ "flushed" }
                     h={ 12 }
                     fontSize={ 16 }
-                    fontWeight={ 700 }
                     onKeyDown={ onEnterDown }
                     value={ values.groupName }
                     onChange={ ( e ) => handleChange(e, "groupName") }
