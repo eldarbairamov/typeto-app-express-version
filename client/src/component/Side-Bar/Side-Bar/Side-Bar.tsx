@@ -5,6 +5,7 @@ import { SearchBar } from "../Search-Bar/Search-Bar.tsx";
 import { ConversationItem, ConversationList, AppModal, CreateConversationButton, GroupConversationMenu } from "../../../component";
 import { useAppDispatch, useObserver } from "../../../hook";
 import { conversationActions } from "../../../store/slice";
+import { useColorValues } from "../../../constant";
 
 export function SideBar() {
    const [ content, setContent ] = useState<JSX.Element>();
@@ -19,18 +20,17 @@ export function SideBar() {
    const dispatch = useAppDispatch();
 
    const { lastElemRef } = useObserver(() => {
-      dispatch(conversationActions.limitIncrease())
+      dispatch(conversationActions.limitIncrease());
    });
 
+   const { BG_SECOND } = useColorValues();
+
    return (
-       <VStack bg={ "white" }
+       <VStack bg={ BG_SECOND }
                h={ "100%" }
-               borderRight={ "1px" }
-               borderColor={ "gray.100" }
                spacing={ 0 }
                borderRadius={ "20px 0 0 20px" }
-               w={ "400px" }
-               display={ [ "none", "none", "none", "none", "flex" ] }>
+               w={ "500px" }>
 
           <SearchBar/>
 
@@ -42,13 +42,11 @@ export function SideBar() {
              <ConversationList Conversation={ ConversationItem } ref={ lastElemRef }/>
           </Box>
 
-
           <Center h={ "100px" }>
              <CreateConversationButton isGroup={ true }
                                        isNoBg={ true }
                                        createGroupConversation={ createGroupConversation }/>
           </Center>
-
 
           <AppModal isOpen={ isOpen } onClose={ onClose } content={ content }/>
 

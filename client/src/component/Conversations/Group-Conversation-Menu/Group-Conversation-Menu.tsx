@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
 
-import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, HStack, Avatar, Heading, Button, Spinner } from "@chakra-ui/react";
+import { Center, Input, InputGroup, InputLeftElement, VStack, Box, HStack, Avatar, Heading, Button, Spinner } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
 import { v4 } from "uuid";
-import { useAppSelector } from "../../hook";
-import { TypedOnChange } from "../../interface";
-import { groupConvMenuService } from "../../service";
-import { ContactItem } from "../Contacts";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../constant";
-import { getImageUrl } from "../../helper";
+import { useAppSelector } from "../../../hook";
+import { TypedOnChange } from "../../../interface";
+import { groupConvMenuService } from "../../../service";
+import { ContactItem } from "../../Contacts";
+import { getImageUrl } from "../../../helper";
+import { useColorValues } from "../../../constant";
 
 export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const { groupMembers } = useAppSelector(state => state.conversationReducer);
@@ -39,6 +39,8 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
       }
    };
 
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR, AVATAR_BORDER, PLACEHOLDER_COLOR, WHITE_COLOR, FONT_COLOR } = useColorValues();
+
    if (isLoading) {
       return (
           <Center h={ 650 }>
@@ -55,15 +57,19 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                   w={ "100%" }>
 
              { Boolean(!groupMembers.length)
-                 ? <Heading size={ "md" }> Оберіть учасників </Heading>
+                 ? <Heading size={ "md" }
+                            color={ FONT_COLOR }> Оберіть учасників </Heading>
 
                  : <VStack spacing={ 7 }>
-                    <Heading size={ "md" }> Учасники </Heading>
+                    <Heading size={ "md" }
+                             color={ FONT_COLOR }> Учасники </Heading>
 
                     <HStack>
                        { groupMembers && groupMembers.map(member =>
                            <Avatar cursor={ "pointer" }
                                    key={ v4() }
+                                   showBorder={ true }
+                                   borderColor={ AVATAR_BORDER }
                                    src={ getImageUrl(member.image, member.email) }
                                    size={ "sm" }
                                    name={ member.username }
@@ -80,14 +86,12 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                 <InputLeftElement pointerEvents={ "none" }
                                   children={ <Search2Icon color={ "gray.500" }/> }/>
                 <Input border={ "none" }
-                       focusBorderColor={ "white" }
                        value={ values.searchValue }
                        onChange={ ( e ) => handleChange(e, "searchValue") }
+                       _placeholder={ { color: PLACEHOLDER_COLOR } }
                        placeholder={ "знайти контакт" }/>
              </InputGroup>
           </Box>
-
-          <Divider w={ "80%" }/>
 
           { contacts
               ? <VStack w={ "100%" }
@@ -122,17 +126,19 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                     h={ 12 }
                     fontSize={ 16 }
                     onKeyDown={ onEnterDown }
+                    border={ "none" }
+                    _focus={ { borderColor: "transparent" } }
                     value={ values.groupName }
                     onChange={ ( e ) => handleChange(e, "groupName") }
                     textAlign={ "center" }
-                    focusBorderColor={ "white" }
+                    _placeholder={ { color: PLACEHOLDER_COLOR } }
                     placeholder={ "введіть назву бесіди" }/>
 
              <Button size={ "lg" }
-                     rounded={ 10 }
+                     rounded={ 8 }
                      ref={ ref }
                      bg={ BUTTON_COLOR }
-                     color={ "white" }
+                     color={ WHITE_COLOR }
                      _hover={ { bg: BUTTON_HOVER_COLOR } }
                      onClick={ createGroupConversation }
                      isDisabled={ !groupMembers.length || values.groupName == "" }
@@ -141,7 +147,6 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
              </Button>
 
           </VStack>
-
 
        </VStack>
    );

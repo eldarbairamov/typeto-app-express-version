@@ -47,7 +47,6 @@ const logout = createAsyncThunk<void, void, { rejectValue: string }>(
     async ( _, { rejectWithValue } ) => {
        try {
           await authApi.logout();
-
        }
        catch (e) {
           return rejectWithValue(errorCatcherFn(e));
@@ -60,7 +59,6 @@ const forgotPassword = createAsyncThunk<void, { email: string }, { rejectValue: 
     async ( { email }, { rejectWithValue } ) => {
        try {
           await authApi.forgotPassword(email);
-
        }
        catch (e) {
           return rejectWithValue(errorCatcherFn(e));
@@ -134,7 +132,6 @@ const authSlice = createSlice({
           state.isLogin = false;
           state.isLoading = false;
           storageApi.deleteAuthData();
-
        })
 
        .addCase(logout.rejected, ( state, { payload } ) => {

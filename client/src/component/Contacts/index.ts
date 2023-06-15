@@ -1,2 +1,2 @@
-export * from "./Contact-List/Contact-List.tsx";
+export * from "./Contacts-Menu/Contacts-Menu.tsx";
 export * from "./Contact-Item/Contact-Item.tsx";

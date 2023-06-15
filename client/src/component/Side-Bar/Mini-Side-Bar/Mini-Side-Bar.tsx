@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Box, calc, Center, IconButton, Menu, MenuButton, MenuList, useDisclosure, VStack } from "@chakra-ui/react";
 import { Search2Icon } from "@chakra-ui/icons";
 import { FiUsers } from "react-icons/all";
-import { MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 import { ConversationList, MiniConversation, AppModal, ButtonIcon, GroupConversationMenu, SearchBar } from "../../../component";
 import { useAppDispatch, useObserver } from "../../../hook";
 import { conversationActions } from "../../../store/slice";
@@ -24,13 +24,12 @@ export function MiniSideBar() {
       dispatch(conversationActions.limitIncrease());
    });
 
+   const { BG_SECOND, MAIN_COLOR } = useColorValues();
+
    return (
-       <VStack display={ [ "initial", "initial", "initial", "initial", "none" ] }
-               borderRadius={ "20px 0 0 20px" }
-               borderRight={ "1px" }
-               borderColor={ "gray.100" }
+       <VStack borderRadius={ "20px 0 0 20px" }
                spacing={ 0 }
-               bg={ "white" }
+               bg={ BG_SECOND }
                w={ "130px" }
                h={ "100%" }>
 
@@ -45,6 +44,7 @@ export function MiniSideBar() {
                             variant={ "outline" }/>
 
                 <MenuList rounded={ 10 }
+                          bg={BG_SECOND}
                           p={ 0 }>
                    <SearchBar height={ "45px" } width={ "100%" }/>
                 </MenuList>

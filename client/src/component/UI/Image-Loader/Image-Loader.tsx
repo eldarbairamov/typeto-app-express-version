@@ -1,7 +1,8 @@
 import { Alert, HStack, Spinner, Text } from "@chakra-ui/react";
-import { MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 
 export function ImageLoader() {
+   const { MAIN_COLOR, MAIN_COLOR_SUPER_LIGHT2 } = useColorValues();
 
    return (
        <Alert style={ { position: "fixed" } }
@@ -9,7 +10,7 @@ export function ImageLoader() {
               bg={ "transparent" }
               zIndex={ 100 }>
 
-          <HStack bg={ MAIN_COLOR }
+          <HStack bg={ MAIN_COLOR_SUPER_LIGHT2 }
                   w={ "100%" }
                   p={ 3 }
                   rounded={ 10 }
@@ -18,9 +19,10 @@ export function ImageLoader() {
 
              <Spinner size={ "sm" }
                       thickness={ "2px" }
-                      color={ "white" }/>
+                      color={ MAIN_COLOR }/>
 
-             <Text color={ "white" }>
+             <Text color={ MAIN_COLOR }
+                   fontWeight={ "bold" }>
                 зачекайте...
              </Text>
 

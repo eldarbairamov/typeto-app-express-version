@@ -3,10 +3,10 @@ import { useState } from "react";
 import moment from "moment/moment";
 import { Avatar, Heading, HStack, Image, Text, useDisclosure, VStack } from "@chakra-ui/react";
 import { IMessage } from "../../../interface";
-import { useContextMenu } from "../../../hook";
+import { useAppSelector, useContextMenu } from "../../../hook";
 import { deleteMessageService } from "../../../service";
 import { AppModal, MessagePopover, ShowImage } from "../../../component";
-import { MAIN_COLOR, MESSAGE_OUTCOMING_COLOR_ } from "../../../constant";
+import { useColorValues } from "../../../constant";
 import { getImageUrl } from "../../../helper";
 
 interface IOutcomingMessage {
@@ -27,7 +27,11 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
       onOpen();
    };
 
+   const { currentUserInfo } = useAppSelector(state => state.userReducer);
+
    const { deleteMessage } = deleteMessageService(message);
+
+   const { FONT_COLOR, MAIN_COLOR, AVATAR_BORDER, WHITE_COLOR, MESSAGE_OUTCOMING_COLOR } = useColorValues();
 
    return (
        <VStack alignItems={ "flex-end" }
@@ -42,7 +46,7 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
                              onClose={ closeCtxMenu }>
 
                 <VStack maxW={ [ null, null, null, 300, 600 ] }
-                        bg={ message.isImage ? "transparent" : MESSAGE_OUTCOMING_COLOR_ }
+                        bg={ message.isImage ? "transparent" : MESSAGE_OUTCOMING_COLOR }
                         alignItems={ "flex-end" }
                         cursor={ "pointer" }
                         borderRadius={ "20px 0 20px 20px" }
@@ -54,7 +58,7 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
                         p={ 5 }>
 
                    <Heading size={ "sm" }
-                            color={ message.isImage ? MAIN_COLOR : "white" }>
+                            color={ message.isImage ? MAIN_COLOR : WHITE_COLOR }>
                       { message.sender.username }
                    </Heading>
 
@@ -65,7 +69,7 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
                                 onClick={ openImage }
                                 h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
 
-                       : <Text color={ "white" }> { message.content } </Text>
+                       : <Text color={ WHITE_COLOR }> { message.content } </Text>
                    }
 
                 </VStack>
@@ -74,10 +78,12 @@ export function OutcomingMessage( { message }: IOutcomingMessage ) {
              <VStack>
                 <Avatar name={ message.sender.username }
                         ignoreFallback={ true }
-                        src={ getImageUrl(message.sender.image, message.sender.email) }
+                        showBorder={ true }
+                        borderColor={ AVATAR_BORDER }
+                        src={ getImageUrl(currentUserInfo.image, currentUserInfo.email) }
                         size={ "md" }/>
 
-                <Text> { conversationTime } </Text>
+                <Text color={ FONT_COLOR }> { conversationTime } </Text>
              </VStack>;
 
           </HStack>

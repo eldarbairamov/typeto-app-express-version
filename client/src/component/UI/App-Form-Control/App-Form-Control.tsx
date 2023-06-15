@@ -1,6 +1,6 @@
 import { UseFormRegister } from "react-hook-form";
 import { FormControl, FormErrorMessage, FormLabel, Input, ResponsiveValue } from "@chakra-ui/react";
-import { MAIN_COLOR_LIGHTER } from "../../../constant";
+import { useColorValues } from "../../../constant";
 
 interface IFormControl {
    errorMessage: string | undefined;
@@ -12,13 +12,14 @@ interface IFormControl {
 }
 
 export function AppFormControl( { errorMessage, fieldName, labelName, register, isRequired, textAlign }: IFormControl ) {
+   const { MAIN_COLOR_LIGHTER , PLACEHOLDER_COLOR, ALERT_COLOR} = useColorValues();
 
    return (
        <FormControl isInvalid={ Boolean(errorMessage) }
                     isRequired={ isRequired ? isRequired : false }
                     h={ 100 }>
 
-          <FormLabel color={ "blackAlpha.600" }> { labelName } </FormLabel>
+          <FormLabel color={ PLACEHOLDER_COLOR }> { labelName } </FormLabel>
 
           <Input { ...register(fieldName) }
                  focusBorderColor={ MAIN_COLOR_LIGHTER }
@@ -26,7 +27,7 @@ export function AppFormControl( { errorMessage, fieldName, labelName, register, 
                  textAlign={ textAlign ? textAlign : "initial" }
                  variant={ "flushed" }/>
 
-          <FormErrorMessage color={ "red.500" }
+          <FormErrorMessage color={ ALERT_COLOR }
                             justifyContent={ textAlign === "center" ? "center" : "initial" }>
              { errorMessage && errorMessage }
           </FormErrorMessage>

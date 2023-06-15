@@ -5,10 +5,10 @@ import { resetPasswordValidator } from "../../validator";
 import { useSearchParams } from "react-router-dom";
 import { Button, Center, VStack } from "@chakra-ui/react";
 import { AppFormControlPass, Logo } from "../../component";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../constant";
 import { useAppDispatch, useAppSelector } from "../../hook";
 import { appActions, authAsyncActions } from "../../store/slice";
 import { UnauthorizedRouter, UnauthorizedRoutesEnum } from "../../router";
+import { useColorValues } from "../../constant";
 
 export function ResetPasswordPage() {
    const { isLoading } = useAppSelector(state => state.authReducer);
@@ -37,11 +37,13 @@ export function ResetPasswordPage() {
       else dispatch(appActions.setActionMessage({ message: "Паролі не співпадають", type: "error" }));
    };
 
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR, BG_SECOND } = useColorValues();
+
    return (
        <Center h={ "100vh" } flexDirection={ "column" } gap={ 20 }>
           <Logo color={ MAIN_COLOR }/>
 
-          <VStack bg={ "white" }
+          <VStack bg={ BG_SECOND }
                   p={ "50px" }
                   boxShadow={ "xl" }
                   spacing={ 10 }

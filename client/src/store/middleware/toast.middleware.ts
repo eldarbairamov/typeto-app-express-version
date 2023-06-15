@@ -32,3 +32,29 @@ toastMiddleware.startListening({
       dispatch(appActions.setActionMessage({ message: message, type: "error" }));
    }
 });
+
+toastMiddleware.startListening({
+   matcher: isAnyOf(
+       userAsyncActions.uploadAvatar.pending,
+       userAsyncActions.deleteAvatar.pending,
+       authAsyncActions.logout.pending,
+   ),
+   effect: ( _, api ) => {
+      const dispatch = api.dispatch;
+
+      dispatch(appActions.setActionMessage({ message: "зачекайте...", type: "loading" }));
+   }
+});
+
+toastMiddleware.startListening({
+   matcher: isAnyOf(
+       userAsyncActions.uploadAvatar.fulfilled,
+       userAsyncActions.deleteAvatar.fulfilled,
+       authAsyncActions.logout.fulfilled,
+   ),
+   effect: ( _, api ) => {
+      const dispatch = api.dispatch;
+
+      dispatch(appActions.setIsToastClosed(true));
+   }
+});

@@ -5,6 +5,7 @@ import { errorCatcherFn } from "../../helper";
 
 interface IInitialState {
    messages: IMessage[];
+   prevMessagesLength: number;
    isMessagesLoading: boolean;
    isMessageSending: boolean;
    isImageSending: boolean;
@@ -14,6 +15,7 @@ interface IInitialState {
 
 const initialState: IInitialState = {
    messages: [] as IMessage[],
+   prevMessagesLength: 0,
    isMessagesLoading: false,
    isMessageSending: false,
    isImageSending: false,
@@ -94,6 +96,14 @@ const messageSlice = createSlice({
          const target = state.messages.find(m => m.id === payload);
          const targetIndex = state.messages.indexOf(target!);
          state.messages.splice(targetIndex, 1);
+      },
+
+      resetMessagesLength: ( state ) => {
+         state.prevMessagesLength = state.messages.length;
+      },
+
+      resetIsNewMessageAdded: ( state ) => {
+         state.isNewMessageAdded = false;
       }
 
    },
@@ -105,6 +115,7 @@ const messageSlice = createSlice({
        .addCase(getMessages.fulfilled, ( state, { payload } ) => {
           state.messages = payload;
           state.isMessagesLoading = false;
+          state.prevMessagesLength = payload.length;
        })
        .addCase(getMessages.rejected, ( state, { payload } ) => {
           state.errorMessage = payload;
@@ -121,6 +132,7 @@ const messageSlice = createSlice({
           state.isNewMessageAdded = true;
           state.isMessageSending = false;
           state.messages.push(payload);
+          state.prevMessagesLength = state.messages.length;
        })
 
        .addCase(sendMessage.rejected, ( state, { payload } ) => {

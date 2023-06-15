@@ -1,7 +1,7 @@
 import { Button, Divider, Text } from "@chakra-ui/react";
 import { Icon } from "@chakra-ui/icons";
 import { AiOutlineMessage, FiUsers } from "react-icons/all";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 
 interface IGroupConversationButtonProps {
    isGroup?: boolean;
@@ -11,6 +11,8 @@ interface IGroupConversationButtonProps {
 }
 
 export function CreateConversationButton( { createGroupConversation, openFriendList, isGroup, isNoBg }: IGroupConversationButtonProps ) {
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR, FONT_COLOR } = useColorValues();
+
    return (
        <Button p={ 8 }
                variant={ isNoBg ? "ghost" : "ghost" }
@@ -22,7 +24,7 @@ export function CreateConversationButton( { createGroupConversation, openFriendL
                gap={ 5 }
                onClick={ isGroup ? createGroupConversation : openFriendList }>
 
-          <Text color={ isNoBg ? "gray.600" : "white" }
+          <Text color={ FONT_COLOR }
                 fontSize={ 15 }>
              { isGroup ? "створити групову бесіду?" : "створити бесіду?" }
           </Text>

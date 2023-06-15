@@ -1,13 +1,16 @@
 import { useState } from "react";
 
-import { Highlight, HStack, Text, useDisclosure } from "@chakra-ui/react";
-import { BiSearch, IoMdLogOut, FiUsers } from "react-icons/all";
+import { Highlight, HStack, Text, useColorMode, useDisclosure } from "@chakra-ui/react";
+import { BiSearch, IoMdLogOut, FiUsers, FaRegLightbulb, FaLightbulb } from "react-icons/all";
 import { logoutService } from "../../service";
-import { MAIN_COLOR } from "../../constant";
-import { AppModal, ButtonIcon, ProfileInfo, FindUser, ContactList } from "../../component";
+import { useColorValues } from "../../constant";
+import { AppModal, ButtonIcon, ProfileInfo, FindUser, ContactsMenu } from "../../component";
 
 export function Header() {
+   const { colorMode, toggleColorMode } = useColorMode();
+
    const { isOpen, onOpen, onClose } = useDisclosure();
+
    const [ content, setContent ] = useState<JSX.Element>();
 
    const openFindUsers = () => {
@@ -16,11 +19,13 @@ export function Header() {
    };
 
    const openFriendList = () => {
-      setContent(<ContactList onModalClose={ onClose }/>);
+      setContent(<ContactsMenu onModalClose={ onClose }/>);
       onOpen();
    };
 
    const { logout } = logoutService();
+
+   const { ICON_COLOR, LOGO_COLOR, MAIN_COLOR, WHITE_COLOR } = useColorValues();
 
    return (
        <HStack w={ "95%" }
@@ -32,12 +37,13 @@ export function Header() {
 
           <Text cursor={ "default" }
                 ml={ 5 }
+                color={ LOGO_COLOR }
                 fontWeight={ "bold" }
                 fontSize={ 30 }>
 
              <Highlight query={ "to" }
                         styles={ {
-                           color: "white",
+                           color: WHITE_COLOR,
                            p: "5px 10px",
                            marginLeft: 1,
                            borderRadius: "10px 0 10px 10px",
@@ -55,21 +61,28 @@ export function Header() {
              <ButtonIcon size={ 8 }
                          as={ FiUsers }
                          rounded={ 5 }
-                         color={ "gray.600" }
+                         color={ ICON_COLOR }
                          p={ 5 }
                          fn={ openFriendList }/>
 
              <ButtonIcon size={ 8 }
                          as={ BiSearch }
                          rounded={ 5 }
-                         color={ "gray.600" }
+                         color={ ICON_COLOR }
                          p={ 5 }
                          fn={ openFindUsers }/>
+
+             <ButtonIcon size={ 7 }
+                         as={ colorMode === "light" ? FaRegLightbulb : FaLightbulb }
+                         rounded={ 5 }
+                         color={ ICON_COLOR }
+                         p={ 5 }
+                         fn={ toggleColorMode }/>
 
              <ButtonIcon size={ 8 }
                          as={ IoMdLogOut }
                          rounded={ 5 }
-                         color={ "gray.600" }
+                         color={ ICON_COLOR }
                          p={ 5 }
                          fn={ logout }/>
           </HStack>

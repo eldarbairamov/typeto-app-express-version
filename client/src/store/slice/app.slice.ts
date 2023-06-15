@@ -39,8 +39,8 @@ export const appSlice = createSlice({
          state.whoIsTyping = payload;
       },
 
-      closeToast: ( state ) => {
-         state.isToastIsClosed = true;
+      setIsToastClosed: ( state, { payload }: PayloadAction<boolean> ) => {
+         state.isToastIsClosed = payload;
       }
 
    }

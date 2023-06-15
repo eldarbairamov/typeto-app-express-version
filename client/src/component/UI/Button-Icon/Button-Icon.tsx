@@ -4,7 +4,7 @@ import { Button, ComponentWithAs } from "@chakra-ui/react";
 import { Icon, IconProps } from "@chakra-ui/icons";
 
 interface IIconProps {
-   size: number;
+   size: number | string;
    as: ComponentWithAs<"svg", IconProps>;
    fn?: ( prop?: any ) => void;
    bg?: string;
@@ -22,7 +22,6 @@ export function ButtonIcon( { size, as, fn, bg, color, rounded, p, style, cursor
               <Button variant={ "ghost" }
                       style={ style }
                       rounded={ rounded ? rounded : 20 }
-                      gap={ 5 }
                       p={ p }
                       cursor={ cursor }
                       bg={ bg }

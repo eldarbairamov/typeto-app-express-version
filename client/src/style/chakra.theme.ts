@@ -1,21 +1,29 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, ThemeOverride } from "@chakra-ui/react";
+import { mode } from "@chakra-ui/theme-tools";
 import "@fontsource/roboto";
 import "@fontsource/pt-sans-narrow";
 
-export const chakraTheme = extendTheme({
+const theme: ThemeOverride = {
    fonts: {
       heading: `"Roboto", sans-serif`,
       body: `"Roboto", sans-serif`,
    },
    styles: {
-      global: {
+      global: ( props: any ) => ({
+         body: {
+            bg: mode("#eff0f3", "#2d303b")(props),
+
+         },
+         "*": {
+            letterSpacing: -0.5,
+         },
          "html, body": {
             fontSize: 14,
-            backgroundColor: "#eff0f3",
             margin: 0,
             padding: 0,
             boxSizing: "border-box",
-            letterSpacing: -0.5,
+            // transitionProperty: "color, background-color",
+            // transitionDuration: "300ms"
          },
          "&::-webkit-scrollbar": {
             height: 0,
@@ -30,7 +38,11 @@ export const chakraTheme = extendTheme({
             borderRadius: "20px",
 
          },
-      }
+         "&:focus, :focus-visible, *[data-focus]": {
+            boxShadow: "none !important",
+            outline: "none !important",
+         },
+      })
    },
    components: {
       Input: {
@@ -43,10 +55,10 @@ export const chakraTheme = extendTheme({
             }
          }
       },
-      Icon: {
-         baseStyle: {
-            transition: ".3s"
-         }
-      },
    },
-});
+   config: {
+      // disableTransitionOnChange: false
+   }
+};
+
+export const chakraTheme = extendTheme(theme);

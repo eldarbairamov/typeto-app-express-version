@@ -1,8 +1,10 @@
 import { LoginForm, Logo } from "../../component";
 import { Center } from "@chakra-ui/react";
-import { MAIN_COLOR } from "../../constant";
+import { useColorValues } from "../../constant";
 
 export function LoginPage() {
+   const { MAIN_COLOR } = useColorValues();
+
    return (
        <Center h={ "100vh" }
                gap={ 100 }

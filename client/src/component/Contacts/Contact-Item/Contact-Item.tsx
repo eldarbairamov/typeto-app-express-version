@@ -1,11 +1,12 @@
-import { Avatar, AvatarBadge, Button, Heading, HStack } from "@chakra-ui/react";
+import { Avatar, AvatarBadge, Heading, HStack } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../../../hook";
 import { IUser } from "../../../interface";
 import { createConversationService } from "../../../service";
 import { conversationActions, userActions, userAsyncActions } from "../../../store/slice";
 import { getImageUrl } from "../../../helper";
-import { Icon } from "@chakra-ui/icons";
 import { AiOutlineDelete, AiOutlineMessage, AiOutlineUsergroupAdd } from "react-icons/all";
+import { useColorValues } from "../../../constant";
+import { ButtonIcon } from "../../UI";
 
 interface IUserItemProps {
    user: IUser,
@@ -26,8 +27,11 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
       dispatch(userActions.groupModeMove({ id: user.id, action: "add" }));
    };
 
+   const { AVATAR_BORDER, ICON_COLOR, MAIN_COLOR, FONT_COLOR } = useColorValues();
+
    return (
        <HStack w={ "85%" }
+               p={ 1 }
                spacing={ 5 }
                justify={ "space-between" }>
 
@@ -35,17 +39,21 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
 
              <Avatar name={ user.username }
                      ignoreFallback={ true }
+                     showBorder={ true }
+                     borderColor={ AVATAR_BORDER }
                      src={ getImageUrl(user.image, user.email) }
                      size={ "md" }>
 
                 { onlineContactsIds.includes(user.id) &&
-                    <AvatarBadge boxSize={ 5 }
-                                 bg={ "green.500" }/>
+                    <AvatarBadge boxSize={ 4 }
+                                 borderColor={ "white" }
+                                 bg={ MAIN_COLOR }/>
                 }
 
              </Avatar>
 
-             <Heading size={ "md" }>
+             <Heading size={ "md" }
+                      color={ FONT_COLOR }>
                 { user.username }
              </Heading>
 
@@ -53,28 +61,18 @@ export function ContactItem( { user, canDelete, onModalClose, isOnlyForAdding }:
 
           <HStack spacing={ 1 }>
 
-             <Button variant={ "unstyled" }
-                     display={ "flex" }
-                     onClick={ isOnlyForAdding ? addContactToGroup : createConversation }
-                     alignItems={ "center" }>
-
-                <Icon as={ isOnlyForAdding ? AiOutlineUsergroupAdd : AiOutlineMessage }
-                      boxSize={ isOnlyForAdding ? "29px" : "25px" }
-                      color={ "gray.600" }/>
-
-             </Button>
+             <ButtonIcon size={ isOnlyForAdding ? "29px" : "25px" }
+                         p={0}
+                         fn={ isOnlyForAdding ? addContactToGroup : createConversation }
+                         color={ ICON_COLOR }
+                         as={ isOnlyForAdding ? AiOutlineUsergroupAdd : AiOutlineMessage }/>
 
              { canDelete &&
-                 <Button variant={ "unstyled" }
-                         display={ "flex" }
-                         onClick={ () => dispatch(userAsyncActions.deleteContact({ contactId: user.id })) }
-                         alignItems={ "center" }>
-
-                   <Icon as={ AiOutlineDelete }
-                         boxSize={ "25px" }
-                         color={ "gray.600" }/>
-
-                 </Button>
+                 <ButtonIcon size={ "25px" }
+                             p={0}
+                             fn={ () => dispatch(userAsyncActions.deleteContact({ contactId: user.id })) }
+                             color={ ICON_COLOR }
+                             as={ AiOutlineDelete }/>
              }
 
           </HStack>

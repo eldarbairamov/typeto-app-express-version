@@ -2,10 +2,10 @@ import { Avatar, AvatarBadge, AvatarGroup, Center, Divider, Tooltip, VStack } fr
 import { conversationActions } from "../../../store/slice";
 import { IConversation, IUserFromConversation } from "../../../interface";
 import { useAppDispatch, useAppSelector } from "../../../hook";
-import { CONVERSATION_ACTIVE_COLOR } from "../../../constant";
 import { v4 } from "uuid";
 import { getImageUrl } from "../../../helper";
 import { ForwardedRef, forwardRef } from "react";
+import { useColorValues } from "../../../constant";
 
 interface IConversationProps {
    conversation: IConversation;
@@ -24,6 +24,8 @@ export const MiniConversation = forwardRef(( { user, conversation }: IConversati
          username: user?.username
       }));
    };
+
+   const { CONVERSATION_ACTIVE_COLOR, MAIN_COLOR, AVATAR_BORDER } = useColorValues();
 
    return (
        <Tooltip placement={ "right" }
@@ -45,9 +47,10 @@ export const MiniConversation = forwardRef(( { user, conversation }: IConversati
                 { conversation.isGroupConversation &&
                     <AvatarGroup size={ "sm" }
                                  max={ 1 }>
-
                        { conversation.users.map(user =>
                            <Avatar key={ v4() }
+                                   showBorder={ true }
+                                   borderColor={ AVATAR_BORDER }
                                    src={ getImageUrl(user.image, user.email) }
                                    ignoreFallback={ true }
                                    name={ user.username }
@@ -55,7 +58,8 @@ export const MiniConversation = forwardRef(( { user, conversation }: IConversati
 
                               { onlineContactsIds.includes(user.id)
                                   && <AvatarBadge boxSize={ 3 }
-                                                  bg={ "green.500" }/>
+                                                  borderColor={ "white" }
+                                                  bg={ MAIN_COLOR }/>
                               }
 
                            </Avatar>)
@@ -65,13 +69,16 @@ export const MiniConversation = forwardRef(( { user, conversation }: IConversati
 
                 { user &&
                     <Avatar name={ user?.username }
+                            showBorder={ true }
+                            borderColor={ AVATAR_BORDER }
                             src={ getImageUrl(user.image, user.email) }
                             ignoreFallback={ true }
                             size={ "md" }>
 
                        { onlineContactsIds.includes(user.id)
-                           && <AvatarBadge boxSize={ 3 }
-                                           bg={ "green.500" }/>
+                           && <AvatarBadge boxSize={ 4 }
+                                           borderColor={ "white" }
+                                           bg={ MAIN_COLOR }/>
                        }
 
                     </Avatar>

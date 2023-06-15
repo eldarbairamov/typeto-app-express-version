@@ -1,7 +1,11 @@
-import { calc, HStack } from "@chakra-ui/react";
-import { ChatBox, MiniSideBar, SideBar } from "../../component";
+import { calc, HStack, useMediaQuery } from "@chakra-ui/react";
+import { ChatBox, EmptyBox, MiniSideBar, SideBar } from "../../component";
+import { useAppSelector } from "../../hook";
 
 export function ChatsPage() {
+   const { conversations } = useAppSelector(state => state.conversationReducer);
+
+   const [ isWidth1000 ] = useMediaQuery("(max-width: 1000px)");
 
    return (
        <HStack spacing={ 0 }
@@ -12,11 +16,9 @@ export function ChatsPage() {
                justify={ "space-between" }
                alignItems={ "flex-start" }>
 
-          <SideBar/>
+          { isWidth1000 ? <MiniSideBar/> : <SideBar/> }
 
-          <MiniSideBar/>
-
-          <ChatBox/>
+          { Boolean(!conversations.length) ? <EmptyBox/> : <ChatBox/> }
 
        </HStack>
    );

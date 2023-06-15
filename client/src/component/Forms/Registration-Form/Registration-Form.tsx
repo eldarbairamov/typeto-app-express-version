@@ -6,8 +6,8 @@ import { useAppDispatch, useAppSelector } from "../../../hook";
 import { authAsyncActions } from "../../../store/slice";
 import { UnauthorizedRouter, UnauthorizedRoutesEnum } from "../../../router";
 import { Button, VStack } from "@chakra-ui/react";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../../constant";
 import { AppFormControl, AppFormControlPass } from "../../UI";
+import { useColorValues } from "../../../constant";
 
 export function RegistrationForm() {
    const { isLoading } = useAppSelector(state => state.authReducer);
@@ -26,13 +26,15 @@ export function RegistrationForm() {
       }
    };
 
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, BG_SECOND } = useColorValues();
+
    return (
        <form onSubmit={ handleSubmit(onSubmit) }
              noValidate={ true }>
 
           <VStack p={ "50px" }
                   alignItems={ "stretch" }
-                  bg={ "white" }
+                  bg={ BG_SECOND }
                   rounded={ 20 }
                   boxShadow={ "xl" }
                   spacing={ 5 }>

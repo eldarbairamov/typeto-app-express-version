@@ -24,8 +24,8 @@ export const userApi = {
       return await axiosInstance.patch<{ imageName: string }>("/users/avatar", formData);
    },
 
-   deleteAvatar: async (): Promise<AxiosResponse<void>> => {
-      return await axiosInstance.delete("/users/avatar");
+   deleteAvatar: async (): Promise<void> => {
+      await axiosInstance.delete("/users/avatar");
    },
 
    getCurrentUser: async (): Promise<AxiosResponse<IUser>> => {

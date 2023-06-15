@@ -1,4 +1,5 @@
 import { Modal, ModalContent, ModalOverlay } from "@chakra-ui/react";
+import { useColorValues } from "../../../style/colors.theme.ts";
 
 interface IModalProps {
    isOpen: boolean;
@@ -8,6 +9,8 @@ interface IModalProps {
 }
 
 export function AppModal( { onClose, isOpen, content, p = 2 }: IModalProps ) {
+   const { BG_SECOND } = useColorValues();
+
    return (
        <Modal isOpen={ isOpen }
               onClose={ onClose }
@@ -20,6 +23,7 @@ export function AppModal( { onClose, isOpen, content, p = 2 }: IModalProps ) {
 
           <ModalContent w={ 400 }
                         p={ p }
+                        bg={ BG_SECOND }
                         boxShadow={ "xl" }
                         rounded={ 20 }>
              { content }

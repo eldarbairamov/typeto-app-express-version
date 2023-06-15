@@ -1,8 +1,8 @@
 import { v4 } from "uuid";
-import { Divider, IconButton, Menu, MenuButton, MenuItem, MenuList, Text, VStack } from "@chakra-ui/react";
+import { Divider, IconButton, Menu, MenuButton, MenuItem, MenuList, Text, useColorMode, VStack } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useAppSelector } from "../../../hook";
-import { MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 import { ConversationUserItem } from "../../../component";
 import { conversationOptionsService } from "../../../service";
 
@@ -13,20 +13,25 @@ export function ChatBoxOptions() {
 
    const { deleteConversation, deleteGroupConversation, leaveGroupConversation } = conversationOptionsService(activeConversation);
 
+   const { MAIN_COLOR, BG_SECOND, WHITE_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR_SUPER_LIGHT } = useColorValues();
+
+   const { colorMode } = useColorMode();
+
    return (
        <Menu autoSelect={ false }>
 
           <MenuButton style={ { position: "absolute", right: 30 } }
                       as={ IconButton }
-                      _active={ { bg: "#eff0f3" } }
-                      _hover={ { bg: "#eff0f3" } }
+                      _active={ { bg: colorMode === "dark" ? BUTTON_HOVER_COLOR : MAIN_COLOR_SUPER_LIGHT } }
+                      _hover={ { bg: colorMode === "dark" ? BUTTON_HOVER_COLOR : MAIN_COLOR_SUPER_LIGHT } }
                       p={ 1 }
                       border={ "none" }
                       icon={ <HamburgerIcon boxSize={ 5 } color={ MAIN_COLOR }/> }
                       variant={ "outline" }/>
 
           <MenuList rounded={ 10 }
-                    p={ 2 }>
+                    bg={ BG_SECOND }
+                    p={ 1 }>
 
              <VStack w={ "100%" }>
 
@@ -46,16 +51,18 @@ export function ChatBoxOptions() {
                     </>
                 }
 
-                <MenuItem rounded={ 5 }
-                          _hover={ { bg: "#eff0f3" } }
+                <MenuItem _hover={ { bg: "none" } }
+                          bg={ BG_SECOND }
                           onClick={
                              activeConversation.adminId === currentUserInfo.id ? deleteGroupConversation :
-                                 activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation }
-                          p={ 2 }>
+                                 activeConversation.isGroupConversation ? leaveGroupConversation : deleteConversation }>
 
                    <Text w={ "100%" }
+                         rounded={ 5 }
+                         p={ 2 }
                          textAlign={ "center" }
                          fontWeight={ "bold" }
+                         _hover={ { bg: MAIN_COLOR, color: WHITE_COLOR } }
                          color={ MAIN_COLOR }>
 
                       { (activeConversation.adminId === currentUserInfo.id || !activeConversation.isGroupConversation) ? "Завершити бесіду" : "Покинути бесіду" }

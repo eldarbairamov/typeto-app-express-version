@@ -1,8 +1,8 @@
 import { Button, FormControl, FormErrorMessage, FormLabel, Input, InputGroup, InputRightElement } from "@chakra-ui/react";
-import { MAIN_COLOR_LIGHTER } from "../../../constant";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { UseFormRegister } from "react-hook-form";
 import { useHidePass } from "../../../hook";
+import { useColorValues } from "../../../constant";
 
 interface IAppFormControlPass {
    errorMessage: string | undefined;
@@ -13,6 +13,7 @@ interface IAppFormControlPass {
 }
 
 export function AppFormControlPass( { labelName, fieldName, errorMessage, register, isRequired }: IAppFormControlPass ) {
+   const { MAIN_COLOR_LIGHTER, PLACEHOLDER_COLOR, ALERT_COLOR } = useColorValues();
 
    const { isShow, handleClick } = useHidePass();
 
@@ -21,7 +22,7 @@ export function AppFormControlPass( { labelName, fieldName, errorMessage, regist
                     isRequired={ isRequired ? isRequired : false }
                     h={ 100 }>
 
-          <FormLabel color={ "blackAlpha.600" }> { labelName } </FormLabel>
+          <FormLabel color={ PLACEHOLDER_COLOR }> { labelName } </FormLabel>
 
           <InputGroup>
 
@@ -29,7 +30,7 @@ export function AppFormControlPass( { labelName, fieldName, errorMessage, regist
                     autoComplete={ "" }
                     focusBorderColor={ MAIN_COLOR_LIGHTER }
                     variant={ "flushed" }
-                    _invalid={ { borderColor: "red.500" } }
+                    _invalid={ { borderColor: ALERT_COLOR } }
                     type={ isShow ? "text" : "password" }/>
 
              <InputRightElement>
@@ -38,10 +39,10 @@ export function AppFormControlPass( { labelName, fieldName, errorMessage, regist
                         onClick={ handleClick }>
                    { isShow ?
                        <ViewOffIcon boxSize={ 5 }
-                                    color={ "gray.500" }/>
+                                    color={ PLACEHOLDER_COLOR }/>
                        :
                        <ViewIcon boxSize={ 5 }
-                                 color={ "gray.500" }/>
+                                 color={ PLACEHOLDER_COLOR }/>
                    }
                 </Button>
 

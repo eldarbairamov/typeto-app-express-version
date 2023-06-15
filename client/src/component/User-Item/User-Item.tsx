@@ -1,10 +1,12 @@
-import { Avatar, Button, Heading, HStack } from "@chakra-ui/react";
-import { Icon } from "@chakra-ui/icons";
+import { Avatar, AvatarBadge, Heading, HStack } from "@chakra-ui/react";
 import { AiOutlineMessage, FiUserPlus, FiUserCheck } from "react-icons/all";
 import { useState } from "react";
 import { IUserBySearch } from "../../interface";
 import { addContactService, createConversationService } from "../../service";
 import { getImageUrl } from "../../helper";
+import { useColorValues } from "../../style/colors.theme.ts";
+import { ButtonIcon } from "../UI";
+import { useAppSelector } from "../../hook";
 
 interface IUserItemProps {
    user: IUserBySearch,
@@ -14,9 +16,15 @@ interface IUserItemProps {
 export function UserItem( { user, onModalClose }: IUserItemProps ) {
    const [ isAdded, setIsAdded ] = useState<boolean>(user.isAlreadyAdded);
 
+   const { onlineContactsIds } = useAppSelector(state => state.userReducer);
+
+   const { currentUserInfo } = useAppSelector(state => state.userReducer);
+
    const { addContact } = addContactService(user, setIsAdded);
 
    const { createConversation } = createConversationService(user, onModalClose);
+
+   const { FONT_COLOR, ICON_COLOR, AVATAR_BORDER, MAIN_COLOR } = useColorValues();
 
    return (
        <HStack w={ "85%" }
@@ -26,38 +34,38 @@ export function UserItem( { user, onModalClose }: IUserItemProps ) {
           <HStack spacing={ 5 }>
 
              <Avatar name={ user.username }
-                     src={ getImageUrl(user.image, user.email) }
                      ignoreFallback={ true }
-                     size={ "md" }/>
+                     showBorder={ true }
+                     borderColor={ AVATAR_BORDER }
+                     src={ getImageUrl(user.image, user.email) }
+                     size={ "md" }>
 
-             <Heading size={ "md" }> { user.username } </Heading>
+                { onlineContactsIds.includes(user.id) &&
+                    <AvatarBadge boxSize={ 5 }
+                                 borderColor={ "white" }
+                                 bg={ MAIN_COLOR }/>
+                }
+
+             </Avatar>
+
+             <Heading size={ "md" } color={ FONT_COLOR }> { user.username } </Heading>
 
           </HStack>
 
           <HStack spacing={ 1 }>
 
-             <Button variant={ "unstyled" }
-                     display={ "flex" }
-                     onClick={ createConversation }
-                     alignItems={ "center" }>
+             <ButtonIcon size={ "25px" }
+                         p={0}
+                         as={ currentUserInfo.id === user.id ? undefined : AiOutlineMessage }
+                         color={ ICON_COLOR }
+                         fn={ createConversation }/>
 
-                <Icon as={ AiOutlineMessage }
-                      boxSize={ "25px" }
-                      color={ "gray.600" }/>
-
-             </Button>
-
-             <Button variant={ "unstyled" }
-                     cursor={ isAdded ? "default" : "pointer" }
-                     display={ "flex" }
-                     onClick={ isAdded ? undefined : addContact }
-                     alignItems={ "center" }>
-
-                <Icon as={ isAdded ? FiUserCheck : FiUserPlus }
-                      boxSize={ "25px" }
-                      color={ "gray.600" }/>
-
-             </Button>
+             <ButtonIcon size={ "25px" }
+                         p={0}
+                         as={ currentUserInfo.id === user.id ? undefined : isAdded ? FiUserCheck : FiUserPlus }
+                         cursor={ isAdded ? "default" : "pointer" }
+                         color={ ICON_COLOR }
+                         fn={ isAdded ? undefined : addContact }/>
 
           </HStack>
 

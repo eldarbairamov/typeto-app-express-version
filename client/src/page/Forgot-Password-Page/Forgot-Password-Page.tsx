@@ -3,10 +3,10 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { joiResolver } from "@hookform/resolvers/joi";
 import { emailValidator } from "../../validator";
 import { AppFormControl, Logo } from "../../component";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR, FONT_SECOND, MAIN_COLOR } from "../../constant";
 import { useAppDispatch, useAppSelector } from "../../hook";
 import { authAsyncActions } from "../../store/slice";
 import { UnauthorizedRouter, UnauthorizedRoutesEnum } from "../../router";
+import { useColorValues } from "../../constant";
 
 export function ForgotPasswordPage() {
    const { isLoading } = useAppSelector(state => state.authReducer);
@@ -23,12 +23,14 @@ export function ForgotPasswordPage() {
       UnauthorizedRouter.navigate(UnauthorizedRoutesEnum.LoginPage);
    };
 
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, MAIN_COLOR, FONT_SECOND, BG_SECOND, WHITE_COLOR } = useColorValues();
+
    return (
        <Center h={ "100vh" } flexDirection={ "column" } gap={ 20 }>
 
           <Logo color={ MAIN_COLOR }/>
 
-          <VStack bg={ "white" }
+          <VStack bg={ BG_SECOND }
                   p={ "50px" }
                   boxShadow={ "xl" }
                   spacing={ 10 }
@@ -57,7 +59,7 @@ export function ForgotPasswordPage() {
                            isLoading={ isLoading }
                            type={ "submit" }
                            isDisabled={ !isValid }
-                           color={ "white" }
+                           color={ WHITE_COLOR }
                            size={ "lg" }
                            _hover={ { bg: BUTTON_HOVER_COLOR } }>
                       Відправити

@@ -1,15 +1,18 @@
 import { useAppSelector } from "../../../hook";
 import { getMessageService } from "../../../service";
 import { calc, HStack, VStack } from "@chakra-ui/react";
-import { EmptyBox, MessageList, ChatBoxBottom, ChatBoxHeader } from "../../../component";
+import { MessageList, ChatBoxBottom, ChatBoxHeader } from "../../../component";
+import { useColorValues } from "../../../constant";
 
 export function ChatBox() {
    const { activeConversation, conversations } = useAppSelector(state => state.conversationReducer);
 
    getMessageService(activeConversation);
 
+   const { BG_SECOND } = useColorValues();
+
    return (
-       <HStack w={ [ "100%", "100%", "100%", "100%", calc("100%").subtract("400px").toString() ] }
+       <HStack w={ "100%" }
                spacing={ 0 }
                justify={ "space-between" }
                h={ "100%" }>
@@ -18,7 +21,8 @@ export function ChatBox() {
               <VStack h={ "100%" }
                       borderRadius={ "0 20px 20px 0" }
                       w={ "100%" }
-                      bg={ "white" }
+                      transition={ "3000ms" }
+                      bg={ BG_SECOND }
                       spacing={ 0 }>
 
                 <ChatBoxHeader/>
@@ -35,8 +39,6 @@ export function ChatBox() {
 
               </VStack>
           }
-
-          { Boolean(!conversations.length) && <EmptyBox/> }
 
        </HStack>
    );

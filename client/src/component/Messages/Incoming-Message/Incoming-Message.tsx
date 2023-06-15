@@ -2,7 +2,7 @@ import { Avatar, Heading, HStack, Image, Text, useDisclosure, VStack } from "@ch
 import moment from "moment";
 import { IMessage } from "../../../interface";
 import { getImageUrl } from "../../../helper";
-import { MAIN_COLOR, MESSAGE_INCOMING_COLOR_ } from "../../../constant";
+import { useColorValues } from "../../../constant";
 import { AppModal } from "../../UI";
 import { useState } from "react";
 import { ShowImage } from "../Show-Image/Show-Image.tsx";
@@ -23,6 +23,8 @@ export function IncomingMessage( { message }: IIncomingMessage ) {
       onOpen();
    };
 
+   const { BLACK_COLOR, MAIN_COLOR, MESSAGE_INCOMING_COLOR, FONT_COLOR, AVATAR_BORDER } = useColorValues();
+
    return (
        <VStack alignItems={ "flex-start" }
                w={ "100%" }>
@@ -34,21 +36,23 @@ export function IncomingMessage( { message }: IIncomingMessage ) {
              <VStack>
                 <Avatar name={ message.sender.username }
                         ignoreFallback={ true }
+                        showBorder={ true }
+                        borderColor={ AVATAR_BORDER }
                         src={ getImageUrl(message.sender.image, message.sender.email) }
                         size={ "md" }/>
 
-                <Text> { conversationTime } </Text>
+                <Text color={ FONT_COLOR }> { conversationTime } </Text>
              </VStack>
 
              <VStack maxW={ [ null, null, null, 300, 600 ] }
-                     bg={ message.isImage ? "transparent" : MESSAGE_INCOMING_COLOR_ }
+                     bg={ message.isImage ? "transparent" : MESSAGE_INCOMING_COLOR }
                      alignItems={ "flex-start" }
                      rounded={ "0 20px 20px 20px" }
                      spacing={ message.isImage ? 7 : 1 }
                      p={ 5 }>
 
                 <Heading size={ "sm" }
-                         color={ message.isImage ? MAIN_COLOR : "black" }>
+                         color={ message.isImage ? MAIN_COLOR : BLACK_COLOR }>
                    { message.sender.username }
                 </Heading>
 
@@ -59,7 +63,7 @@ export function IncomingMessage( { message }: IIncomingMessage ) {
                              onClick={ openImage }
                              h={ [ "100px", "200px", "300px", "300px", "500px" ] }/>
 
-                    : <Text color={ "gray.700" }> { message.content } </Text>
+                    : <Text color={ BLACK_COLOR }> { message.content } </Text>
                 }
 
              </VStack>

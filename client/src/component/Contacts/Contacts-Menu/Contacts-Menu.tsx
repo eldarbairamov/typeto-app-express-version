@@ -2,17 +2,21 @@ import { Center, Divider, Input, InputGroup, InputLeftElement, VStack, Box, Spin
 import { Icon, Search2Icon } from "@chakra-ui/icons";
 import { RiUserSearchLine } from "react-icons/all";
 import { v4 } from "uuid";
-import { useAppSelector, useInputHandler } from "../../../hook";
+import { useAppSelector, useDebounce, useInputHandler } from "../../../hook";
 import { getContactsService } from "../../../service";
 import { ContactItem } from "../Contact-Item/Contact-Item.tsx";
-import { MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 
-export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
+export function ContactsMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?: boolean, onModalClose: () => void } ) {
    const { value, handleChange } = useInputHandler();
+
+   const debounced = useDebounce(value);
 
    const { contacts, isLoading } = useAppSelector(state => state.userReducer);
 
-   getContactsService(value);
+   getContactsService(debounced);
+
+   const { MAIN_COLOR, PLACEHOLDER_COLOR, ICON_COLOR } = useColorValues();
 
    if (isLoading) {
       return (
@@ -31,15 +35,17 @@ export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: 
                                   children={ <Search2Icon color={ "gray.500" }/> }/>
                 <Input border={ "none" }
                        focusBorderColor={ "white" }
+                       autoFocus={ true }
                        value={ value }
                        onChange={ handleChange }
+                       _placeholder={ { color: PLACEHOLDER_COLOR } }
                        placeholder={ "знайти контакт" }/>
              </InputGroup>
           </Box>
 
           <Divider/>
 
-          { contacts
+          { Boolean(contacts.length)
               ? <VStack w={ "100%" }
                         paddingTop={ 5 }
                         spacing={ 5 }
@@ -57,7 +63,7 @@ export function ContactList( { isOnlyMessage, onModalClose }: { isOnlyMessage?: 
 
                  <Icon as={ RiUserSearchLine }
                        boxSize={ "70px" }
-                       color={ "gray.300" }/>
+                       color={ ICON_COLOR }/>
 
               </Center>
           }

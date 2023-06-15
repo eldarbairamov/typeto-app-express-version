@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 
 import { IMessage } from "../interface";
+import { useAppDispatch } from "../hook";
+import { messageActions } from "../store/slice";
 
-export const scrollService = ( isNewMessageAdded: boolean, messages: IMessage[], onClose: () => void, onOpen: () => void ) => {
+export const scrollService = ( isNewMessageAdded: boolean, prevMessagesLength: number, messages: IMessage[], onClose: () => void, onOpen: () => void ) => {
 
    const messageListRef = useRef<HTMLDivElement>(null);
 
-   const [ prevStateLength, setPrevStateLength ] = useState<number>(0);
-
    const [ isBlindZone, setIsBlindZone ] = useState<boolean>(false);
+
+   const dispatch = useAppDispatch();
 
    const scrollHandler = () => {
       const scrollH = messageListRef.current?.scrollHeight as number;
@@ -17,10 +19,12 @@ export const scrollService = ( isNewMessageAdded: boolean, messages: IMessage[],
 
       if ((scrollH - clientH - 500) > scrollT) {
          setIsBlindZone(true);
+         dispatch(messageActions.resetIsNewMessageAdded());
       }
 
       if ((Math.ceil(scrollT) === (scrollH - clientH))) {
          setIsBlindZone(false);
+         dispatch(messageActions.resetMessagesLength());
       }
    };
 
@@ -30,18 +34,17 @@ export const scrollService = ( isNewMessageAdded: boolean, messages: IMessage[],
 
       messageListRef.current?.scrollTo({ behavior: "smooth", top: scrollH - clientH });
       onClose();
+      dispatch(messageActions.resetMessagesLength());
    };
 
    useEffect(() => {
-      setPrevStateLength(messages.length);
-
-      if ((messages.length > prevStateLength) && isBlindZone && !isNewMessageAdded) {
+      if ((messages.length > prevMessagesLength) && isBlindZone && !isNewMessageAdded) {
          onOpen();
       }
 
       if (!isBlindZone) onClose();
 
-   }, [ messages, isBlindZone ]);
+   }, [ messages, prevMessagesLength, isBlindZone, isNewMessageAdded ]);
 
    useEffect(() => {
       const scrollH = messageListRef.current?.scrollHeight as number;

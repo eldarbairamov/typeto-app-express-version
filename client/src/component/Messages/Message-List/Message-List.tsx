@@ -2,18 +2,25 @@ import { calc, Center, Spinner, useDisclosure, VStack } from "@chakra-ui/react";
 import { v4 } from "uuid";
 import { useAppSelector } from "../../../hook";
 import { scrollService } from "../../../service";
-import { MAIN_COLOR } from "../../../constant";
 import { OutcomingMessage, IncomingMessage } from "../../Messages";
 import { ImageLoader, NewMessageAlert } from "../../UI";
+import { useColorValues } from "../../../constant";
 
 export function MessageList() {
    const { currentUserInfo } = useAppSelector(state => state.userReducer);
 
-   const { isMessagesLoading, messages, isNewMessageAdded, isImageSending } = useAppSelector(state => state.messageReducer);
+   const { isMessagesLoading, messages, isNewMessageAdded, isImageSending, prevMessagesLength } = useAppSelector(state => state.messageReducer);
 
    const { isOpen: isVisible, onClose, onOpen, } = useDisclosure();
 
-   const { messageListRef, scrollToBottom } = scrollService(isNewMessageAdded, messages, onClose, onOpen);
+   const { messageListRef, scrollToBottom } = scrollService(
+       isNewMessageAdded,
+       prevMessagesLength,
+       messages,
+       onClose,
+       onOpen);
+
+   const { MAIN_COLOR } = useColorValues();
 
    if (isMessagesLoading) {
       return (
@@ -44,6 +51,7 @@ export function MessageList() {
           }) }
 
           { (isImageSending) && <ImageLoader/> }
+
           { isVisible && <NewMessageAlert scrollToBottom={ scrollToBottom }/> }
 
        </VStack>

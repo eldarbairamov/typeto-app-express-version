@@ -6,9 +6,9 @@ import { userActions } from "../../store/slice";
 import { IUserBySearch } from "../../interface";
 import { Box, Button, Center, Divider, Input, InputGroup, InputLeftElement, InputRightElement, VStack } from "@chakra-ui/react";
 import { Icon, Search2Icon } from "@chakra-ui/icons";
-import { BUTTON_COLOR, BUTTON_HOVER_COLOR } from "../../constant";
 import { UserItem } from "../../component";
 import { RiUserSearchLine } from "react-icons/all";
+import { useColorValues } from "../../constant";
 
 export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
    const { userBySearch } = useAppSelector(state => state.userReducer);
@@ -23,6 +23,8 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
       dispatch(userActions.setUser({} as IUserBySearch));
    }, []);
 
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, PLACEHOLDER_COLOR, ICON_COLOR, WHITE_COLOR } = useColorValues();
+
    return (
        <VStack h={ 200 }>
 
@@ -31,12 +33,13 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
              <InputGroup w={ 350 }>
 
                 <InputLeftElement pointerEvents={ "none" }
-                                  children={ <Search2Icon color={ "gray.500" }/> }/>
+                                  children={ <Search2Icon color={ ICON_COLOR }/> }/>
 
                 <Input border={ "none" }
-                       focusBorderColor={ "white" }
+                       autoFocus={ true }
                        value={ value }
                        onChange={ handleChange }
+                       _placeholder={ { color: PLACEHOLDER_COLOR } }
                        placeholder={ "введіть e-mail користувача" }/>
 
                 <InputRightElement w={ 130 }
@@ -44,7 +47,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
                    <Button onClick={ findUser }
                            bg={ BUTTON_COLOR }
-                           color={ "white" }
+                           color={ WHITE_COLOR }
                            _hover={ { bg: BUTTON_HOVER_COLOR } }>
                       Знайти
                    </Button>
@@ -72,7 +75,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
 
                  <Icon as={ RiUserSearchLine }
                        boxSize={ "70px" }
-                       color={ "gray.300" }/>
+                       color={ ICON_COLOR }/>
 
               </Center>
           }

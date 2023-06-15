@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 
 import { Button, Popover, PopoverArrow, PopoverBody, PopoverContent, PopoverTrigger } from "@chakra-ui/react";
-import { MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 
 interface IMessagePopover {
    children: ReactNode,
@@ -11,6 +11,7 @@ interface IMessagePopover {
 }
 
 export function MessagePopover( { children, isOpen, onClose, deleteMessage }: IMessagePopover ) {
+   const { MAIN_COLOR, BG_SECOND, WHITE_COLOR } = useColorValues();
 
    return (
        <Popover isOpen={ isOpen }
@@ -28,13 +29,13 @@ export function MessagePopover( { children, isOpen, onClose, deleteMessage }: IM
 
              <PopoverArrow/>
 
-             <PopoverBody>
+             <PopoverBody bg={ BG_SECOND }>
                 <Button variant={ "ghost" }
                         color={ MAIN_COLOR }
                         onClick={ deleteMessage }
                         rounded={ 5 }
-                        _active={ { bg: "#eff0f3" } }
-                        _hover={ { bg: "#eff0f3" } }>
+                        _active={ { bg: MAIN_COLOR, color: WHITE_COLOR  } }
+                        _hover={ { bg: MAIN_COLOR, color: WHITE_COLOR } }>
                    видалити повідомлення
                 </Button>
              </PopoverBody>

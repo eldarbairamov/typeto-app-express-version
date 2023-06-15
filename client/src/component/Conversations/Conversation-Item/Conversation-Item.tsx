@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "../../../hook";
 import { IConversation, IUserFromConversation } from "../../../interface";
 import { conversationActions } from "../../../store/slice";
 import { Avatar, AvatarBadge, AvatarGroup, Divider, Heading, HStack, VStack, Text } from "@chakra-ui/react";
-import { CONVERSATION_ACTIVE_COLOR, MAIN_COLOR } from "../../../constant";
+import { useColorValues } from "../../../constant";
 import { v4 } from "uuid";
 import { getImageUrl } from "../../../helper";
 import { Icon } from "@chakra-ui/icons";
@@ -31,6 +31,8 @@ export const ConversationItem = forwardRef(( { user, conversation }: IConversati
 
    const conversationTime = moment(+conversation.lastModified).format("HH:mm");
 
+   const { FONT_SECOND, FONT_COLOR, AVATAR_BORDER, CONVERSATION_ACTIVE_COLOR, MAIN_COLOR, WHITE_COLOR } = useColorValues();
+
    return (
        <VStack width={ "100%" } ref={ ref }>
 
@@ -54,23 +56,29 @@ export const ConversationItem = forwardRef(( { user, conversation }: IConversati
                                     max={ 2 }>
                           { conversation.users.map(user =>
                               <Avatar key={ v4() }
+                                      showBorder={ true }
+                                      borderColor={ AVATAR_BORDER }
                                       name={ user.username }
                                       src={ getImageUrl(user.image, user.email) }
                                       ignoreFallback={ true }
                                       size={ "lg" }>
                                  { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 4 }
-                                                                                       bg={ "green.500" }/> }
+                                                                                       borderColor={ "white" }
+                                                                                       bg={ MAIN_COLOR }/> }
                               </Avatar>) }
                        </AvatarGroup>
                    }
 
                    { user &&
                        <Avatar name={ user?.username }
+                               showBorder={ true }
+                               borderColor={ AVATAR_BORDER }
                                src={ getImageUrl(user.image, user.email) }
                                ignoreFallback={ true }
                                size={ "lg" }>
                           { onlineContactsIds.includes(user.id) && <AvatarBadge boxSize={ 5 }
-                                                                                bg={ "green.500" }/> }
+                                                                                borderColor={ "white" }
+                                                                                bg={ MAIN_COLOR }/> }
                        </Avatar>
                    }
 
@@ -78,12 +86,12 @@ export const ConversationItem = forwardRef(( { user, conversation }: IConversati
                            h={ "100%" }
                            justify={ "center" }>
 
-                      <Heading size={ "sm" }
-                               color={ conversation.id === activeConversation.id ? "white" : "default" }>
+                      <Heading size={ "ьв" }
+                               color={ conversation.id === activeConversation.id ? WHITE_COLOR : "default" }>
                          { conversation.isGroupConversation ? conversation.conversationName : user?.username }
                       </Heading>
 
-                      <Text color={ conversation.id === activeConversation.id ? "gray.200" : "gray.500" } noOfLines={ 1 }>
+                      <Text color={ conversation.id === activeConversation.id ? WHITE_COLOR : FONT_SECOND } noOfLines={ 1 }>
                          {
                             (conversation.lastMessage?.content && !conversation.lastMessage.isImage)
                                 ? conversation.lastMessage.content
@@ -100,7 +108,7 @@ export const ConversationItem = forwardRef(( { user, conversation }: IConversati
                 <VStack h={ "100%" }
                         justify={ "space-between" }>
 
-                   <Text color={ conversation.id === activeConversation.id ? "white" : "default" }>
+                   <Text color={ conversation.id === activeConversation.id ? WHITE_COLOR : FONT_COLOR }>
                       { conversationTime }
                    </Text>
 
@@ -116,7 +124,7 @@ export const ConversationItem = forwardRef(( { user, conversation }: IConversati
 
           </VStack>
 
-          <Divider width={ 300 } />
+          <Divider w={ 250 }/>
 
        </VStack>
    );
