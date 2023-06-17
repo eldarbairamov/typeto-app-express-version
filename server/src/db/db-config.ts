@@ -10,6 +10,6 @@ export const sequelize = new Sequelize(
        dialect: "postgres",
        host: process.env.POSTGRES_HOST,
        port: Number(process.env.POSTGRES_PORT),
-       models: [ Message, User, Conversation, ConversationUser, OAuth, ActionToken, Contacts ],
        logging: false,
+       models: [ Message, User, Conversation, ConversationUser, OAuth, ActionToken, Contacts ],
     });

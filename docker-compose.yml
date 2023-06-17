@@ -2,7 +2,7 @@ version: "3"
 
 services:
   api:
-    container_name: api_express
+    container_name: api
     build: ./server
     command: npm run prod
     ports:
@@ -31,6 +31,7 @@ services:
   socket:
     container_name: socket
     build: ./socket
+    command: npm run prod
     env_file:
       - socket/.env
     environment:
@@ -39,3 +40,12 @@ services:
     depends_on:
       - db
 
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./client/build:/usr/share/nginx/html
