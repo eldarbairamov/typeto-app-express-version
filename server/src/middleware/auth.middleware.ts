@@ -4,6 +4,8 @@ import { NextFunction, Response } from "express";
 import { ApiException } from "../exception";
 import { OAuth, User } from "../model";
 import { emailValidator } from "../validator";
+import { tokenService } from "../service";
+import { ACCESS_TOKEN_TYPE } from "../constant";
 
 export const authMiddleware = {
 
@@ -33,7 +35,7 @@ export const authMiddleware = {
       const isAccessTokenExists = await OAuth.findOne({ where: { accessToken: token } });
       if (!isAccessTokenExists) throw new ApiException("Token invalid or expired", 401);
 
-      req.userId = isAccessTokenExists.ownerId;
+      req.userId = tokenService.tokenVerify(token, ACCESS_TOKEN_TYPE);
       req.token = token;
 
       next();

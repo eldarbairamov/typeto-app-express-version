@@ -13,7 +13,7 @@ export function SearchBar( { height, width }: { height?: string | number, width?
 
    const dispatch = useAppDispatch();
 
-   const { BG_SECOND, PLACEHOLDER_COLOR, MAIN_COLOR } = useColorValues();
+   const { BG_SECOND, PLACEHOLDER_COLOR, MAIN_COLOR, FONT_COLOR } = useColorValues();
 
    useEffect(() => {
       if (debounced.length >= 1) dispatch(conversationActions.setSearchKey(debounced));
@@ -34,7 +34,8 @@ export function SearchBar( { height, width }: { height?: string | number, width?
                     focusBorderColor={ "white" }
                     onChange={ handleChange }
                     value={ value }
-                    _placeholder={ { color: PLACEHOLDER_COLOR      } }
+                    color={ FONT_COLOR }
+                    _placeholder={ { color: PLACEHOLDER_COLOR } }
                     placeholder={ "знайти діалог" }/>
           </InputGroup>
 

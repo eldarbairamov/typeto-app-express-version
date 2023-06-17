@@ -13,6 +13,10 @@ export const UnauthorizedRouter = createBrowserRouter([
             element: <LoginPage/>
          },
          {
+            path: "login",
+            element: <LoginPage/>
+         },
+         {
             path: "registration",
             element: <RegistrationPage/>
          },
@@ -23,7 +27,7 @@ export const UnauthorizedRouter = createBrowserRouter([
          {
             path: "reset_password/:token",
             element: <ResetPasswordPage/>
-         }
+         },
       ],
       errorElement: <Error/>
    },

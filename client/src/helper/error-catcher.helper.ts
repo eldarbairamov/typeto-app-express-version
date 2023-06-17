@@ -33,7 +33,7 @@ export const errorCatcherFn = ( e: unknown) => {
          break;
 
       default:
-         message = `Непередбачена помилка: ${ axiosError.message }`;
+         message = "Непередбачена помилка";
          break;
    }
 

@@ -87,6 +87,7 @@ export function GroupConversationMenu( { isOnlyMessage, onModalClose }: { isOnly
                                   children={ <Search2Icon color={ "gray.500" }/> }/>
                 <Input border={ "none" }
                        value={ values.searchValue }
+                       color={ FONT_COLOR }
                        onChange={ ( e ) => handleChange(e, "searchValue") }
                        _placeholder={ { color: PLACEHOLDER_COLOR } }
                        placeholder={ "знайти контакт" }/>

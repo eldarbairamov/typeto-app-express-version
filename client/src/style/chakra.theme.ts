@@ -12,7 +12,6 @@ const theme: ThemeOverride = {
       global: ( props: any ) => ({
          body: {
             bg: mode("#eff0f3", "#2d303b")(props),
-
          },
          "*": {
             letterSpacing: -0.5,
@@ -22,8 +21,6 @@ const theme: ThemeOverride = {
             margin: 0,
             padding: 0,
             boxSizing: "border-box",
-            // transitionProperty: "color, background-color",
-            // transitionDuration: "300ms"
          },
          "&::-webkit-scrollbar": {
             height: 0,
@@ -56,9 +53,6 @@ const theme: ThemeOverride = {
          }
       },
    },
-   config: {
-      // disableTransitionOnChange: false
-   }
 };
 
 export const chakraTheme = extendTheme(theme);

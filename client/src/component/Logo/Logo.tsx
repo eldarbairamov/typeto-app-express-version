@@ -3,6 +3,7 @@ import { useColorValues } from "../../style/colors.theme.ts";
 
 export function Logo( { color }: { color: string } ) {
    const { WHITE_COLOR } = useColorValues();
+
    return (
        <Heading size={ "4xl" }>
 

@@ -84,7 +84,11 @@ const resetPassword = createAsyncThunk<void, { resetPasswordToken: string, passw
 const authSlice = createSlice({
    name: "auth",
    initialState,
-   reducers: {},
+   reducers: {
+      logout: ( state ) => {
+         state.isLoading = false;
+      }
+   },
    extraReducers: builder => builder
 
        .addCase(login.pending, ( state ) => {
@@ -131,7 +135,7 @@ const authSlice = createSlice({
        .addCase(logout.fulfilled, ( state ) => {
           state.isLogin = false;
           state.isLoading = false;
-          storageApi.deleteAuthData();
+          storageApi.deleteTokens();
        })
 
        .addCase(logout.rejected, ( state, { payload } ) => {
@@ -173,4 +177,5 @@ const authSlice = createSlice({
 });
 
 export const authReducer = authSlice.reducer;
+export const authActions = authSlice.actions;
 export const authAsyncActions = { login, registration, logout, forgotPassword, resetPassword };

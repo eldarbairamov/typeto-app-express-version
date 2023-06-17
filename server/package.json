@@ -5,7 +5,9 @@
    "main": "index.js",
    "scripts": {
       "test": "echo \"Error: no test specified\" && exit 1",
-      "dev": "nodemon ./src/app.ts"
+      "build": "rimraf ./build && tsc",
+      "dev": "nodemon ./src/app.ts",
+      "prod": "npm run build && node ./build/app.js"
    },
    "author": "",
    "license": "ISC",
@@ -23,6 +25,7 @@
       "pg": "^8.10.0",
       "pg-hstore": "^2.3.4",
       "reflect-metadata": "^0.1.13",
+      "rimraf": "^5.0.1",
       "sequelize": "^6.31.1",
       "sequelize-typescript": "^2.1.5",
       "sharp": "^0.32.1"

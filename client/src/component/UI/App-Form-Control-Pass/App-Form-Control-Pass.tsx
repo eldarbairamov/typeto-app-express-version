@@ -13,7 +13,7 @@ interface IAppFormControlPass {
 }
 
 export function AppFormControlPass( { labelName, fieldName, errorMessage, register, isRequired }: IAppFormControlPass ) {
-   const { MAIN_COLOR_LIGHTER, PLACEHOLDER_COLOR, ALERT_COLOR } = useColorValues();
+   const { MAIN_COLOR_LIGHTER, PLACEHOLDER_COLOR, ALERT_COLOR, FONT_COLOR } = useColorValues();
 
    const { isShow, handleClick } = useHidePass();
 
@@ -29,6 +29,7 @@ export function AppFormControlPass( { labelName, fieldName, errorMessage, regist
              <Input { ...register(fieldName) }
                     autoComplete={ "" }
                     focusBorderColor={ MAIN_COLOR_LIGHTER }
+                    color={ FONT_COLOR }
                     variant={ "flushed" }
                     _invalid={ { borderColor: ALERT_COLOR } }
                     type={ isShow ? "text" : "password" }/>

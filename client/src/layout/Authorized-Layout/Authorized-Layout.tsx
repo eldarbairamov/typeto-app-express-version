@@ -19,14 +19,14 @@ export function AuthorizedLayout() {
                   h={ "100%" }
                   spacing={ 0 }>
 
-             <Toast actionMessage={ actionMessage }
-                    actionType={ actionType }/>
-
              <Header/>
 
              <Outlet/>
 
           </VStack>
+
+          <Toast actionMessage={ actionMessage }
+                 actionType={ actionType }/>
 
        </Center>
    );

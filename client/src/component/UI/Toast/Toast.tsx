@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 
-import { Button, HStack, Spinner, Text, useToast, UseToastOptions } from "@chakra-ui/react";
+import { Button, Flex, HStack, Spinner, Text, useToast, UseToastOptions } from "@chakra-ui/react";
 import { useAppDispatch, useAppSelector } from "../../../hook";
 import { Icon } from "@chakra-ui/icons";
 import { BiBell } from "react-icons/all";
@@ -36,28 +36,32 @@ export function Toast( { actionMessage, actionType }: IToastProps ) {
 
    const options: Omit<UseToastOptions, "id"> = {
       render: () => (
-          <HStack bg={ actionType === "info" || actionType === "loading" ? MAIN_COLOR : ALERT_COLOR }
-                  w={ "fit-content" }
-                  p={ 3 }
-                  rounded={ 10 }>
+          <Flex justifyContent={ "center" }
+                alignItems={ "center" }>
 
-             { actionType === "loading"
+             <HStack bg={ actionType === "info" || actionType === "loading" ? MAIN_COLOR : ALERT_COLOR }
+                     p={ 3 }
+                     w={ "fit-content" }
+                     rounded={ 10 }>
 
-                 ? <Spinner size={ "sm" }
-                            thickness={ "2px" }
-                            color={ "white" }/>
+                { actionType === "loading"
 
-                 : <Icon as={ BiBell }
-                         color={ "white" }
-                         boxSize={ 5 }/>
-             }
+                    ? <Spinner size={ "sm" }
+                               thickness={ "2px" }
+                               color={ "white" }/>
 
-             <Text fontWeight={ "bold" }
-                   color={ "white" }>
-                { actionMessage }
-             </Text>
+                    : <Icon as={ BiBell }
+                            color={ "white" }
+                            boxSize={ 5 }/>
+                }
 
-          </HStack>
+                <Text fontWeight={ "bold" }
+                      color={ "white" }>
+                   { actionMessage }
+                </Text>
+
+             </HStack>
+          </Flex>
       ),
       position: "top",
    };

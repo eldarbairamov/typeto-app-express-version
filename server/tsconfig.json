@@ -9,7 +9,7 @@
       "./src/type"
     ],
     "strictPropertyInitialization": false,
-    "outDir": "./dist",
+    "outDir": "./build",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,

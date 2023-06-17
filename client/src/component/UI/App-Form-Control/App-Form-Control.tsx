@@ -12,7 +12,7 @@ interface IFormControl {
 }
 
 export function AppFormControl( { errorMessage, fieldName, labelName, register, isRequired, textAlign }: IFormControl ) {
-   const { MAIN_COLOR_LIGHTER , PLACEHOLDER_COLOR, ALERT_COLOR} = useColorValues();
+   const { MAIN_COLOR_LIGHTER, PLACEHOLDER_COLOR, ALERT_COLOR, FONT_COLOR } = useColorValues();
 
    return (
        <FormControl isInvalid={ Boolean(errorMessage) }
@@ -24,6 +24,7 @@ export function AppFormControl( { errorMessage, fieldName, labelName, register, 
           <Input { ...register(fieldName) }
                  focusBorderColor={ MAIN_COLOR_LIGHTER }
                  _invalid={ { borderColor: "red.500" } }
+                 color={ FONT_COLOR }
                  textAlign={ textAlign ? textAlign : "initial" }
                  variant={ "flushed" }/>
 

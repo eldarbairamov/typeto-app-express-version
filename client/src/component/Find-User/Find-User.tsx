@@ -23,7 +23,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
       dispatch(userActions.setUser({} as IUserBySearch));
    }, []);
 
-   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, PLACEHOLDER_COLOR, ICON_COLOR, WHITE_COLOR } = useColorValues();
+   const { BUTTON_COLOR, BUTTON_HOVER_COLOR, PLACEHOLDER_COLOR, FONT_COLOR, ICON_COLOR, WHITE_COLOR } = useColorValues();
 
    return (
        <VStack h={ 200 }>
@@ -38,6 +38,7 @@ export function FindUser( { onModalClose }: { onModalClose: () => void } ) {
                 <Input border={ "none" }
                        autoFocus={ true }
                        value={ value }
+                       color={ FONT_COLOR }
                        onChange={ handleChange }
                        _placeholder={ { color: PLACEHOLDER_COLOR } }
                        placeholder={ "введіть e-mail користувача" }/>

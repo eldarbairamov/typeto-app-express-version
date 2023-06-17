@@ -2,6 +2,7 @@ import { CSSProperties } from "react";
 
 import { Button, ComponentWithAs } from "@chakra-ui/react";
 import { Icon, IconProps } from "@chakra-ui/icons";
+import { useColorValues } from "../../../style/colors.theme.ts";
 
 interface IIconProps {
    size: number | string;
@@ -16,6 +17,7 @@ interface IIconProps {
 }
 
 export function ButtonIcon( { size, as, fn, bg, color, rounded, p, style, cursor = "pointer" }: IIconProps ) {
+   const { MAIN_COLOR } = useColorValues();
    return (
        <>
           { as &&
@@ -31,6 +33,8 @@ export function ButtonIcon( { size, as, fn, bg, color, rounded, p, style, cursor
                 <Icon as={ as }
                       boxSize={ size }
                       cursor={ cursor }
+                      _hover={ { color: MAIN_COLOR } }
+                      transition={ ".3s" }
                       color={ color }/>
 
               </Button>

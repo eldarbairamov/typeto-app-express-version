@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  api:
+    container_name: api_express
+    build: ./server
+    command: npm run prod
+    ports:
+      - "3100:3100"
+    env_file:
+      - server/.env
+    environment:
+      - POSTGRES_HOST=db
+    volumes:
+      - ./server/client:/app/client
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15.3-alpine
+    container_name: postgres_db
+    env_file:
+      - server/.env
+    ports:
+      - "5430:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  socket:
+    container_name: socket
+    build: ./socket
+    env_file:
+      - socket/.env
+    environment:
+      - POSTGRES_HOST=db
+    restart: unless-stopped
+    depends_on:
+      - db
+

@@ -16,7 +16,7 @@ export function ContactsMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?:
 
    getContactsService(debounced);
 
-   const { MAIN_COLOR, PLACEHOLDER_COLOR, ICON_COLOR } = useColorValues();
+   const { MAIN_COLOR, PLACEHOLDER_COLOR, ICON_COLOR, FONT_COLOR } = useColorValues();
 
    if (isLoading) {
       return (
@@ -37,6 +37,7 @@ export function ContactsMenu( { isOnlyMessage, onModalClose }: { isOnlyMessage?:
                        focusBorderColor={ "white" }
                        autoFocus={ true }
                        value={ value }
+                       color={ FONT_COLOR }
                        onChange={ handleChange }
                        _placeholder={ { color: PLACEHOLDER_COLOR } }
                        placeholder={ "знайти контакт" }/>
