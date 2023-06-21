@@ -1,59 +1,45 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
 import fileUpload, { FileArray } from "express-fileupload";
-import path from "node:path";
-import process from "process";
-import { mkdir } from "fs/promises";
-import sharp from "sharp";
 import { Op } from "sequelize";
-import { exists, fileNameMaker } from "../../helper";
+import { imageService } from "../image.service";
 
-export const sendImageService = async ( userId: number, files: FileArray, conversationId: number ) => {
-   const user = await User.findByPk(userId);
+export const sendImageService = async ( senderId: number, files: FileArray, conversationId: number ) => {
 
-   const avatar = files?.image as fileUpload.UploadedFile;
+   const userEmail = await User.findByPk( senderId, { attributes: [ "email" ] } ).then( res => res?.email );
 
-   const imageName = fileNameMaker(avatar);
-   const folderPath = path.join(process.cwd(), "client", String(user?.email));
+   const image = files?.image as fileUpload.UploadedFile;
 
-   const isFolderExists = await exists(folderPath);
-   if (!isFolderExists) await mkdir(folderPath, { recursive: true });
+   const { imageName } = await imageService.process( image, userEmail! )
 
-   const [ newMessage ] = await Promise.all([
-      await Message.create({ content: imageName, conversationId, senderId: userId!, isImage: true }),
-      await sharp(avatar.data).jpeg({ quality: 40 }).toFile(path.join(folderPath, imageName))
-   ]);
+   const newMessage = await Message.create( { content: imageName, conversationId, senderId, isImage: true } )
 
-   const [ messageWithSender ] = await Promise.all([
-
-      Message.findByPk(newMessage.id, {
+   const [ messageWithSender ] = await Promise.all( [
+      Message.findByPk( newMessage.id, {
          include: {
             model: User,
             as: "sender",
             attributes: [ "id", "username", "email", "image" ]
          }
-      }),
-
-      Conversation.update({
+      } ),
+      Conversation.update( {
              lastModified: Date.now()
           },
           {
              where: {
                 id: conversationId
              }
-          }),
-
-      ConversationUser.update({
+          } ),
+      ConversationUser.update( {
          isNewMessagesExist: true
       }, {
          where: {
             conversationId,
             userId: {
-               [Op.ne]: userId
+               [Op.ne]: senderId
             }
          }
-      })
-
-   ]);
+      } )
+   ] );
 
    return messageWithSender;
 };

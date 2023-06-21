@@ -10,6 +10,6 @@ export const userPresenter = ( document: User ) => {
 };
 
 export const allUserPresenter = ( documents: User[] ) => {
-   return documents.map(doc => userPresenter(doc));
+   return documents.map( doc => userPresenter( doc ) );
 };
 

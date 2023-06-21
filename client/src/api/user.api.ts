@@ -8,8 +8,8 @@ export const userApi = {
       return await axiosInstance.get<IUserBySearch>("/users", { params: { userEmail } });
    },
 
-   addContact: async ( contactId: number ): Promise<void> => {
-      await axiosInstance.post("/users/add_contact", { contactId });
+   addContact: async ( targetId: number ): Promise<void> => {
+      await axiosInstance.post("/users/contacts", { targetId });
    },
 
    getContacts: async ( searchKey?: string ): Promise<AxiosResponse<IUser[]>> => {
@@ -17,7 +17,7 @@ export const userApi = {
    },
 
    deleteContact: async ( contactId: number ): Promise<AxiosResponse<IUser[]>> => {
-      return await axiosInstance.delete<IUser[]>("/users/delete_contact", { params: { contactId } });
+      return await axiosInstance.delete<IUser[]>("/users/contacts", { params: { contactId } });
    },
 
    uploadAvatar: async ( formData: FormData ): Promise<AxiosResponse<{ imageName: string }>> => {

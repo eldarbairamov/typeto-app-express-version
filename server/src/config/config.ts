@@ -8,5 +8,5 @@ export const config = {
 
    SECRET_ACCESS_TOKEN_KEY: process.env.SECRET_ACCESS_TOKEN_KEY as string || "secret access token key",
    SECRET_REFRESH_TOKEN_KEY: process.env.SECRET_REFRESH_TOKEN_KEY as string || "secret access refresh key",
-   SECRET_FORGOT_PASS_KEY: process.env.SECRET_FORGOT_PASS_KEY as string || "secret forgot pass key",
+   SECRET_RESET_PASS_KEY: process.env.SECRET_RESET_PASS_KEY as string || "secret reset pass key",
 };

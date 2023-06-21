@@ -21,31 +21,31 @@ interface ConversationCreationAttr {
    adminId?: number;
 }
 
-@Table({ tableName: "conversation", timestamps: false })
+@Table( { tableName: "conversation", timestamps: false } )
 export class Conversation extends Model<ConversationAttr, ConversationCreationAttr> {
 
-   @Column({ type: DataType.STRING, allowNull: true })
+   @Column( { type: DataType.STRING, allowNull: true } )
    conversationName: string;
 
-   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
+   @Column( { type: DataType.BOOLEAN, allowNull: true, defaultValue: false } )
    isGroupConversation: boolean;
 
-   @Column({ type: DataType.INTEGER, allowNull: true, defaultValue: null })
+   @Column( { type: DataType.INTEGER, allowNull: true, defaultValue: null } )
    adminId: number;
 
-   @Column({ type: DataType.BIGINT, allowNull: true })
+   @Column( { type: DataType.BIGINT, allowNull: true } )
    lastModified: number;
 
-   @BelongsToMany(() => User, () => ConversationUser, "conversationId")
+   @BelongsToMany( () => User, () => ConversationUser, "conversationId" )
    users: User[];
 
-   @BelongsTo(() => User, "adminId")
+   @BelongsTo( () => User, "adminId" )
    admin: User;
 
-   @HasOne(() => Message, "conversationId")
+   @HasOne( () => Message, "conversationId" )
    lastMessage: Message;
 
-   @HasMany(() => Message, { foreignKey: "conversationId" })
+   @HasMany( () => Message, { foreignKey: "conversationId" } )
    messages: Message[];
 
    @BeforeCreate

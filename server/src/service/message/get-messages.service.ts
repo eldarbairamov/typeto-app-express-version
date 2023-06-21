@@ -2,9 +2,8 @@ import { ConversationUser, Message, User } from "../../model";
 
 export const getMessagesService = async ( conversationId: number, currentUserId: number ) => {
 
-   const [ messages ] = await Promise.all([
-
-      Message.findAll({
+   const [ messages ] = await Promise.all( [
+      Message.findAll( {
          where: { conversationId },
          attributes: [ "id", "content", "conversationId", "lastModified", "isImage" ],
          include: {
@@ -13,20 +12,18 @@ export const getMessagesService = async ( conversationId: number, currentUserId:
             attributes: [ "id", "username", "email", "image" ]
          },
          order: [
-             ["id", "ASC"]
+            [ "id", "ASC" ]
          ]
-      }),
-
-      ConversationUser.update({
+      } ),
+      ConversationUser.update( {
          isNewMessagesExist: false
       }, {
          where: {
             conversationId,
             userId: currentUserId
          }
-      })
-
-   ]);
+      } )
+   ] );
 
    return messages;
 };

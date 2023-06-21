@@ -4,10 +4,9 @@ import { Op } from "sequelize";
 
 export const getConversationsBySearchService = async ( currentUserId: number, searchKey: string, limit: number ) => {
 
-   // Find group and private conversations by search key
-   const [ groupConversations, privateConversation ] = await Promise.all([
+   const [ groupConversations, privateConversation ] = await Promise.all( [
 
-      User.findByPk(currentUserId, {
+      User.findByPk( currentUserId, {
          include: {
             model: Conversation,
             as: "conversations",
@@ -40,14 +39,14 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
             [ "conversations", "users", "id", "ASC" ],
             [ "conversations", "lastMessage", "id", "ASC" ]
          ]
-      })
-          .then(user => {
-             const conversations = user?.conversations.map(c => groupConversationPresenter(c.toJSON(), currentUserId));
-             if (conversations) return conversations;
+      } )
+          .then( user => {
+             const conversations = user?.conversations.map( c => groupConversationPresenter( c.toJSON(), currentUserId ) );
+             if ( conversations ) return conversations;
              else return [];
-          }),
+          } ),
 
-      User.findByPk(currentUserId, {
+      User.findByPk( currentUserId, {
          include: {
             model: Conversation,
             as: "conversations",
@@ -77,16 +76,25 @@ export const getConversationsBySearchService = async ( currentUserId: number, se
             [ "conversations", "users", "id", "ASC" ],
             [ "conversations", "lastMessage", "id", "ASC" ]
          ]
-      })
-          .then(user => {
-             const target = user?.conversations.find(c => c.users.find(u => u.username.match(searchKey)));
-             if (target) return [ privateConversationPresenter(target.toJSON(), currentUserId) ];
+      } )
+          .then( user => {
+             const target = user?.conversations.find( c => c.users.find( u => u.username.match( searchKey ) ) );
+             if ( target ) return [ privateConversationPresenter( target.toJSON(), currentUserId ) ];
              else return [];
-          })
+          } )
 
-   ]);
+   ] );
 
-   // Return presented data for client by condition
-   return groupConversations.length ? { data: groupConversations?.splice(0, limit), count: groupConversations.length } : { data: privateConversation?.splice(0, limit), count: privateConversation.length };
+   return groupConversations.length
+       ?
+       {
+          data: limit ? Array.from( groupConversations ).splice( 0, limit ) : groupConversations,
+          count: limit ? Array.from( groupConversations ).splice( 0, limit ).length : groupConversations.length
+       }
+       :
+       {
+          data: limit ? Array.from( privateConversation ).splice( 0, limit ) : privateConversation,
+          count: limit ? Array.from( privateConversation ).splice( 0, limit ).length : privateConversation.length
+       };
 
 };

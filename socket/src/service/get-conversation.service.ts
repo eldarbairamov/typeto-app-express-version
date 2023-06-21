@@ -4,17 +4,17 @@ import { groupConversationPresenter, privateConversationPresenter } from "../pre
 
 export const getConversationService = async ( conversationId: number, senderId: number, whoWillReceive: "sender" | "receiver" ) => {
 
-   const receiverId = await Conversation.findByPk(conversationId, {
+   const receiverId = await Conversation.findByPk( conversationId, {
       include:
           {
              model: User,
              as: "users",
              attributes: [ "id", "username", "email", "image" ],
           }
-   })
-       .then(conversation => conversation?.users.find(u => u.id !== senderId)?.id) as number;
+   } )
+       .then( conversation => conversation?.users.find( u => u.id !== senderId )?.id ) as number;
 
-   return await Conversation.findByPk(conversationId, {
+   return await Conversation.findByPk( conversationId, {
       include: [
          {
             model: User,
@@ -39,13 +39,13 @@ export const getConversationService = async ( conversationId: number, senderId: 
          [ { model: Message, as: "lastMessage" }, "id", "ASC" ],
          [ { model: User, as: "users" }, "id", "ASC" ]
       ]
-   })
-       .then(conversation => {
+   } )
+       .then( conversation => {
 
-          if (conversation && conversation.isGroupConversation) return groupConversationPresenter(conversation.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
-          if (conversation && !conversation.isGroupConversation) return privateConversationPresenter(conversation.toJSON(), whoWillReceive === "sender" ? senderId : receiverId);
+          if ( conversation && conversation.isGroupConversation ) return groupConversationPresenter( conversation.toJSON(), whoWillReceive === "sender" ? senderId : receiverId );
+          if ( conversation && !conversation.isGroupConversation ) return privateConversationPresenter( conversation.toJSON(), whoWillReceive === "sender" ? senderId : receiverId );
 
           return conversation;
 
-       }) as IConversation;
+       } ) as IConversation;
 };

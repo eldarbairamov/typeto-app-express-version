@@ -35,11 +35,11 @@ const getContacts = createAsyncThunk<IUser[], { searchKey?: string }, { rejectVa
     }
 );
 
-const addContact = createAsyncThunk<void, { contactId: number }, { rejectValue: string }>(
+const addContact = createAsyncThunk<void, { targetId: number }, { rejectValue: string }>(
     "user/addContact",
-    async ( { contactId }, { rejectWithValue } ) => {
+    async ( { targetId }, { rejectWithValue } ) => {
        try {
-          await userApi.addContact(contactId);
+          await userApi.addContact(targetId);
 
        }
        catch (e) {

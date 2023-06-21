@@ -1,26 +1,18 @@
 import { User } from "../../model";
 import fileUpload, { FileArray } from "express-fileupload";
-import path from "node:path";
-import process from "process";
-import { mkdir } from "fs/promises";
-import sharp from "sharp";
-import { exists, fileNameMaker } from "../../helper";
+import { imageService } from "../image.service";
 
 export const uploadAvatarService = async ( userId: number, files: FileArray ) => {
-   const user = await User.findByPk(userId);
+
+   const user = await User.findByPk( userId );
 
    const avatar = files?.avatar as fileUpload.UploadedFile;
 
-   const imageName = fileNameMaker(avatar);
-   const folderPath = path.join(process.cwd(), "client", String(user?.email));
+   if ( user?.image ) await imageService.delete( user.email, user.image );
 
-   const isFolderExists = await exists(folderPath);
-   if (!isFolderExists) await mkdir(folderPath, { recursive: true });
+   const { imageName } = await imageService.process( avatar, user?.email! );
 
-   user?.set({ image: imageName });
-
-   await user?.save({ hooks: false });
-   await sharp(avatar.data).jpeg({ quality: 70 }).toFile(path.join(folderPath, imageName));
+   await user?.update( { image: imageName }, { hooks: false } );
 
    return imageName;
 };

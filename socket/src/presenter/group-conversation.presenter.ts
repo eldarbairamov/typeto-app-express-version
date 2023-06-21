@@ -7,18 +7,18 @@ export const groupConversationPresenter = ( conversation: ConversationAttr, user
        conversation,
        {
           isNewMessagesExist: conversation.users
-              .map(( user ) => {
+              .map( ( user ) => {
                  const userWithAssociation = user as User & { ConversationUser: ConversationUserAttr };
 
-                 if (userWithAssociation.id === userId) {
+                 if ( userWithAssociation.id === userId ) {
                     return userWithAssociation.ConversationUser.isNewMessagesExist;
                  }
 
                  return null;
-              })
-              .filter(user => user !== null)[0]
+              } )
+              .filter( user => user !== null )[0]
        },
        {
           lastMessage: conversation.lastMessage
-       });
+       } );
 };

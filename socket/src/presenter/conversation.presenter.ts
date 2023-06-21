@@ -7,20 +7,20 @@ export const conversationPresenter = ( conversation: ConversationAttr, whoCreate
        { ...conversation },
        {
           conversationWith:
-              whoCreated ? conversation.users.filter(user => user.id === whoCreated) : conversation.users.filter(user => user.id !== whoWillReceive)
+              whoCreated ? conversation.users.filter( user => user.id === whoCreated ) : conversation.users.filter( user => user.id !== whoWillReceive )
        },
        {
           isNewMessagesExist: conversation.users
-              .map(( user ) => {
+              .map( ( user ) => {
                  const userWithAssociation = user as User & { ConversationUser: ConversationUserAttr };
 
-                 if (userWithAssociation.id === whoWillReceive) {
+                 if ( userWithAssociation.id === whoWillReceive ) {
                     return userWithAssociation.ConversationUser.isNewMessagesExist;
                  }
 
                  return null;
-              })
-              .filter(user => user !== null)[0]
+              } )
+              .filter( user => user !== null )[0]
        },
        {
           lastMessage: conversation.lastMessage

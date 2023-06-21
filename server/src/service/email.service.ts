@@ -10,25 +10,25 @@ import hbs from "nodemailer-express-handlebars";
 export const emailSender = async ( to: string, emailAction: EmailActionType, context: any ) => {
    const template = emailTemplate[emailAction];
 
-   const transporter = nodemailer.createTransport({
+   const transporter = nodemailer.createTransport( {
       service: "gmail",
       from: "no reply",
       auth: {
          user: config.EMAIL_SERVICE_USER,
          pass: config.EMAIL_SERVICE_PASS,
       },
-   });
+   } );
 
-   transporter.use("compile", hbs({
+   transporter.use( "compile", hbs( {
       viewEngine: {
          defaultLayout: "main",
-         layoutsDir: path.join(EMAIL_TEMPLATES_PATH, "layout"),
-         partialsDir: path.join(EMAIL_TEMPLATES_PATH, "partial"),
+         layoutsDir: path.join( EMAIL_TEMPLATES_PATH, "layout" ),
+         partialsDir: path.join( EMAIL_TEMPLATES_PATH, "partial" ),
          extname: ".hbs",
       },
       extName: ".hbs",
-      viewPath: path.join(EMAIL_TEMPLATES_PATH, "view"),
-   }));
+      viewPath: path.join( EMAIL_TEMPLATES_PATH, "view" ),
+   } ) );
 
    const mail = {
       to,
@@ -38,10 +38,10 @@ export const emailSender = async ( to: string, emailAction: EmailActionType, con
    };
 
    return transporter
-       .sendMail(mail)
-       .catch(( e ) => {
+       .sendMail( mail )
+       .catch( ( e ) => {
           const error = e as Error;
-          console.log(error.message);
-          throw new ApiException("Nodemailer: Error", 500);
-       });
+          console.log( error.message );
+          throw new ApiException( "Nodemailer: Error", 500 );
+       } );
 };

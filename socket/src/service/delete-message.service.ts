@@ -3,17 +3,17 @@ import { Op } from "sequelize";
 
 export const deleteMessageService = async ( conversationId: number, currentUserId: number ) => {
 
-   const conversationWith = await ConversationUser.findAll({
+   const conversationWith = await ConversationUser.findAll( {
       where: {
          conversationId,
          userId: {
             [Op.ne]: currentUserId
          }
       },
-   })
-       .then(conversationUser => conversationUser.map(c => c.userId));
+   } )
+       .then( conversationUser => conversationUser.map( c => c.userId ) );
 
-   const updatedLastMessage = await Conversation.findByPk(conversationId, {
+   const updatedLastMessage = await Conversation.findByPk( conversationId, {
       include: {
          model: Message,
          as: "lastMessage"
@@ -21,8 +21,8 @@ export const deleteMessageService = async ( conversationId: number, currentUserI
       order: [
          [ { model: Message, as: "lastMessage" }, "id", "DESC" ]
       ]
-   })
-       .then(conversation => conversation?.lastMessage);
+   } )
+       .then( conversation => conversation?.lastMessage );
 
    return { conversationWith, updatedLastMessage };
 

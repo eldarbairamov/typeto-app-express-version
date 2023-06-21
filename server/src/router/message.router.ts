@@ -1,12 +1,32 @@
 import { Router } from "express";
-import { authMiddleware } from "../middleware";
+import { authMiddleware, commonMiddleware } from "../middleware";
 import { messageController } from "../controller";
 
 export const messageRouter = Router();
 
 messageRouter
-    .post("/", authMiddleware.isAccessExists, messageController.sendMessage)
-    .post("/image", authMiddleware.isAccessExists, messageController.sendImage)
-    .get("/:conversationId", authMiddleware.isAccessExists, messageController.getMessages)
-    .delete("/:conversationId", authMiddleware.isAccessExists, messageController.deleteMessage)
+    .post(
+        "/:conversationId",
+        authMiddleware.isAccessExists,
+        commonMiddleware.isConversationExists,
+        messageController.sendMessage
+    )
+    .post(
+        "/:conversationId/image",
+        authMiddleware.isAccessExists,
+        commonMiddleware.isConversationExists,
+        messageController.sendImage
+    )
+    .get(
+        "/:conversationId",
+        authMiddleware.isAccessExists,
+        commonMiddleware.isConversationExists,
+        messageController.getMessages
+    )
+    .delete(
+        "/:conversationId",
+        authMiddleware.isAccessExists,
+        commonMiddleware.isConversationExists,
+        messageController.deleteMessage
+    )
 

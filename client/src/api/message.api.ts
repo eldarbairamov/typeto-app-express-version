@@ -5,23 +5,23 @@ import { IMessage } from "../interface";
 export const messageApi = {
 
    getMessages: async ( conversationId: number ): Promise<AxiosPromise<IMessage[]>> => {
-      return await axiosInstance.get<IMessage[]>(`/messages/${ conversationId }`);
+      return await axiosInstance.get<IMessage[]>( `/messages/${ conversationId }` );
    },
 
    sendMessage: async ( conversationId: number, content: string ): Promise<AxiosPromise<IMessage>> => {
-      return await axiosInstance.post<IMessage>("/messages", { conversationId, content });
+      return await axiosInstance.post<IMessage>( `/messages/${ conversationId }`, { content } );
    },
 
-   sendImage: async ( formData: FormData ): Promise<AxiosPromise<IMessage>> => {
-      return await axiosInstance.post<IMessage>("/messages/image", formData);
+   sendImage: async ( formData: FormData, conversationId: number ): Promise<AxiosPromise<IMessage>> => {
+      return await axiosInstance.post<IMessage>( `/messages/image/${ conversationId }`, formData );
    },
 
    deleteMessage: async ( messageId: number, conversationId: number ): Promise<AxiosPromise<IMessage>> => {
-      return await axiosInstance.delete<IMessage>(`/messages/${ conversationId }`, {
+      return await axiosInstance.delete<IMessage>( `/messages/${ conversationId }`, {
          params: {
             messageId: messageId
          }
-      });
+      } );
    },
 
 };

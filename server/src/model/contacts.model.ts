@@ -6,14 +6,14 @@ interface ContactsAttr {
    readonly contactId: number
 }
 
-@Table({ tableName: "contacts", timestamps: false })
-export class Contacts extends Model<ContactsAttr> {
+@Table( { tableName: "contacts", timestamps: false } )
+export class Contacts extends Model<ContactsAttr, ContactsAttr> {
 
-   @ForeignKey(() => User)
+   @ForeignKey( () => User )
    @Column
    readonly contactId: number;
 
-   @ForeignKey(() => User)
+   @ForeignKey( () => User )
    @Column
    readonly userId: number;
 

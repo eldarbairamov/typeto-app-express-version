@@ -14,18 +14,18 @@ interface ConversationUserCreationAttr {
    readonly isNewMessagesExist?: boolean;
 }
 
-@Table({ tableName: "conversationUser", timestamps: false })
+@Table( { tableName: "conversationUser", timestamps: false } )
 export class ConversationUser extends Model<ConversationUserAttr, ConversationUserCreationAttr> {
 
-   @ForeignKey(() => Conversation)
-   @Column
+   @ForeignKey( () => Conversation )
+   @Column( { type: DataType.INTEGER, unique: false } )
    readonly conversationId: number;
 
-   @ForeignKey(() => User)
-   @Column
+   @ForeignKey( () => User )
+   @Column( { type: DataType.INTEGER, unique: false } )
    readonly userId: number;
 
-   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
+   @Column( { type: DataType.BOOLEAN, allowNull: true, defaultValue: false } )
    readonly isNewMessagesExist: boolean;
 
 }

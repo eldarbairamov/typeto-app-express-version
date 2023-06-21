@@ -7,7 +7,7 @@ import { messageRouter } from "./message.router";
 export const appRouter = Router();
 
 appRouter
-    .use("/auth", authRouter)
-    .use("/users", userRouter)
-    .use("/conversations", conversationRouter)
-    .use("/messages", messageRouter);
+    .use( "/auth", authRouter )
+    .use( "/users", userRouter )
+    .use( "/conversations", conversationRouter )
+    .use( "/messages", messageRouter );

@@ -1,10 +1,10 @@
 import { Contacts } from "../../model";
 
-export const addContactService = async ( contactId: number, currentUserId: number ) => {
+export const addContactService = async ( targetId: number, currentUserId: number ) => {
 
-   return await Contacts.create({
+   await Contacts.create( {
       userId: currentUserId!,
-      contactId
-   });
+      contactId: targetId
+   } );
 
 };

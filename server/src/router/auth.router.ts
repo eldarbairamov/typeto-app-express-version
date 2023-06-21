@@ -9,25 +9,31 @@ authRouter
         "/registration",
         commonMiddleware.isRequestEmpty,
         authMiddleware.isEmailUnique,
-        authController.registration)
+        authController.registration
+    )
     .post(
         "/login",
         commonMiddleware.isRequestEmpty,
         authMiddleware.isUserExists,
-        authController.login)
+        authController.login
+    )
     .post(
         "/forgot_password",
         commonMiddleware.isRequestEmpty,
         authMiddleware.isUserExists,
-        authController.forgotPassword)
+        authController.forgotPassword
+    )
     .patch(
         "/reset_password",
         commonMiddleware.isRequestEmpty,
-        authController.resetPassword)
-    .get(
+        authController.resetPassword
+    )
+    .delete(
         "/logout",
         authMiddleware.isAccessExists,
-        authController.logout)
+        authController.logout
+    )
     .post(
         "/refresh",
-        authController.refresh);
+        authController.refresh
+    );

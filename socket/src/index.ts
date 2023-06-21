@@ -1,7 +1,7 @@
 import "dotenv/config";
 import { sequelize } from "./db";
 import { startSocket } from "./socket";
-import { YELLOW_COLOR } from "./constant";
+import { BLUE_COLOR } from "./constant";
 import { config } from "./config";
 
 const startDb = async () => {
@@ -10,5 +10,5 @@ const startDb = async () => {
 };
 
 startDb()
-    .then(() => startSocket())
-    .then(() => console.log(YELLOW_COLOR, `Database is connected. Socket.io is started on port ${ config.SOCKET_PORT }`));
+    .then( () => startSocket() )
+    .then( () => console.log( BLUE_COLOR, `Database is connected. Socket.io is started on port ${ config.SOCKET_PORT }` ) );

@@ -15,19 +15,19 @@ interface ActionTokenCreationAttr {
    readonly ownerId: number;
 }
 
-@Table({ tableName: "actionToken", timestamps: false })
+@Table( { tableName: "actionToken", timestamps: false } )
 export class ActionToken extends Model<ActionTokenAttr, ActionTokenCreationAttr> {
 
-   @Column({ type: DataType.STRING, allowNull: false })
+   @Column( { type: DataType.STRING, allowNull: false } )
    readonly token: string;
 
-   @Column({ type: DataType.STRING, allowNull: false })
+   @Column( { type: DataType.STRING, allowNull: false } )
    readonly tokenType: string;
 
-   @Column({ type: DataType.INTEGER, allowNull: false })
+   @Column( { type: DataType.INTEGER, allowNull: false } )
    readonly ownerId: number;
 
-   @BelongsTo(() => User, "ownerId")
+   @BelongsTo( () => User, "ownerId" )
    readonly owner: User;
 
 }

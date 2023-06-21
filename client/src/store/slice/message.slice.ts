@@ -65,11 +65,11 @@ const deleteMessage = createAsyncThunk<IMessage, { messageId: number, conversati
     }
 );
 
-const sendImage = createAsyncThunk<IMessage, { formData: FormData }, { rejectValue: string }>(
+const sendImage = createAsyncThunk<IMessage, { formData: FormData, conversationId: number }, { rejectValue: string }>(
     "message/sendImage",
-    async ( { formData }, { rejectWithValue } ) => {
+    async ( { formData, conversationId }, { rejectWithValue } ) => {
        try {
-          const { data } = await messageApi.sendImage(formData);
+          const { data } = await messageApi.sendImage(formData, conversationId);
           return data;
        }
        catch (e) {

@@ -20,31 +20,31 @@ interface UserCreationAttr {
    image?: string | null;
 }
 
-@Table({ tableName: "user", timestamps: false })
+@Table( { tableName: "user", timestamps: false } )
 export class User extends Model<UserAttr, UserCreationAttr> {
 
-   @Column({ type: DataType.STRING, allowNull: false })
+   @Column( { type: DataType.STRING, allowNull: false } )
    username: string;
 
-   @Column({ type: DataType.STRING, allowNull: false, unique: true })
+   @Column( { type: DataType.STRING, allowNull: false, unique: true } )
    email: string;
 
-   @Column({ type: DataType.STRING, allowNull: false })
+   @Column( { type: DataType.STRING, allowNull: false } )
    password: string;
 
-   @Column({ type: DataType.STRING, allowNull: true })
+   @Column( { type: DataType.STRING, allowNull: true } )
    image: string | null;
 
-   @BelongsToMany(() => Conversation, () => ConversationUser, "userId")
+   @BelongsToMany( () => Conversation, () => ConversationUser, "userId" )
    conversations: Conversation[];
 
-   @BelongsToMany(() => User, () => Contacts, "userId")
+   @BelongsToMany( () => User, () => Contacts, "userId" )
    contacts: User[];
 
    @BeforeCreate
    @BeforeUpdate
    static async hashPass( instance: User ) {
-      instance.password = await passwordService.passHasher(instance.password);
+      instance.password = await passwordService.passHasher( instance.password );
    }
 
 }

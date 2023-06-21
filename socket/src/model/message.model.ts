@@ -11,28 +11,28 @@ interface MessageAttr {
    isImage: boolean;
 }
 
-@Table({ tableName: "message", timestamps: false })
+@Table( { tableName: "message", timestamps: false } )
 export class Message extends Model<MessageAttr> {
 
-   @Column({ type: DataType.TEXT, allowNull: false })
+   @Column( { type: DataType.TEXT, allowNull: false } )
    content: string;
 
-   @Column({ type: DataType.INTEGER, allowNull: false })
+   @Column( { type: DataType.INTEGER, allowNull: false } )
    senderId: number;
 
-   @Column({ type: DataType.INTEGER, allowNull: false })
+   @Column( { type: DataType.INTEGER, allowNull: false } )
    conversationId: number;
 
-   @Column({ type: DataType.BIGINT, allowNull: true })
+   @Column( { type: DataType.BIGINT, allowNull: true } )
    lastModified: number;
 
-   @Column({ type: DataType.BOOLEAN, allowNull: true, defaultValue: false })
+   @Column( { type: DataType.BOOLEAN, allowNull: true, defaultValue: false } )
    isImage: boolean;
 
-   @BelongsTo(() => User, "senderId")
+   @BelongsTo( () => User, "senderId" )
    sender: User;
 
-   @BelongsTo(() => Conversation, { foreignKey: 'conversationId', onDelete: "CASCADE" })
+   @BelongsTo( () => Conversation, { foreignKey: "conversationId", onDelete: "CASCADE" } )
    conversation: Conversation;
 
 }
