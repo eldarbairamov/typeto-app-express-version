@@ -16,5 +16,5 @@ export const groupConversationPresenter = ( conversation: ConversationAttr, user
           } )
           .filter( res => res !== null )[0],
       lastMessage: conversation.lastMessage
-   }
+   };
 };

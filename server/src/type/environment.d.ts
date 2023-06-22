@@ -25,7 +25,7 @@ declare global {
          user?: User;
          userId?: number;
          token?: string;
-         files?: fileUpload.FileArray | null | undefined
+         files?: fileUpload.FileArray | null | undefined;
       }
    }
 }

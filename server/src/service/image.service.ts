@@ -15,15 +15,15 @@ export const imageService = {
       const isFoldExists = await isFolderExists( folderPath );
       if ( !isFoldExists ) await mkdir( folderPath, { recursive: true } );
 
-      await sharp( image.data ).jpeg( { quality: 40 } ).toFile( path.join( folderPath, imageName ) )
+      await sharp( image.data ).jpeg( { quality: 40 } ).toFile( path.join( folderPath, imageName ) );
 
-      return { imageName }
+      return { imageName };
    },
 
    delete: async ( userEmail: string, imageName: string ) => {
       const imagePath = path.join( process.cwd(), "client", userEmail, imageName );
       const isFoldExists = await isFolderExists( imagePath );
-      isFoldExists && await deleteFileFolder( imagePath )
+      isFoldExists && await deleteFileFolder( imagePath );
    }
 
-}
+};

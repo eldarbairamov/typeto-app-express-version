@@ -9,9 +9,9 @@ export const sendImageService = async ( senderId: number, files: FileArray, conv
 
    const image = files?.image as fileUpload.UploadedFile;
 
-   const { imageName } = await imageService.process( image, userEmail! )
+   const { imageName } = await imageService.process( image, userEmail! );
 
-   const newMessage = await Message.create( { content: imageName, conversationId, senderId, isImage: true } )
+   const newMessage = await Message.create( { content: imageName, conversationId, senderId, isImage: true } );
 
    const [ messageWithSender ] = await Promise.all( [
       Message.findByPk( newMessage.id, {

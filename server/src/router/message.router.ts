@@ -28,5 +28,5 @@ messageRouter
         authMiddleware.isAccessExists,
         commonMiddleware.isConversationExists,
         messageController.deleteMessage
-    )
+    );
 

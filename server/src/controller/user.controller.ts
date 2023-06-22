@@ -43,7 +43,7 @@ export const userController = {
    } ),
 
    deleteAvatar: expressAsyncHandler( async ( req: IRequest<any, any, any>, res: Response<{ message: string }> ) => {
-      await deleteAvatarService( req.userId! )
+      await deleteAvatarService( req.userId! );
       res.json( { message: "Success" } );
    } )
 

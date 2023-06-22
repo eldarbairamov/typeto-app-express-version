@@ -13,17 +13,17 @@ export * from "./conversation/get-conversations-by-search.service";
 
 export * from "./message/get-messages.service";
 export * from "./message/send-message.service";
-export * from "./message/send-image.service"
-export * from "./message/delete-message.service"
+export * from "./message/send-image.service";
+export * from "./message/delete-message.service";
 
 export * from "./user/find-user.service";
 export * from "./user/add-contact.service";
 export * from "./user/delete-contact.service";
 export * from "./user/get-contacts.service";
-export * from "./user/upload-avatar.service"
-export * from "./user/delete-avatar.service"
+export * from "./user/upload-avatar.service";
+export * from "./user/delete-avatar.service";
 
 export * from "./email.service";
 export * from "./password.service";
 export * from "./token.service";
-export * from "./image.service"
+export * from "./image.service";
