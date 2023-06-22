@@ -16,8 +16,6 @@ export default ( { io, addUser, users, socket }: IAddUserHandler ) => {
 
       addUser( userId, socket.id );
 
-      console.log( users )
-
       io.emit( "who_is_online", users.map( u => u.userId ) );
    } );
 
