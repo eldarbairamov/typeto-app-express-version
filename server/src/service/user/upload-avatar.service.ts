@@ -2,7 +2,7 @@ import { User } from "../../model";
 import fileUpload, { FileArray } from "express-fileupload";
 import { imageService } from "../image.service";
 
-export const uploadAvatarService = async ( userId: number, files: FileArray ) => {
+export const uploadAvatarService = async ( userId: number, files: FileArray ): Promise<string> => {
 
    const user = await User.findByPk( userId );
 

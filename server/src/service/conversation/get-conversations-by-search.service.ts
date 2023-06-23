@@ -1,8 +1,9 @@
 import { Conversation, Message, User } from "../../model";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
 import { Op } from "sequelize";
+import { IConversationList } from "../../interface";
 
-export const getConversationsBySearchService = async ( currentUserId: number, searchKey: string, limit: number ) => {
+export const getConversationsBySearchService = async ( currentUserId: number, searchKey: string, limit: number ): Promise<IConversationList> => {
 
    const [ groupConversations, privateConversation ] = await Promise.all( [
 

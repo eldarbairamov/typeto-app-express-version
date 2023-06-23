@@ -3,7 +3,7 @@ import fileUpload, { FileArray } from "express-fileupload";
 import { Op } from "sequelize";
 import { imageService } from "../image.service";
 
-export const sendImageService = async ( senderId: number, files: FileArray, conversationId: number ) => {
+export const sendImageService = async ( senderId: number, files: FileArray, conversationId: number ): Promise<Message> => {
 
    const userEmail = await User.findByPk( senderId, { attributes: [ "email" ] } ).then( res => res?.email );
 
@@ -41,5 +41,5 @@ export const sendImageService = async ( senderId: number, files: FileArray, conv
       } )
    ] );
 
-   return messageWithSender;
+   return messageWithSender!;
 };

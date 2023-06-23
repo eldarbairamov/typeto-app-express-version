@@ -4,7 +4,7 @@ import { config } from "../../config";
 import { emailSender } from "../email.service";
 import { FORGOT_PASSWORD, RESET_PASSWORD_TOKEN_TYPE } from "../../constant";
 
-export const forgotPasswordService = async ( email: string, user: User, clientUrl: string ) => {
+export const forgotPasswordService = async ( email: string, user: User, clientUrl: string ): Promise<void> => {
 
    const resetPasswordToken = jwt.sign( { userId: user.id }, config.SECRET_RESET_PASS_KEY, { expiresIn: "1d" } );
    const resetPasswordLink = `${ clientUrl }/reset_password/new?token=${ resetPasswordToken }`;

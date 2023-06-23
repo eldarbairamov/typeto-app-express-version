@@ -1,8 +1,9 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
 import { ApiException } from "../../exception";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
+import { IConversationList } from "../../interface";
 
-export const deleteGroupConversationService = async ( conversationId: number, currentUserId: number, limit: number ) => {
+export const deleteGroupConversationService = async ( conversationId: number, currentUserId: number, limit: number ): Promise<IConversationList> => {
 
    const [ isUserAdmin, isGroupConversation ] = await Conversation
        .findByPk( conversationId )
@@ -11,7 +12,6 @@ export const deleteGroupConversationService = async ( conversationId: number, cu
           Boolean( res?.isGroupConversation === true )
        ] );
 
-   // Check results and throw errors if it's need
    if ( !isGroupConversation ) throw new ApiException( "It is not group conversation", 400 );
    if ( !isUserAdmin ) throw new ApiException( "You are not admin", 401 );
 

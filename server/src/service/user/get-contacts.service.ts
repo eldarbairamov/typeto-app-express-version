@@ -1,6 +1,6 @@
 import { User } from "../../model";
 
-export const getContactsService = async ( searchKey: string, currentUserId: number ) => {
+export const getContactsService = async ( searchKey: string, currentUserId: number ): Promise<User[] | undefined> => {
 
    return await User.findOne( {
       where: {

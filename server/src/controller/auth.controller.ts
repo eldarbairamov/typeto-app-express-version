@@ -6,9 +6,7 @@ import { forgotPasswordService, loginService, refreshService, registrationServic
 
 export const authController = {
 
-   registration: expressAsyncHandler( async ( req: IRequest<IRegistration, any, any>, res: Response<{
-      message: string
-   }> ) => {
+   registration: expressAsyncHandler( async ( req: IRequest<IRegistration, any, any>, res: Response<{ message: string }> ) => {
       await registrationService( req.body );
       res.status( 201 ).json( { message: "Success" } );
    } ),
@@ -18,17 +16,13 @@ export const authController = {
       res.status( 201 ).json( accessTokenPair );
    } ),
 
-   forgotPassword: expressAsyncHandler( async ( req: IRequest<{ email: string }, any, any>, res: Response<{
-      message: string
-   }> ) => {
+   forgotPassword: expressAsyncHandler( async ( req: IRequest<{ email: string }, any, any>, res: Response<{ message: string }> ) => {
       const clientUrl = req.headers.origin;
       await forgotPasswordService( req.body.email, req.user!, clientUrl! );
       res.json( { message: "Success" } );
    } ),
 
-   resetPassword: expressAsyncHandler( async ( req: IRequest<IResetPassword, any, any>, res: Response<{
-      message: string
-   }> ) => {
+   resetPassword: expressAsyncHandler( async ( req: IRequest<IResetPassword, any, any>, res: Response<{ message: string }> ) => {
       await resetPasswordService( req.body );
       res.status( 201 ).json( { message: "Success" } );
    } ),
@@ -38,9 +32,7 @@ export const authController = {
       res.json( { message: "Success" } );
    } ),
 
-   refresh: expressAsyncHandler( async ( req: IRequest<{
-      refreshToken: string
-   }, any, any>, res: Response<IAccessTokenPair> ) => {
+   refresh: expressAsyncHandler( async ( req: IRequest<{ refreshToken: string }, any, any>, res: Response<IAccessTokenPair> ) => {
       const { refreshToken } = req.body;
       const accessTokenPair = await refreshService( refreshToken );
       res.status( 201 ).json( { ...accessTokenPair } );

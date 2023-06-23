@@ -1,6 +1,6 @@
 import { ConversationUser, Message, User } from "../../model";
 
-export const getMessagesService = async ( conversationId: number, currentUserId: number ) => {
+export const getMessagesService = async ( conversationId: number, currentUserId: number ): Promise<Message[]> => {
 
    const [ messages ] = await Promise.all( [
       Message.findAll( {

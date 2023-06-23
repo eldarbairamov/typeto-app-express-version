@@ -4,7 +4,7 @@ import process from "process";
 import { mkdir } from "fs/promises";
 import fileUpload from "express-fileupload";
 import sharp from "sharp";
-import { deleteFileFolder } from "../helper/delete-file-folder.helper";
+import { deleteFileFolder } from "../helper";
 
 export const imageService = {
 

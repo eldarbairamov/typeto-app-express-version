@@ -1,7 +1,7 @@
 import { Conversation, ConversationUser, Message, User } from "../../model";
 import { Op } from "sequelize";
 
-export const sendMessageService = async ( content: string, senderId: number, conversationId: number ) => {
+export const sendMessageService = async ( content: string, senderId: number, conversationId: number ): Promise<Message> => {
 
    const newMessage = await Message.create( {
       content,
@@ -37,5 +37,5 @@ export const sendMessageService = async ( content: string, senderId: number, con
       } )
    ] );
 
-   return messageWithSender;
+   return messageWithSender!;
 };

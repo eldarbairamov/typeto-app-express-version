@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { userController } from "../controller";
-import { authMiddleware, fileMiddleware } from "../middleware";
+import { authMiddleware, commonMiddleware, fileMiddleware } from "../middleware";
 
 export const userRouter = Router();
 
@@ -34,6 +34,7 @@ userRouter
     .post(
         "/contacts",
         authMiddleware.isAccessExists,
+        commonMiddleware.isRequestEmpty,
         userController.addContact
     )
     .delete(

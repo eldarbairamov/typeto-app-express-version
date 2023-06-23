@@ -1,7 +1,8 @@
 import { Conversation, Message, User } from "../../model";
 import { groupConversationPresenter, privateConversationPresenter } from "../../presenter";
+import { IConversationList } from "../../interface";
 
-export const getConversationsService = async ( currentUserId: number, limit: number ) => {
+export const getConversationsService = async ( currentUserId: number, limit: number ): Promise<IConversationList> => {
 
    const conversations = await User.findByPk( currentUserId, {
       include: {

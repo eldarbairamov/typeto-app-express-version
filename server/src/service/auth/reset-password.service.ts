@@ -3,7 +3,7 @@ import { resetPasswordValidator } from "../../validator";
 import { ApiException } from "../../exception";
 import { ActionToken, User } from "../../model";
 
-export const resetPasswordService = async ( body: IResetPassword ) => {
+export const resetPasswordService = async ( body: IResetPassword ): Promise<void> => {
 
    const validation = resetPasswordValidator.validate( body );
    if ( validation.error ) throw new ApiException( validation.error.message, 400 );

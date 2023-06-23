@@ -2,7 +2,7 @@ import { Conversation, Message, User } from "../../model";
 import { imageService } from "../image.service";
 import { ApiException } from "../../exception";
 
-export const deleteMessageService = async ( currentUserId: number, messageId: number, conversationId: number ) => {
+export const deleteMessageService = async ( currentUserId: number, messageId: number, conversationId: number ): Promise<Message | undefined> => {
 
    const [ message, user ] = await Promise.all( [
       Message.findOne( {

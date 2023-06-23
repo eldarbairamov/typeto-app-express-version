@@ -1,6 +1,6 @@
 import { Contacts, User } from "../../model";
 
-export const deleteContactService = async ( contactId: number, currentUserId: number ) => {
+export const deleteContactService = async ( contactId: number, currentUserId: number ): Promise<User[] | undefined> => {
 
    await Contacts.destroy( {
       where: {

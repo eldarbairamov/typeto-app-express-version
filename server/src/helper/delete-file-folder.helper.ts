@@ -1,7 +1,7 @@
 import { unlink } from "fs/promises";
 import { ApiException } from "../exception";
 
-export const deleteFileFolder = async ( path: string ) => {
+export const deleteFileFolder = async ( path: string ): Promise<void> => {
    try {
       await unlink( path );
    }

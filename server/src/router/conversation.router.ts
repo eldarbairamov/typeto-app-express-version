@@ -8,6 +8,7 @@ conversationRouter
     .post(
         "/",
         authMiddleware.isAccessExists,
+        commonMiddleware.isRequestEmpty,
         conversationController.createConversation
     )
     .get(

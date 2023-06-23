@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import expressAsyncHandler from "express-async-handler";
 import { ApiException } from "../exception";
 import { Conversation } from "../model";
@@ -6,7 +6,7 @@ import { IRequest } from "../interface";
 
 export const commonMiddleware = {
 
-   isRequestEmpty: expressAsyncHandler( async ( req: Request, res: Response, next: NextFunction ) => {
+   isRequestEmpty: expressAsyncHandler( async ( req: IRequest<any, any, any>, res: Response<any>, next: NextFunction ) => {
       if ( !Object.entries( req.body ).length ) throw new ApiException( "Request is empty", 400 );
 
       next();

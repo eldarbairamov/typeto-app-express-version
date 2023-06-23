@@ -12,32 +12,32 @@ export const userController = {
       res.json( { ...user, isAlreadyAdded: Boolean( isAlreadyAdded ) } );
    } ),
 
-   getContacts: expressAsyncHandler( async ( req: IRequest<any, any, { searchKey: string }>, res: Response ) => {
+   getContacts: expressAsyncHandler( async ( req: IRequest<any, any, { searchKey: string }>, res: Response<User[] | undefined> ) => {
       const searchKey = req.query.searchKey;
       const usersContacts = await getContactsService( searchKey, req.userId! );
       res.json( usersContacts );
    } ),
 
-   addContact: expressAsyncHandler( async ( req: IRequest<{ targetId: number }, any, any>, res: Response ) => {
+   addContact: expressAsyncHandler( async ( req: IRequest<{ targetId: number }, any, any>, res: Response<{ message: string }> ) => {
       const targetId = req.body.targetId;
       await addContactService( targetId, req.userId! );
       res.json( { message: "Success" } );
    } ),
 
-   deleteContact: expressAsyncHandler( async ( req: IRequest<any, any, { contactId: string }>, res: Response ) => {
+   deleteContact: expressAsyncHandler( async ( req: IRequest<any, any, { contactId: string }>, res: Response<User[] | undefined> ) => {
       const contactId = req.query.contactId;
       const usersContacts = await deleteContactService( +contactId, req.userId! );
       res.json( usersContacts );
    } ),
 
-   getCurrentUser: expressAsyncHandler( async ( req: IRequest<any, any, any>, res: Response ) => {
+   getCurrentUser: expressAsyncHandler( async ( req: IRequest<any, any, any>, res: Response<User> ) => {
       const user = await User.findByPk( req.userId, {
          attributes: [ "id", "username", "email", "image" ]
       } );
-      res.json( user );
+      res.json( user! );
    } ),
 
-   uploadAvatar: expressAsyncHandler( async ( req: IRequest<any, any, any>, res: Response ) => {
+   uploadAvatar: expressAsyncHandler( async ( req: IRequest<any, any, any>, res: Response<{ imageName: string }> ) => {
       const imageName = await uploadAvatarService( req.userId!, req.files! );
       res.json( { imageName } );
    } ),

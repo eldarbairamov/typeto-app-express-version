@@ -8,12 +8,14 @@ messageRouter
     .post(
         "/:conversationId",
         authMiddleware.isAccessExists,
+        commonMiddleware.isRequestEmpty,
         commonMiddleware.isConversationExists,
         messageController.sendMessage
     )
     .post(
         "/:conversationId/image",
         authMiddleware.isAccessExists,
+        commonMiddleware.isRequestEmpty,
         commonMiddleware.isConversationExists,
         messageController.sendImage
     )
