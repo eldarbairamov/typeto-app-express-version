@@ -5,8 +5,8 @@ import { ISocketUser } from "../interface";
 interface IAddUserHandler {
    socket: Socket;
    io: Server;
-   addUser: ( userId: number, socketId: string ) => void
-   users: ISocketUser[]
+   addUser: ( userId: number, socketId: string ) => void;
+   users: ISocketUser[];
 }
 
 export default ( { io, addUser, users, socket }: IAddUserHandler ) => {

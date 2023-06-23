@@ -21,6 +21,6 @@ export const sessionManagerService = () => {
           .filter( item => item !== null );
    };
 
-   return { users, addUser, removeUser, getUser, getUsers }
+   return { users, addUser, removeUser, getUser, getUsers };
 
-}
+};

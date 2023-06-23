@@ -30,7 +30,6 @@ axiosInstance.interceptors.response.use( ( config ) => {
           originalRequest._isRetry = true;
 
           try {
-             console.log( "try" );
              const { data } = await authApi.refresh( refreshToken );
              storageApi.setTokens( data );
           }
@@ -38,6 +37,8 @@ axiosInstance.interceptors.response.use( ( config ) => {
              storageApi.deleteTokens();
              AuthorizedRouter.navigate( UnauthorizedRoutesEnum.UnauthorizedPage );
           }
+
+          originalRequest._isRetry = false;
 
           return axiosInstance( originalRequest );
        }

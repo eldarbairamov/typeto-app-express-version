@@ -1,1 +1,1 @@
-export * from "./colors.constant"
+export * from "./colors.constant";

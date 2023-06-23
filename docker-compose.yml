@@ -2,7 +2,7 @@ version: "3"
 
 services:
   api:
-    container_name: api-express
+    container_name: api_express
     build: ./server
     command: npm run prod
     ports:
@@ -18,8 +18,8 @@ services:
       - db
 
   db:
+    container_name: postgres_db_express
     image: postgres:15.3-alpine
-    container_name: postgres-db-express
     env_file:
       - server/.env
     ports:
@@ -29,7 +29,7 @@ services:
     restart: unless-stopped
 
   socket:
-    container_name: socket-express
+    container_name: socket_express
     build: ./socket
     command: npm run prod
     env_file:
@@ -43,8 +43,8 @@ services:
       - db
 
   nginx:
+    container_name: nginx_express
     image: nginx:alpine
-    container_name: nginx
     restart: unless-stopped
     ports:
       - "80:80"

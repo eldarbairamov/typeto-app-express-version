@@ -6,7 +6,7 @@ interface IConversationHandler {
    socket: Socket;
    io: Server;
    getUser: ( userId: number ) => (string | undefined);
-   getUsers: ( userIds: number[] ) => (string | null)[]
+   getUsers: ( userIds: number[] ) => (string | null)[];
 }
 
 export default ( { socket, io, getUser, getUsers }: IConversationHandler ) => {

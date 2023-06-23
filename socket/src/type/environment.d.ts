@@ -9,8 +9,8 @@ declare global {
          POSTGRES_PASSWORD: string;
          POSTGRES_PORT: number;
 
-         SOCKET_PORT: number
-         CLIENT_URL: string
+         SOCKET_PORT: number;
+         CLIENT_URL: string;
       }
    }
 }
