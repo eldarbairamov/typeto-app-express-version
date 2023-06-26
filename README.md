@@ -1,4 +1,4 @@
-<h1 align="center">TypeTo (1.0-beta) | React + Express.js</h1>
+<h1 align="center">TypeTo (1.0-beta) | React + Express.js + Chakra UI</h1>
 
 ###
 
