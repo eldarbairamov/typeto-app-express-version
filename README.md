@@ -38,7 +38,7 @@
 
 ###
 
-<p align="center">Back-end application is built on Node.js platform using Express.js framework on TypeScript and PostgreSQL database via Suquelize ORM.<br><br>Front-end part is built using React using TypeScript via Vite builder and Redux Toolkit state manager. Also we have Chakra UI library for defining CSS styles.<br><br>The application can run in Docker containers. All instructions for this are already described in Dockerfile's and Docker Compose.</p>
+<p align="center">Back-end part of the application is built on Node.js platform using Express.js framework on TypeScript and PostgreSQL database via Suquelize ORM.<br><br>Front-end part is built using React using TypeScript via Vite builder and Redux Toolkit state manager. Also we have Chakra UI library for defining CSS styles.<br><br>The application can run in Docker containers. All instructions for this are already described in Dockerfile's and Docker Compose.</p>
 
 ###
 
