@@ -1,4 +1,4 @@
-<h1 align="center">TypeTo (1.0-beta) | React + Express.js + Chakra UI</h1>
+<h1 align="center">TypeTo (1.0-beta) | React + Express.js + Socket.IO + Chakra UI</h1>
 
 ###
 
@@ -34,6 +34,8 @@
   <img src="https://skillicons.dev/icons?i=express" height="50" alt="express logo"  />
   <img width="5" />
   <img src="https://skillicons.dev/icons?i=docker" height="50" alt="docker logo"  />
+  <img width="5" />
+  <img src="https://cdn.simpleicons.org/socketdotio/010101" height="50" alt="socketio logo"  />
 </div>
 
 ###
