@@ -77,6 +77,8 @@ listenerMiddleware.startListening( {
 
       socket.off( "get_message" );
 
+      socket.off( "someone_is_typing" );
+
       socket.on( "get_message", ( message: IMessage, conversationForSender: IConversation, conversationForReceiver: IConversation ) => {
          // console.log( MAGENTA, "socket: get_message" );
 
